@@ -55,14 +55,15 @@ a{
 
 
 th{
-    padding: 5px;
+    padding: 3px;
     background-color: rgb(56, 150, 180);
+    border: solid 1px black;
     color: white;
 }
 
 td{
     text-align: center;
-    padding: 5px;
+    padding: 3px;
     border: 1px solid black;
 }
 
