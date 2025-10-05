@@ -1,50 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <title>Gestorpps</title>
 </head>
+
 <body>
     <header class="encabezado">
         <h1>¡Hola, Santiago!</h1>
-        <nav >
-           <a href="#">Cerrar sesión</a>
+        <nav>
+            <a href="login.html">Cerrar sesión</a>
         </nav>
     </header>
     <main class="contenedor-principal">
         <h2>Bienvenido al gestor de pps</h2>
 
         <div class="filtros">
-            <h3>Filtros:</h2>
-            <div class="filtro caso">
-                <p>Caso</p>
-                <input type="number" name="" id="">
+            <h3>Filtros:</h3>
+            <div class="filtros-fila fila1">
+                <div class="filtro caso">
+                    <p>Caso</p>
+                    <input type="number" name="" id="">
+                </div>
+                <div class="filtro id">
+                    <p>ID</p>
+                    <input type="number" name="" id="">
+                </div>
+                <div class="filtro canal">
+                    <p>Canal</p>
+                    <select name="Sites" id="">
+                        <option value="canal-todos">Todos</option>
+                        <option value="OFFLINE">OFFLINE</option>
+                        <option value="C2C">C2C</option>
+                        <option value="CHAT">CHAT</option>
+                    </select>
+                </div>
+                <div class="filtro Site-Pais">
+                    <p>Site/Pais</p>
+                    <select name="Sites" id="">
+                        <option value="site-todos">Todos</option>
+                        <option value="MLA">MLA</option>
+                        <option value="MLM">MLM</option>
+                        <option value="MLC">MLC</option>
+                    </select>
+                </div>
+                <div class="filtro monto">
+                    <p>monto</p>
+                    <input type="number" name="" id="">
+                </div>
             </div>
-            <div class="filtro id">
-                <p>ID</p>
-                <input type="number" name="" id="">
-            </div>
-            <div class="filtro Site-Pais">
-                <p>Site/Pais</p>
-                <select name="Opciones" id="">
-                    <option value="MLA">MLA</option>
-                    <option value="MLM">MLM</option>
-                    <option value="MLC">MLC</option>
-                </select>
-            </div>
-            <div class="filtro monto">
-                <p>monto</p>
-                <input type="number" name="" id="">
-            </div>
-            <div class="filtro fecha-carga">
-                <p>Fecha de carga</p>
-                <input type="date" name="" id="">
-            </div>
-            <div class="filtro fecha-pago">
-                <p>Fecha de pago</p>
-                <input type="date" name="" id="">
+            <div class="filtros-fila fila2">
+                <div class="filtro fecha-carga">
+                    <p>Fecha de carga</p>
+                    <input type="date" name="" id="">
+                </div>
+                <div class="filtro fecha-pago">
+                    <p>Fecha de pago</p>
+                    <input type="date" name="" id="">
+                </div>
+                <div class="filtro tipo-acuerdo">
+                    <p>Tipo de acuerdo</p>
+                    <select name="tipo-acuerdos" id="">
+                        <option value="pago-todos">Todos</option>
+                        <option value="pago-total">Pago total</option>
+                        <option value="condonacion">Condonación</option>
+                        <option value="Parcelamento">Parcelamento</option>
+                        <option value="parcial">Pago Parcial</option>
+                    </select>
+                </div>
+
+                <div class="filtro operador">
+                    <p>Operador</p>
+                    <select name="operadores" id="">
+                        <option value="operador-todos">Todos</option>
+                        <option value="operador-nombre1">Santiago</option>
+                    </select>
+                </div>
+
+                <div class="filtro cumplimiento">
+                    <p>Cumplimiento</p>
+                    <select name="cumplimientos" id="">
+                        <option value="cumplimiento-todos">Todos</option>
+                        <option value="cumplimiento-encurso">En curso</option>
+                        <option value="cumplimiento-cumplida">Cumplida</option>
+                        <option value="cumplimiento-incumplida">Incumplida</option>
+                    </select>
+                </div>
+
             </div>
             <button>Filtrar</button>
         </div>
@@ -265,12 +310,13 @@
                 <td>Santiago</td>
                 <td>En curso</td>
             </tr>
-            
-           
+
+
         </table>
     </main>
     <footer>
         Cernadas Santiago - 2025
     </footer>
 </body>
+
 </html>
