@@ -27,6 +27,10 @@ a{
     border-radius: 5px;
 }
 
+a:hover{
+    background-color: rgb(124, 205, 255);
+    color: black;
+}
 
 
 
@@ -40,19 +44,19 @@ a{
 
 
 .tabla{
-    border-collapse: collapse;
+    border-collapse:collapse;
+    margin-top: 20px;
     width: 75%;
-    margin-top: 50px;
-    margin-bottom: 60px;
 }
 
 .filtros{
     display: flex;
     flex-direction: row;
+    white-space: nowrap;
     align-items: center;
     background-color: rgb(56, 150, 180);
     margin-top: 20px;
-    padding: 5px;
+    padding: 5px 20px;
     border-radius: 10px;
     color: white;
     text-align: center;
@@ -62,7 +66,7 @@ a{
     padding: 5px;
     border: none;
     outline: none;
-    
+    border-radius: 5px;
 }
 
 .filtros input{
@@ -88,6 +92,14 @@ input[type=number] {
     gap: 20px;
 }
 
+.fila4{
+    display: flex;
+    flex-direction: column;
+}
+
+.duplica input{
+    width: 200px;
+}
 
 #boton-filtrar{
     border: none;
@@ -100,6 +112,8 @@ input[type=number] {
 
 #boton-filtrar:hover{
     cursor: pointer;
+    background-color: rgb(124, 205, 255);
+    color: black;
 }
 
 th{
@@ -113,7 +127,27 @@ td{
     text-align: center;
     padding: 3px;
     border: 1px solid black;
+    font-family: Arial, Helvetica, sans-serif;
+    flex: 1;
 }
+
+td button{
+ font-size: 11px;
+ border: none;
+ padding: 5px;
+ color: white;
+ border-radius: 3px;
+ font-family: Arial, Helvetica, sans-serif;
+}
+
+td .boton-editar{
+    background-color: rgb(21, 21, 194);
+}
+
+td .boton-eliminar{
+    background-color: rgb(214, 31, 31);
+}
+
 
 
 
@@ -130,4 +164,89 @@ footer{
 /*
  RGB AZUL OSCURO: 47 97 129
  RGB AZUL CLARO: 56 150 180
- */
+*/
+
+/*
+    Sites:
+    MLA:CELESTE
+    MLM:NARANJA
+    MLC:AMARILLO
+
+    CANALES:
+    CHAT:VERDE
+    OFFLINE:CELESTE
+    C2C:NARANJA
+
+    TIPO ACUERDO:
+    PAGO TOTAL: VERDE
+    CONDONACIÓN: MORADO
+    PARCELAMENTO: AZUL
+    PARCIAL: NARANJA
+
+    TIPO CUMPLIMIENTO:
+    EN CURSO: AMARILLO
+    CUMPLIDA: VERDE
+    INCUMPLIDA: ROJO
+*/
+
+.columna-borde{
+    border-radius: 20px;
+}
+
+.columna-chat{
+    background-color: green;
+    color: white; 
+}
+
+.columna-offline{
+    background-color: blue;
+    color: white;
+}
+
+.columna-c2c{
+    background-color: orange;
+}
+
+.columna-mla{
+    background-color:cornflowerblue;
+}
+
+.columna-mlm{
+    background-color: darksalmon;
+}
+
+.columna-mlc{
+    background-color:goldenrod;
+}
+
+.columna-pagototal{
+    background-color: green;
+    color: white;
+}
+
+.columna-condonacion{
+    background-color:blueviolet;
+    color: white;
+}
+
+.columna-parcelamento{
+    background-color:cornflowerblue;
+}
+
+.columna-pagoparcial{
+    background-color: darksalmon;
+}
+
+.columna-encurso{
+    background-color: darksalmon;
+}
+
+.columna-cumplida{
+    background-color: green;
+    color: white;
+}
+
+.columna-incumplida{
+    background-color: red;
+    color: white;
+}
