@@ -28,22 +28,7 @@ a{
 }
 
 
-.filtros{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: rgb(56, 150, 180);
-    margin-top: 20px;
-    padding: 5px;
-    border-radius: 10px;
-    color: white;
-}
 
-.filtros-fila{
-    display: flex;
-    padding: 10px;
-    gap: 20px;
-}
 
 .contenedor-principal{
     padding-top: 20px;
@@ -52,6 +37,8 @@ a{
     align-items: center;
 }
 
+
+
 .tabla{
     border-collapse: collapse;
     width: 75%;
@@ -59,6 +46,61 @@ a{
     margin-bottom: 60px;
 }
 
+.filtros{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: rgb(56, 150, 180);
+    margin-top: 20px;
+    padding: 5px;
+    border-radius: 10px;
+    color: white;
+    text-align: center;
+}
+
+.filtros input,select{
+    padding: 5px;
+    border: none;
+    outline: none;
+    
+}
+
+.filtros input{
+    width: 100px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+
+
+.filtros-fila{
+    display: flex;
+    padding: 10px;
+    gap: 20px;
+}
+
+
+#boton-filtrar{
+    border: none;
+    font-size: 16px;
+    padding: 10px 50px;
+    background: rgb(47 97 129);
+    color: white;
+    border-radius: 10px;
+}
+
+#boton-filtrar:hover{
+    cursor: pointer;
+}
 
 th{
     padding: 3px;
