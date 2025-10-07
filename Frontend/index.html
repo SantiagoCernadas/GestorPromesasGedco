@@ -20,7 +20,6 @@
         <h2>Bienvenido al gestor de pps</h2>
 
         <div class="filtros">
-            <h3>Filtros:</h3>
             <div class="filtros-fila fila1">
                 <div class="filtro caso">
                     <p>Caso</p>
@@ -61,7 +60,11 @@
                     </select>
                 </div>
 
-                <div class="filtro operador">
+               
+
+            </div>
+            <div class="filtros-fila fila3">
+                 <div class="filtro operador">
                     <p>Operador</p>
                     <select name="operadores" id="">
                         <option value="operador-todos">Todos</option>
@@ -78,10 +81,9 @@
                         <option value="cumplimiento-incumplida">Incumplida</option>
                     </select>
                 </div>
-
-
             </div>
-            <div class="filtros-fila fila3">
+
+            <div class="filtros-fila fila4">
                 <div class="filtro fecha-carga">
                     <p><strong>Fecha de carga</strong></p>
                     <p>Desde</p>
@@ -97,13 +99,14 @@
                     <input type="date" name="" id="">
                 </div>
             </div>
-
-            <div class="filtros-fila fila4">
+            <div class="filtros-fila fila5">
                 <div class="filtro duplica">
-                    <p> <strong> PP Duplica</strong></p>
+                    <p> <strong> PP Duplica:</strong></p>
                     <input type="checkbox" name="" id="">
                 </div>
-                <button id="boton-filtrar">Filtrar</button>
+                <div class="filtro">
+                    <button id="boton-filtrar">Filtrar</button>
+                </div>
             </div>
         </div>
         <table class="tabla">
@@ -118,84 +121,85 @@
                 <th>Tipo de acuerdo</th>
                 <th>Operador</th>
                 <th>¿Cumplió?</th>
+                <th>Opciones</th>
             </tr>
             <tr>
-                <td class="columna-borde">12312331231</td>
-                <td class="columna-borde">123412</td>
-                <td class="columna-borde columna-chat">CHAT</td>
-                <td class="columna-borde columna-mla">MLA</td>
-                <td class="columna-borde">1000.00</td>
-                <td class="columna-borde">04/10/2025</td>
-                <td class="columna-borde">05/10/2025</td>
-                <td class="columna-borde columna-parcelamento">Parcelamento</td>
-                <td class="columna-borde">Santiago</td>
-                <td class="columna-borde">Cumplida</td>
-                <td><button class="boton-editar"> Editar</button> <button class="boton-eliminar"> Eliminar</button></td>
+                <td><p class="columna-borde">12312331231</p></td>
+                <td><p class="columna-borde">123412</p></td>
+                <td ><p class="columna-borde columna-chat">CHAT</p></td>
+                <td><p class="columna-borde columna-mla">MLA</p></td>
+                <td><p class="columna-borde">7250000.21</p></td>
+                <td><p class="columna-borde">04/10/2025</p></td>
+                <td><p class="columna-borde">05/10/2025</p></td>
+                <td><p class="columna-borde columna-parcelamento">Parcelamento</p></td>
+                <td><p class="columna-borde">Santiago</p></td>
+                <td><p class="columna-borde columna-cumplida">Cumplida</p></td>
+                <td class="columna-botones"><button class="boton-editar"> Editar</button><button class="boton-eliminar">Eliminar</button></td>
             </tr>
             <tr>
-                <td class="columna-borde">1231231231</td>
-                <td class="columna-borde">123123123</td>
-                <td class="columna-borde columna-c2c">C2C</td>
-                <td class="columna-borde columna-mla">MLA</td>
-                <td class="columna-borde">1000.00</td>
-                <td class="columna-borde">04/10/2025</td>
-                <td class="columna-borde">05/10/2025</td>
-                <td class="columna-borde columna-pagototal">Pago total</td>
-                <td class="columna-borde">Santiago</td>
-                <td class="columna-borde">En curso</td>
-                <td><button class="boton-editar"> Editar</button> <button class="boton-eliminar"> Eliminar</button></td>
+                <td><p class="columna-borde">1231231231</p></td>
+                <td><p class="columna-borde">123123123</p></td>
+                <td><p class="columna-borde columna-c2c">C2C</p></td>
+                <td><p class="columna-borde columna-mla">MLA</p></td>
+                <td><p class="columna-borde">30000</p></td>
+                <td><p class="columna-borde">04/10/2025</p></td>
+                <td><p class="columna-borde">05/10/2025</p></td>
+                <td><p class="columna-borde columna-pagototal">Pago total</p></td>
+                <td><p class="columna-borde">Santiago</p></td>
+                <td><p class="columna-borde columna-encurso">En curso</p></td>
+                <td class="columna-botones"><button class="boton-editar"> Editar</button><button class="boton-eliminar"> Eliminar</button></td>
             </tr>
             <tr>
-                <td class="columna-borde">123123</td>
-                <td class="columna-borde">123412</td>
-                <td class="columna-borde columna-chat">CHAT</td>
-                <td class="columna-borde columna-mlm">MLM</td>
-                <td class="columna-borde">1000.00</td>
-                <td class="columna-borde">04/10/2025</td>
-                <td class="columna-borde">05/10/2025</td>
-                <td class="columna-borde columna-pagoparcial">Pago parcial</td>
-                <td class="columna-borde">Santiago</td>
-                <td class="columna-borde">En curso</td>
-                <td><button class="boton-editar"> Editar</button> <button class="boton-eliminar"> Eliminar</button></td>
+                <td><p class="columna-borde">123123</p></td>
+                <td><p class="columna-borde">123123</p></td>
+                <td><p class="columna-borde columna-chat">CHAT</p></td>
+                <td><p class="columna-borde columna-mlm">MLM</p></td>
+                <td><p class="columna-borde">1000.21</p></td>
+                <td><p class="columna-borde">04/10/2025</p></td>
+                <td><p class="columna-borde">05/10/2025</p></td>
+                <td><p class="columna-borde columna-pagoparcial">Pago parcial</p></td>
+                <td><p class="columna-borde">Santiago</p></td>
+                <td><p class="columna-borde columna-encurso">En curso</p></td>
+                <td class="columna-botones"><button class="boton-editar"> Editar</button><button class="boton-eliminar">Eliminar</button></td>
             </tr>
             <tr>
-                <td class="columna-borde">123123</td>
-                <td class="columna-borde">123412</td>
-                <td class="columna-borde columna-offline">OFFLINE</td>
-                <td class="columna-borde columna-mla">MLA</td>
-                <td class="columna-borde">1000.00</td>
-                <td class="columna-borde">04/10/2025</td>
-                <td class="columna-borde">05/10/2025</td>
-                <td class="columna-borde columna-pagototal">Pago total</td>
-                <td class="columna-borde">Santiago</td>
-                <td class="columna-borde">Cumplida</td>
-                <td><button class="boton-editar"> Editar</button> <button class="boton-eliminar"> Eliminar</button></td>
+                <td><p class="columna-borde">123123</p></td>
+                <td><p class="columna-borde">123412</p></td>
+                <td><p class="columna-borde columna-offline">OFFLINE</p></td>
+                <td><p class="columna-borde columna-mla">MLA</p></td>
+                <td><p class="columna-borde">1000.00</p></td>
+                <td><p class="columna-borde">04/10/2025</p></td>
+                <td><p class="columna-borde">05/10/2025</p></td>
+                <td><p class="columna-borde columna-pagototal">Pago total</p></td>
+                <td><p class="columna-borde">Santiago</p></td>
+                <td><p class="columna-borde columna-cumplida">Cumplida</p></td>
+                <td class="columna-botones"><button class="boton-editar"> Editar</button><button class="boton-eliminar">Eliminar</button></td>
             </tr>
             <tr>
-                <td class="columna-borde">123123</td>
-                <td class="columna-borde">123412</td>
-                <td class="columna-borde columna-chat">CHAT</td>
-                <td class="columna-borde columna-mlm">MLM</td>
-                <td class="columna-borde">1000.00</td>
-                <td class="columna-borde">04/10/2025</td>
-                <td class="columna-borde">05/10/2025</td>
-                <td class="columna-borde columna-parcelamento">Parcelamento</td>
-                <td class="columna-borde">Santiago</td>
-                <td class="columna-borde">En curso</td>
-                <td><button class="boton-editar"> Editar</button> <button class="boton-eliminar"> Eliminar</button></td>
+                <td><p class="columna-borde">123123</p></td>
+                <td><p class="columna-borde">123412</p></td>
+                <td><p class="columna-borde columna-chat">CHAT</p></td>
+                <td><p class="columna-borde columna-mlm">MLM</p></td>
+                <td><p class="columna-borde">250</p></td>
+                <td><p class="columna-borde">04/10/2025</p></td>
+                <td><p class="columna-borde">05/10/2025</p></td>
+                <td><p class="columna-borde columna-parcelamento">Parcelamento</p></td>
+                <td><p class="columna-borde">Santiago</p></td>
+                <td><p class="columna-borde columna-incumplida">Incumplida</p></td>
+                <td class="columna-botones"><button class="boton-editar"> Editar</button><button class="boton-eliminar">Eliminar</button></td>
             </tr>
             <tr>
-                <td class="columna-borde">123123</td>
-                <td class="columna-borde">123412</td>
-                <td class="columna-borde columna-chat">CHAT</td>
-                <td class="columna-borde columna-mlc">MLC</td>
-                <td class="columna-borde">1000.00</td>
-                <td class="columna-borde">04/10/2025</td>
-                <td class="columna-borde">05/10/2025</td>
-                <td class="columna-borde columna-condonacion">Condonación</td>
-                <td class="columna-borde">Santiago</td>
-                <td class="columna-borde">Cumplida</td>
-                <td><button class="boton-editar"> Editar</button> <button class="boton-eliminar"> Eliminar</button></td>
+                <td><p class="columna-borde">123123</p></td>
+                <td><p class="columna-borde">123412</p></td>
+                <td><p class="columna-borde columna-chat">CHAT</p></td>
+                <td><p class="columna-borde columna-mlc">MLC</p></td>
+                <td><p class="columna-borde">3.21</p></td>
+                <td><p class="columna-borde">04/10/2025</p></td>
+                <td><p class="columna-borde">05/10/2025</p></td>
+                <td><p class="columna-borde columna-condonacion">Condonación</p></td>
+                <td><p class="columna-borde">Santiago</p></td>
+                <td><p class="columna-borde columna-cumplida">Cumplida</p></td>
+                <td class="columna-botones"><button class="boton-editar"> Editar</button><button class="boton-eliminar"> Eliminar</button></td>
             </tr>
         </table>
     </main>
