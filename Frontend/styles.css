@@ -5,7 +5,7 @@
 }
 
 body{
-    background-color: #ebeaea;
+    background-color: rgb(240, 240, 240);
 }
 
 header{
@@ -47,12 +47,29 @@ a:hover{
 
 
 
+
+
 .tabla{
     width: 100%;
     border-collapse:collapse;
     margin-top: 20px;
+    margin-bottom: 20px;
     white-space: normal;
+    white-space: nowrap;
     align-self: flex-start;
+}
+
+.filtros-contenedor{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    margin-top: 10px;
+    padding: 10px 30px;
+    border-radius: 10px;
+    color: black;
+    box-shadow: 0 0 5px 1px gray;
+    gap: 20px;
 }
 
 .filtros{
@@ -60,14 +77,8 @@ a:hover{
     flex-direction: row;
     white-space: nowrap;
     flex-wrap: wrap;
-    justify-content: space-evenly;
-    background-color: rgb(56, 150, 180);
-    margin-top: 10px;
     align-items: center;
-    padding: 5px 20px;
-    border-radius: 10px;
-    color: white;
-    text-align: center;
+    gap: 20px;
 }
 
 .filtros input,select{
@@ -75,6 +86,7 @@ a:hover{
     border: none;
     outline: none;
     border-radius: 5px;
+    border: 1px solid black;
 }
 
 .filtros input[type=number],input[type=date]{
@@ -100,9 +112,8 @@ input[type=number] {
 
 .filtros-fila{
     display: flex;
-    padding: 10px;
+    flex-direction: column;
     gap: 20px;
-    
 }
 
 .filtro p:first-child{
@@ -113,12 +124,6 @@ input[type=number] {
     display: flex;
     flex-direction: column;
     gap: 3px;
-}
-
-
-.fila5{
-    display: flex;
-    flex-direction: column;
 }
 
 .duplica{
@@ -137,6 +142,56 @@ input[type=number] {
 }
 
 #boton-filtrar:hover{
+    cursor: pointer;
+    background-color: rgb(124, 205, 255);
+    color: black;
+}
+
+.contenedor-agregar-promesa{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    margin-top: 10px;
+    padding: 10px 30px;
+    border-radius: 10px;
+    color: black;
+    box-shadow: 0 0 5px 1px gray;
+    gap: 20px;
+}
+
+.agregar-promesa{
+    display: flex;
+    flex-direction: row;
+    white-space: nowrap;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+}
+
+
+.agregar-promesa input,select{
+    padding: 5px;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    border: 1px solid black;
+}
+
+.agregar-promesa input[type=number],input[type=date]{
+    width: 100px;
+}
+
+#boton-agregar{
+    border: none;
+    font-size: 16px;
+    padding: 10px 30px;
+    background: rgb(47 97 129);
+    color: white;
+    border-radius: 10px;
+}
+
+#boton-agregar:hover{
     cursor: pointer;
     background-color: rgb(124, 205, 255);
     color: black;
@@ -285,7 +340,7 @@ footer{
 
 .columna-encurso{
     background-color: #F0B13B;
-    color: #BB4D1A;
+    color: #61280e;
 }
 
 .columna-cumplida{

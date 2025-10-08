@@ -11,103 +11,177 @@
 <body>
     <header class="encabezado">
         <h1>CRM De pps</h1>
-        <h2>Hola, Santiago</h2>
+
         <nav>
             <a href="#">Descargar tabla en Excel</a>
             <a href="login.html">Cerrar sesión</a>
         </nav>
     </header>
+
     <main class="contenedor-principal">
-        <div class="filtros">
-            <div class="filtros-fila fila1">
-                <div class="filtro caso">
+
+        <div class="filtros-contenedor">
+            <h2>FILTROS</h3>
+                <div class="filtros">
+                    <div class="filtros-fila fila1">
+                        <div class="filtro caso">
+                            <p>Caso</p>
+                            <input type="number" name="" id="">
+                        </div>
+                        <div class="filtro id">
+                            <p>ID</p>
+                            <input type="number" name="" id="">
+                        </div>
+                    </div>
+                    <div class="filtros-fila fila2">
+                        <div class="filtro canal">
+                            <p>Canal</p>
+                            <select name="Sites" id="">
+                                <option value="canal-todos">Todos</option>
+                                <option value="OFFLINE">OFFLINE</option>
+                                <option value="C2C">C2C</option>
+                                <option value="CHAT">CHAT</option>
+                            </select>
+                        </div>
+                        <div class="filtro Site-Pais">
+                            <p>Site/Pais</p>
+                            <select name="Sites" id="">
+                                <option value="site-todos">Todos</option>
+                                <option value="MLA">MLA</option>
+                                <option value="MLM">MLM</option>
+                                <option value="MLC">MLC</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="filtros-fila fila3">
+                        <div class="filtro tipo-acuerdo">
+                            <p>Tipo de acuerdo</p>
+                            <select name="tipo-acuerdos" id="">
+                                <option value="pago-todos">Todos</option>
+                                <option value="pago-total">Pago total</option>
+                                <option value="condonacion">Condonación</option>
+                                <option value="Parcelamento">Parcelamento</option>
+                                <option value="parcial">Pago Parcial</option>
+                            </select>
+                        </div>
+                        <div class="filtro cumplimiento">
+                            <p>Cumplimiento</p>
+                            <select name="cumplimientos" id="">
+                                <option value="cumplimiento-todos">Todos</option>
+                                <option value="cumplimiento-encurso">En curso</option>
+                                <option value="cumplimiento-cumplida">Cumplida</option>
+                                <option value="cumplimiento-incumplida">Incumplida</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="filtros-fila fila4">
+                        <div class="filtro fecha-carga">
+                            <p>Fecha de carga</p>
+                            <p>Desde</p>
+                            <input type="date" name="" id="">
+                            <p>Hasta</p>
+                            <input type="date" name="" id="">
+                        </div>
+
+                    </div>
+                    <div class="filtros-fila fila5">
+                        <div class="filtro fecha-pago">
+                            <p>Fecha de pago</p>
+                            <p>Desde</p>
+                            <input type="date" name="" id="">
+                            <p>Hasta</p>
+                            <input type="date" name="" id="">
+                        </div>
+                    </div>
+                    <div class="filtros-fila fila6">
+                        <div class="filtro operador">
+                            <p>Operador</p>
+                            <select name="operadores" id="">
+                                <option value="operador-todos">Todos</option>
+                                <option value="operador-nombre1">Santiago</option>
+                            </select>
+                        </div>
+                        <div class="filtro duplica">
+                            <p> <strong> PP Duplica:</strong></p>
+                            <input type="checkbox" name="" id="">
+                        </div>
+
+                    </div>
+
+                </div>
+                <button id="boton-filtrar">Filtrar</button>
+        </div>
+
+
+        <div class="contenedor-agregar-promesa">
+            <h2>AGREGAR PROMESA</h2>
+            <div class="agregar-promesa">
+                <div class="input-pp caso">
                     <p>Caso</p>
                     <input type="number" name="" id="">
                 </div>
-                <div class="filtro id">
+                <div class="input-pp id">
                     <p>ID</p>
                     <input type="number" name="" id="">
                 </div>
-            </div>
-            <div class="filtros-fila fila2">
-                <div class="filtro canal">
+                <div class="input-pp canal">
                     <p>Canal</p>
                     <select name="Sites" id="">
-                        <option value="canal-todos">Todos</option>
+                        <option value="NINGUNA">-</option>
                         <option value="OFFLINE">OFFLINE</option>
                         <option value="C2C">C2C</option>
                         <option value="CHAT">CHAT</option>
                     </select>
                 </div>
-                <div class="filtro Site-Pais">
+                <div class="input-pp Site-Pais">
                     <p>Site/Pais</p>
                     <select name="Sites" id="">
-                        <option value="site-todos">Todos</option>
+                        <option value="NINGUNO">-</option>
                         <option value="MLA">MLA</option>
                         <option value="MLM">MLM</option>
                         <option value="MLC">MLC</option>
                     </select>
                 </div>
-                <div class="filtro tipo-acuerdo">
+                <div class="input-pp monto">
+                    <p>Monto</p>
+                    <input type="number" name="" id="">
+                </div>
+                <div class="input-pp fecha-carga">
+                    <p>Fecha de carga</p>
+                    <input type="date" name="" id="">
+                </div>
+                <div class="input-pp fecha-pago">
+                    <p>Fecha de pago</p>
+                    <input type="date" name="" id="">
+                </div>
+                <div class="input-pp tipo-acuerdo">
                     <p>Tipo de acuerdo</p>
                     <select name="tipo-acuerdos" id="">
-                        <option value="pago-todos">Todos</option>
+                        <option value="ninguno">-</option>
                         <option value="pago-total">Pago total</option>
                         <option value="condonacion">Condonación</option>
                         <option value="Parcelamento">Parcelamento</option>
                         <option value="parcial">Pago Parcial</option>
                     </select>
                 </div>
-
-               
-
-            </div>
-            <div class="filtros-fila fila3">
-                 <div class="filtro operador">
+                <div class="input-pp operador">
                     <p>Operador</p>
-                    <select name="operadores" id="">
-                        <option value="operador-todos">Todos</option>
-                        <option value="operador-nombre1">Santiago</option>
-                    </select>
+                    <input type="text" name="" id="">
                 </div>
-
-                <div class="filtro cumplimiento">
+                <div class="input-pp cumplimiento">
                     <p>Cumplimiento</p>
                     <select name="cumplimientos" id="">
-                        <option value="cumplimiento-todos">Todos</option>
                         <option value="cumplimiento-encurso">En curso</option>
                         <option value="cumplimiento-cumplida">Cumplida</option>
                         <option value="cumplimiento-incumplida">Incumplida</option>
                     </select>
                 </div>
+                
             </div>
-
-            <div class="filtros-fila fila4">
-                <div class="filtro fecha-carga">
-                    <p><strong>Fecha de carga</strong></p>
-                    <p>Desde</p>
-                    <input type="date" name="" id="">
-                    <p>Hasta</p>
-                    <input type="date" name="" id="">
-                </div>
-                <div class="filtro fecha-pago">
-                    <p><strong>Fecha de pago</strong></p>
-                    <p>Desde</p>
-                    <input type="date" name="" id="">
-                    <p>Hasta</p>
-                    <input type="date" name="" id="">
-                </div>
-            </div>
-            <div class="filtros-fila fila5">
-                <div class="filtro duplica">
-                    <p> <strong> PP Duplica:</strong></p>
-                    <input type="checkbox" name="" id="">
-                </div>
-                <div class="filtro">
-                    <button id="boton-filtrar">Filtrar</button>
-                </div>
-            </div>
+            <button id="boton-agregar">Agregar promesa</button>
         </div>
+
         <table class="tabla">
             <tr>
                 <th>Caso</th>
@@ -123,83 +197,517 @@
                 <th>Opciones</th>
             </tr>
             <tr>
-                <td><p class="columna-borde">12312331231</p></td>
-                <td><p class="columna-borde">123412</p></td>
-                <td ><p class="columna-borde columna-chat">CHAT</p></td>
-                <td><p class="columna-borde columna-mla">MLA</p></td>
-                <td><p class="columna-borde">7250000.21</p></td>
-                <td><p class="columna-borde">04/10/2025</p></td>
-                <td><p class="columna-borde">05/10/2025</p></td>
-                <td><p class="columna-borde columna-parcelamento">Parcelamento</p></td>
-                <td><p class="columna-borde">Santiago</p></td>
-                <td><p class="columna-borde columna-cumplida">Cumplida</p></td>
-                <td class="columna-botones"><button class="boton-editar"> Editar</button><button class="boton-eliminar">Eliminar</button></td>
+                <td>
+                    <p class="columna-borde">12312331231</p>
+                </td>
+                <td>
+                    <p class="columna-borde">123412</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-chat">CHAT</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-mla">MLA</p>
+                </td>
+                <td>
+                    <p class="columna-borde">7250000.21</p>
+                </td>
+                <td>
+                    <p class="columna-borde">04/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde">05/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-parcelamento">Parcelamento</p>
+                </td>
+                <td>
+                    <p class="columna-borde">Nombre Operador1</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-cumplida">Cumplida</p>
+                </td>
+                <td class="columna-botones"><button class="boton-editar"> Editar</button><button
+                        class="boton-eliminar">Eliminar</button></td>
             </tr>
             <tr>
-                <td><p class="columna-borde">1231231231</p></td>
-                <td><p class="columna-borde">123123123</p></td>
-                <td><p class="columna-borde columna-c2c">C2C</p></td>
-                <td><p class="columna-borde columna-mla">MLA</p></td>
-                <td><p class="columna-borde">30000</p></td>
-                <td><p class="columna-borde">04/10/2025</p></td>
-                <td><p class="columna-borde">05/10/2025</p></td>
-                <td><p class="columna-borde columna-pagototal">Pago total</p></td>
-                <td><p class="columna-borde">Santiago</p></td>
-                <td><p class="columna-borde columna-encurso">En curso</p></td>
-                <td class="columna-botones"><button class="boton-editar"> Editar</button><button class="boton-eliminar"> Eliminar</button></td>
+                <td>
+                    <p class="columna-borde">1231231231</p>
+                </td>
+                <td>
+                    <p class="columna-borde">123123123</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-c2c">C2C</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-mla">MLA</p>
+                </td>
+                <td>
+                    <p class="columna-borde">30000</p>
+                </td>
+                <td>
+                    <p class="columna-borde">04/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde">05/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-pagototal">Pago total</p>
+                </td>
+                <td>
+                    <p class="columna-borde">Nombre Operador2</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-encurso">En curso</p>
+                </td>
+                <td class="columna-botones"><button class="boton-editar"> Editar</button><button class="boton-eliminar">
+                        Eliminar</button></td>
             </tr>
             <tr>
-                <td><p class="columna-borde">123123</p></td>
-                <td><p class="columna-borde">123123</p></td>
-                <td><p class="columna-borde columna-chat">CHAT</p></td>
-                <td><p class="columna-borde columna-mlm">MLM</p></td>
-                <td><p class="columna-borde">1000.21</p></td>
-                <td><p class="columna-borde">04/10/2025</p></td>
-                <td><p class="columna-borde">05/10/2025</p></td>
-                <td><p class="columna-borde columna-pagoparcial">Pago parcial</p></td>
-                <td><p class="columna-borde">Santiago</p></td>
-                <td><p class="columna-borde columna-encurso">En curso</p></td>
-                <td class="columna-botones"><button class="boton-editar"> Editar</button><button class="boton-eliminar">Eliminar</button></td>
+                <td>
+                    <p class="columna-borde">123123</p>
+                </td>
+                <td>
+                    <p class="columna-borde">123123</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-chat">CHAT</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-mlm">MLM</p>
+                </td>
+                <td>
+                    <p class="columna-borde">1000.21</p>
+                </td>
+                <td>
+                    <p class="columna-borde">04/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde">05/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-pagoparcial">Pago parcial</p>
+                </td>
+                <td>
+                    <p class="columna-borde">Nombre Operador3</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-encurso">En curso</p>
+                </td>
+                <td class="columna-botones"><button class="boton-editar"> Editar</button><button
+                        class="boton-eliminar">Eliminar</button></td>
             </tr>
             <tr>
-                <td><p class="columna-borde">123123</p></td>
-                <td><p class="columna-borde">123412</p></td>
-                <td><p class="columna-borde columna-offline">OFFLINE</p></td>
-                <td><p class="columna-borde columna-mla">MLA</p></td>
-                <td><p class="columna-borde">1000.00</p></td>
-                <td><p class="columna-borde">04/10/2025</p></td>
-                <td><p class="columna-borde">05/10/2025</p></td>
-                <td><p class="columna-borde columna-pagototal">Pago total</p></td>
-                <td><p class="columna-borde">Santiago</p></td>
-                <td><p class="columna-borde columna-cumplida">Cumplida</p></td>
-                <td class="columna-botones"><button class="boton-editar"> Editar</button><button class="boton-eliminar">Eliminar</button></td>
+                <td>
+                    <p class="columna-borde">123123</p>
+                </td>
+                <td>
+                    <p class="columna-borde">123412</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-offline">OFFLINE</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-mla">MLA</p>
+                </td>
+                <td>
+                    <p class="columna-borde">1000.00</p>
+                </td>
+                <td>
+                    <p class="columna-borde">04/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde">05/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-pagototal">Pago total</p>
+                </td>
+                <td>
+                    <p class="columna-borde">Nombre Operador4</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-cumplida">Cumplida</p>
+                </td>
+                <td class="columna-botones"><button class="boton-editar"> Editar</button><button
+                        class="boton-eliminar">Eliminar</button></td>
             </tr>
             <tr>
-                <td><p class="columna-borde">123123</p></td>
-                <td><p class="columna-borde">123412</p></td>
-                <td><p class="columna-borde columna-chat">CHAT</p></td>
-                <td><p class="columna-borde columna-mlm">MLM</p></td>
-                <td><p class="columna-borde">250</p></td>
-                <td><p class="columna-borde">04/10/2025</p></td>
-                <td><p class="columna-borde">05/10/2025</p></td>
-                <td><p class="columna-borde columna-parcelamento">Parcelamento</p></td>
-                <td><p class="columna-borde">Santiago</p></td>
-                <td><p class="columna-borde columna-incumplida">Incumplida</p></td>
-                <td class="columna-botones"><button class="boton-editar"> Editar</button><button class="boton-eliminar">Eliminar</button></td>
+                <td>
+                    <p class="columna-borde">123123</p>
+                </td>
+                <td>
+                    <p class="columna-borde">123412</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-chat">CHAT</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-mlm">MLM</p>
+                </td>
+                <td>
+                    <p class="columna-borde">250</p>
+                </td>
+                <td>
+                    <p class="columna-borde">04/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde">05/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-parcelamento">Parcelamento</p>
+                </td>
+                <td>
+                    <p class="columna-borde">Nombre Operador5</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-incumplida">Incumplida</p>
+                </td>
+                <td class="columna-botones"><button class="boton-editar"> Editar</button><button
+                        class="boton-eliminar">Eliminar</button></td>
             </tr>
             <tr>
-                <td><p class="columna-borde">123123</p></td>
-                <td><p class="columna-borde">123412</p></td>
-                <td><p class="columna-borde columna-chat">CHAT</p></td>
-                <td><p class="columna-borde columna-mlc">MLC</p></td>
-                <td><p class="columna-borde">3.21</p></td>
-                <td><p class="columna-borde">04/10/2025</p></td>
-                <td><p class="columna-borde">05/10/2025</p></td>
-                <td><p class="columna-borde columna-condonacion">Condonación</p></td>
-                <td><p class="columna-borde">Santiago</p></td>
-                <td><p class="columna-borde columna-cumplida">Cumplida</p></td>
-                <td class="columna-botones"><button class="boton-editar"> Editar</button><button class="boton-eliminar"> Eliminar</button></td>
+                <td>
+                    <p class="columna-borde">123123</p>
+                </td>
+                <td>
+                    <p class="columna-borde">123412</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-chat">CHAT</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-mlc">MLC</p>
+                </td>
+                <td>
+                    <p class="columna-borde">3.21</p>
+                </td>
+                <td>
+                    <p class="columna-borde">04/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde">05/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-condonacion">Condonación</p>
+                </td>
+                <td>
+                    <p class="columna-borde">Nombre Operador6</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-cumplida">Cumplida</p>
+                </td>
+                <td class="columna-botones"><button class="boton-editar"> Editar</button><button class="boton-eliminar">
+                        Eliminar</button></td>
             </tr>
+            <tr>
+                <td>
+                    <p class="columna-borde">12312331231</p>
+                </td>
+                <td>
+                    <p class="columna-borde">123412</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-chat">CHAT</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-mla">MLA</p>
+                </td>
+                <td>
+                    <p class="columna-borde">7250000.21</p>
+                </td>
+                <td>
+                    <p class="columna-borde">04/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde">05/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-parcelamento">Parcelamento</p>
+                </td>
+                <td>
+                    <p class="columna-borde">Nombre Operador1</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-cumplida">Cumplida</p>
+                </td>
+                <td class="columna-botones"><button class="boton-editar"> Editar</button><button
+                        class="boton-eliminar">Eliminar</button></td>
+            </tr>
+            <tr>
+                <td>
+                    <p class="columna-borde">1231231231</p>
+                </td>
+                <td>
+                    <p class="columna-borde">123123123</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-c2c">C2C</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-mla">MLA</p>
+                </td>
+                <td>
+                    <p class="columna-borde">30000</p>
+                </td>
+                <td>
+                    <p class="columna-borde">04/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde">05/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-pagototal">Pago total</p>
+                </td>
+                <td>
+                    <p class="columna-borde">Nombre Operador2</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-encurso">En curso</p>
+                </td>
+                <td class="columna-botones"><button class="boton-editar"> Editar</button><button class="boton-eliminar">
+                        Eliminar</button></td>
+            </tr>
+            <tr>
+                <td>
+                    <p class="columna-borde">123123</p>
+                </td>
+                <td>
+                    <p class="columna-borde">123123</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-chat">CHAT</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-mlm">MLM</p>
+                </td>
+                <td>
+                    <p class="columna-borde">1000.21</p>
+                </td>
+                <td>
+                    <p class="columna-borde">04/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde">05/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-pagoparcial">Pago parcial</p>
+                </td>
+                <td>
+                    <p class="columna-borde">Nombre Operador3</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-encurso">En curso</p>
+                </td>
+                <td class="columna-botones"><button class="boton-editar"> Editar</button><button
+                        class="boton-eliminar">Eliminar</button></td>
+            </tr>
+            <tr>
+                <td>
+                    <p class="columna-borde">123123</p>
+                </td>
+                <td>
+                    <p class="columna-borde">123412</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-offline">OFFLINE</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-mla">MLA</p>
+                </td>
+                <td>
+                    <p class="columna-borde">1000.00</p>
+                </td>
+                <td>
+                    <p class="columna-borde">04/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde">05/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-pagototal">Pago total</p>
+                </td>
+                <td>
+                    <p class="columna-borde">Nombre Operador4</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-cumplida">Cumplida</p>
+                </td>
+                <td class="columna-botones"><button class="boton-editar"> Editar</button><button
+                        class="boton-eliminar">Eliminar</button></td>
+            </tr>
+            <tr>
+                <td>
+                    <p class="columna-borde">123123</p>
+                </td>
+                <td>
+                    <p class="columna-borde">123412</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-chat">CHAT</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-mlm">MLM</p>
+                </td>
+                <td>
+                    <p class="columna-borde">250</p>
+                </td>
+                <td>
+                    <p class="columna-borde">04/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde">05/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-parcelamento">Parcelamento</p>
+                </td>
+                <td>
+                    <p class="columna-borde">Nombre Operador5</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-incumplida">Incumplida</p>
+                </td>
+                <td class="columna-botones"><button class="boton-editar"> Editar</button><button
+                        class="boton-eliminar">Eliminar</button></td>
+            </tr>
+            <tr>
+                <td>
+                    <p class="columna-borde">123123</p>
+                </td>
+                <td>
+                    <p class="columna-borde">123412</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-chat">CHAT</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-mlc">MLC</p>
+                </td>
+                <td>
+                    <p class="columna-borde">3.21</p>
+                </td>
+                <td>
+                    <p class="columna-borde">04/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde">05/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-condonacion">Condonación</p>
+                </td>
+                <td>
+                    <p class="columna-borde">Nombre Operador6</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-cumplida">Cumplida</p>
+                </td>
+                <td class="columna-botones"><button class="boton-editar"> Editar</button><button class="boton-eliminar">
+                        Eliminar</button></td>
+            </tr>
+            <tr>
+                <td>
+                    <p class="columna-borde">123123</p>
+                </td>
+                <td>
+                    <p class="columna-borde">123412</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-chat">CHAT</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-mlc">MLC</p>
+                </td>
+                <td>
+                    <p class="columna-borde">3.21</p>
+                </td>
+                <td>
+                    <p class="columna-borde">04/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde">05/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-condonacion">Condonación</p>
+                </td>
+                <td>
+                    <p class="columna-borde">Nombre Operador6</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-cumplida">Cumplida</p>
+                </td>
+                <td class="columna-botones"><button class="boton-editar"> Editar</button><button class="boton-eliminar">
+                        Eliminar</button></td>
+            </tr>
+            <tr>
+                <td>
+                    <p class="columna-borde">123123</p>
+                </td>
+                <td>
+                    <p class="columna-borde">123412</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-chat">CHAT</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-mlc">MLC</p>
+                </td>
+                <td>
+                    <p class="columna-borde">3.21</p>
+                </td>
+                <td>
+                    <p class="columna-borde">04/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde">05/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-condonacion">Condonación</p>
+                </td>
+                <td>
+                    <p class="columna-borde">Nombre Operador6</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-cumplida">Cumplida</p>
+                </td>
+                <td class="columna-botones"><button class="boton-editar"> Editar</button><button class="boton-eliminar">
+                        Eliminar</button></td>
+            </tr>
+            <tr>
+                <td>
+                    <p class="columna-borde">123123</p>
+                </td>
+                <td>
+                    <p class="columna-borde">123412</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-chat">CHAT</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-mlc">MLC</p>
+                </td>
+                <td>
+                    <p class="columna-borde">3.21</p>
+                </td>
+                <td>
+                    <p class="columna-borde">04/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde">05/10/2025</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-condonacion">Condonación</p>
+                </td>
+                <td>
+                    <p class="columna-borde">Nombre Operador6</p>
+                </td>
+                <td>
+                    <p class="columna-borde columna-cumplida">Cumplida</p>
+                </td>
+                <td class="columna-botones"><button class="boton-editar"> Editar</button><button class="boton-eliminar">
+                        Eliminar</button></td>
+            </tr>
+
+
         </table>
     </main>
 </body>
