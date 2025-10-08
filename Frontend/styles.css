@@ -39,12 +39,33 @@ a:hover{
 
 
 .contenedor-principal{
-    padding-top: 20px;
+    padding: 2px;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
+.contenedor-botones{
+    display: flex;
+    gap: 5px;
+    width: 100%;
+    justify-content:flex-start;
+}
+
+.diseño-boton{
+    border: none;
+    font-size: 16px;
+    padding: 5px 10px;
+    background: rgb(47 97 129);
+    color: white;
+    border-radius: 10px;
+}
+
+.diseño-boton:hover{
+    cursor: pointer;
+    background-color: rgb(124, 205, 255);
+    color: black;
+}
 
 
 
@@ -120,6 +141,11 @@ input[type=number] {
     font-weight: bold;
 }
 
+header div{
+    display: flex;
+    gap: 20px;
+}
+
 .filtro{
     display: flex;
     flex-direction: column;
@@ -148,7 +174,7 @@ input[type=number] {
 }
 
 .contenedor-agregar-promesa{
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: center;
     background-color: white;
