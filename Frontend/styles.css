@@ -47,18 +47,22 @@ a:hover{
 
 .contenedor-botones{
     display: flex;
-    gap: 5px;
-    width: 100%;
-    justify-content:flex-start;
 }
 
 .diseño-boton{
     border: none;
     font-size: 16px;
     padding: 5px 10px;
-    background: rgb(47 97 129);
-    color: white;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1;
+    margin-top: 10px;
+    font-size: 20px;
+    background-color: white;
     border-radius: 10px;
+    color: black;
+    box-shadow: 0 0 5px 1px gray;
+    gap: 20px;
 }
 
 .diseño-boton:hover{
@@ -81,11 +85,10 @@ a:hover{
 }
 
 .filtros-contenedor{
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: center;
     background-color: white;
-    margin-top: 10px;
     padding: 10px 30px;
     border-radius: 10px;
     color: black;
@@ -178,7 +181,6 @@ header div{
     flex-direction: column;
     align-items: center;
     background-color: white;
-    margin-top: 10px;
     padding: 10px 30px;
     border-radius: 10px;
     color: black;
