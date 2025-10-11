@@ -40,6 +40,13 @@ botonAgregarPromesa.addEventListener('click', () => {
 })
 
 function printTablaHTML(){
+    const filas = document.querySelectorAll('.tabla tr');
+
+    filas.forEach((p,i) => {
+        if(i != 0){
+            p.remove()
+        }
+    });
 
     listaPromesas.forEach((filaTabla) => {
         const fila = document.createElement('tr');   
@@ -141,8 +148,6 @@ function insertarFecha(fila,columna,valorColumna,fecha){
         month: '2-digit',
         year: 'numeric'
     })
-    console.log(fecha)
-    console.log(formatFecha.format(new Date(fecha)));
     const date = new Date(fecha);
     date.setMinutes(date.getMinutes() + date.getTimezoneOffset())
 
@@ -156,10 +161,22 @@ function insertarDato(fila,columna,valorColumna,dato){
     fila.appendChild(columna);
 }
 
+
 function agregarPromesa(){
-    const fecha = document.getElementById('input-pp-fecha-carga').value;
-    const date = new Date(fecha);
-    alert(fecha);
+    const nuevaPromesa = {
+            caso: document.getElementById("input-pp-caso").value,
+            id: document.getElementById("input-pp-id").value,
+            canal: document.getElementById("input-pp-canal").value,
+            site: document.getElementById("input-pp-site").value,
+            monto: document.getElementById("input-pp-monto").value,
+            fechaCarga: document.getElementById("input-pp-fecha-carga").value,
+            fechaPago: document.getElementById("input-pp-fecha-pago").value,
+            tipoAcuerdo: document.getElementById("input-pp-tipo-acuerdo").value,
+            nombreOperador: document.getElementById("input-pp-operador").value,
+            tipoCumplimiento: document.getElementById("input-pp-cumplimiento").value
+        }
+        listaPromesas.push(nuevaPromesa);
+        printTablaHTML();
 }
 
 function tablaPrueba() {
