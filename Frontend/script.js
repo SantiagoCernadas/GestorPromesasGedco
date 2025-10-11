@@ -163,6 +163,19 @@ function insertarDato(fila,columna,valorColumna,dato){
 
 
 function agregarPromesa(){
+    var sinErrores = true;
+    //1px solid black;
+    document.getElementById("input-pp-caso").style.border = '1px solid black';
+    document.getElementById("input-pp-id").style.border = '1px solid black';
+    document.getElementById("input-pp-canal").style.border = '1px solid black';
+    document.getElementById("input-pp-site").style.border = '1px solid black';
+    document.getElementById("input-pp-monto").style.border = '1px solid black';
+    document.getElementById("input-pp-fecha-carga").style.border = '1px solid black';
+    document.getElementById("input-pp-fecha-pago").style.border = '1px solid black';
+    document.getElementById("input-pp-tipo-acuerdo").style.border = '1px solid black';
+    document.getElementById("input-pp-operador").style.border = '1px solid black';
+    document.getElementById("input-pp-cumplimiento").style.border = '1px solid black';
+
     const nuevaPromesa = {
             caso: document.getElementById("input-pp-caso").value,
             id: document.getElementById("input-pp-id").value,
@@ -175,8 +188,49 @@ function agregarPromesa(){
             nombreOperador: document.getElementById("input-pp-operador").value,
             tipoCumplimiento: document.getElementById("input-pp-cumplimiento").value
         }
-        listaPromesas.push(nuevaPromesa);
-        printTablaHTML();
+
+        if(nuevaPromesa.caso == ''){
+            document.getElementById("input-pp-caso").style.border = '2px solid red';
+            sinErrores = false;
+        }
+        if(nuevaPromesa.id == ''){
+            document.getElementById("input-pp-id").style.border = '2px solid red';
+            sinErrores = false;
+        }
+        if(nuevaPromesa.canal == '-'){
+            document.getElementById("input-pp-canal").style.border = '2px solid red';
+            sinErrores = false;
+        }
+        if(nuevaPromesa.site == '-'){
+            document.getElementById("input-pp-site").style.border = '2px solid red';
+            sinErrores = false;
+        }
+        if(nuevaPromesa.monto == ''){
+            document.getElementById("input-pp-monto").style.border = '2px solid red';
+            sinErrores = false;
+        }
+        if(nuevaPromesa.fechaCarga == ''){
+            document.getElementById("input-pp-fecha-carga").style.border = '2px solid red';
+            sinErrores = false;
+        }
+        if(nuevaPromesa.fechaPago == ''){
+            document.getElementById("input-pp-fecha-pago").style.border = '2px solid red';
+            sinErrores = false;
+        }
+        if(nuevaPromesa.tipoAcuerdo == '-'){
+            document.getElementById("input-pp-tipo-acuerdo").style.border = '2px solid red';
+            sinErrores = false;
+        }
+        if(nuevaPromesa.nombreOperador == ''){
+            document.getElementById("input-pp-operador").style.border = '2px solid red';
+            sinErrores = false;
+        }
+        if(sinErrores){
+            console.log(JSON.stringify(nuevaPromesa));
+            listaPromesas.push(nuevaPromesa);
+            printTablaHTML();
+        }
+
 }
 
 function tablaPrueba() {
