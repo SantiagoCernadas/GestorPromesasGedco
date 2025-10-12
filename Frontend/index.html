@@ -4,201 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <title>Gestorpps</title>
+    <link rel="stylesheet" href="css/login.css">
+    <title>CRM DE PPS</title>
 </head>
 
 <body>
-    <header class="encabezado">
-        <h1>CRM De pps</h1>
-        <div>
-            
-        </div>
-        
-        <nav>
-            <a href="#">Descargar tabla en Excel</a>
-            <a href="login.html">Cerrar sesión</a>
-        </nav>
-    </header>
-    <main class="contenedor-principal">
-            <button class="diseño-boton" id="boton-contenedor-filtros">Filtros </button>
-        <div class="filtros-contenedor">
-                <div class="filtros">
-                    <div class="filtros-fila fila1">
-                        <div class="filtro caso">
-                            <p>Caso</p>
-                            <input type="number" name="" id="">
-                        </div>
-                        <div class="filtro id">
-                            <p>ID</p>
-                            <input type="number" name="" id="">
-                        </div>
-                    </div>
-                    <div class="filtros-fila fila2">
-                        <div class="filtro canal">
-                            <p>Canal</p>
-                            <select name="Sites" id="">
-                                <option value="canal-todos">Todos</option>
-                                <option value="OFFLINE">OFFLINE</option>
-                                <option value="C2C">C2C</option>
-                                <option value="CHAT">CHAT</option>
-                            </select>
-                        </div>
-                        <div class="filtro Site-Pais">
-                            <p>Site/Pais</p>
-                            <select name="Sites" id="">
-                                <option value="site-todos">Todos</option>
-                                <option value="MLA">MLA</option>
-                                <option value="MLM">MLM</option>
-                                <option value="MLC">MLC</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="filtros-fila fila3">
-                        <div class="filtro tipo-acuerdo">
-                            <p>Tipo de acuerdo</p>
-                            <select name="tipo-acuerdos" id="">
-                                <option value="pago-todos">Todos</option>
-                                <option value="pago-total">Pago total</option>
-                                <option value="condonacion">Condonación</option>
-                                <option value="Parcelamento">Parcelamento</option>
-                                <option value="parcial">Pago Parcial</option>
-                            </select>
-                        </div>
-                        <div class="filtro cumplimiento">
-                            <p>Cumplimiento</p>
-                            <select name="cumplimientos" id="">
-                                <option value="cumplimiento-todos">Todos</option>
-                                <option value="cumplimiento-encurso">En curso</option>
-                                <option value="cumplimiento-cumplida">Cumplida</option>
-                                <option value="cumplimiento-incumplida">Incumplida</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="filtros-fila fila4">
-                        <div class="filtro fecha-carga">
-                            <p>Fecha de carga</p>
-                            <p>Desde</p>
-                            <input type="date" name="" id="">
-                            <p>Hasta</p>
-                            <input type="date" name="" id="">
-                        </div>
-
-                    </div>
-                    <div class="filtros-fila fila5">
-                        <div class="filtro fecha-pago">
-                            <p>Fecha de pago</p>
-                            <p>Desde</p>
-                            <input type="date" name="" id="">
-                            <p>Hasta</p>
-                            <input type="date" name="" id="">
-                        </div>
-                    </div>
-                    <div class="filtros-fila fila6">
-                        <div class="filtro operador">
-                            <p>Operador</p>
-                            <select name="operadores" id="">
-                                <option value="operador-todos">Todos</option>
-                                <option value="operador-nombre1">Santiago</option>
-                            </select>
-                        </div>
-                        <div class="filtro duplica">
-                            <p> <strong> PP Duplica:</strong></p>
-                            <input type="checkbox" name="" id="">
-                        </div>
-
-                    </div>
-
-                </div>
-                <button id="boton-filtrar">Filtrar</button>
-        </div>
-
-        <button class="diseño-boton" id="boton-contenedor-agregar">Agregar promesa</button>
-        <div class="contenedor-agregar-promesa">
-            <div class="agregar-promesa">
-                <div class="input-pp caso">
-                    <p>Caso</p>
-                    <input type="number" name="" id="input-pp-caso">
-                </div>
-                <div class="input-pp id">
-                    <p>ID</p>
-                    <input type="number" name="" id="input-pp-id">
-                </div>
-                <div class="input-pp canal">
-                    <p>Canal</p>
-                    <select name="Sites" id="input-pp-canal">
-                        <option value="-">-</option>
-                        <option value="OFFLINE">OFFLINE</option>
-                        <option value="C2C">C2C</option>
-                        <option value="CHAT">CHAT</option>
-                    </select>
-                </div>
-                <div class="input-pp Site-Pais">
-                    <p>Site/Pais</p>
-                    <select name="Sites" id="input-pp-site">
-                        <option value="-">-</option>
-                        <option value="MLA">MLA</option>
-                        <option value="MLM">MLM</option>
-                        <option value="MLC">MLC</option>
-                    </select>
-                </div>
-                <div class="input-pp monto">
-                    <p>Monto</p>
-                    <input type="number" name="" id="input-pp-monto">
-                </div>
-                <div class="input-pp fecha-carga">
-                    <p>Fecha de carga</p>
-                    <input type="date" name="" id="input-pp-fecha-carga">
-                </div>
-                <div class="input-pp fecha-pago">
-                    <p>Fecha de pago</p>
-                    <input type="date" name="" id="input-pp-fecha-pago">
-                </div>
-                <div class="input-pp tipo-acuerdo">
-                    <p>Tipo de acuerdo</p>
-                    <select name="tipo-acuerdos" id="input-pp-tipo-acuerdo">
-                        <option value="-">-</option>
-                        <option value="Pago total">Pago total</option>
-                        <option value="Condonación">Condonación</option>
-                        <option value="Parcelamento">Parcelamento</option>
-                        <option value="Pago parcial">Pago Parcial</option>
-                    </select>
-                </div>
-                <div class="input-pp operador">
-                    <p>Operador</p>
-                    <input type="text" name="" id="input-pp-operador">
-                </div>
-                <div class="input-pp cumplimiento">
-                    <p>Cumplimiento</p>
-                    <select name="cumplimientos" id="input-pp-cumplimiento">
-                        <option value="En curso">En curso</option>
-                        <option value="Cumplida">Cumplida</option>
-                        <option value="Incumplida">Incumplida</option>
-                    </select>
-                </div>
-                
+    <div class="contenedor-login">
+        <h1>CRM DE PPS</h1>
+        <div class="contenedor-inputs">
+            <div>
+                <p>Usuario</p>
+                <input type="text" name="" id="">
             </div>
-            <button id="boton-agregar">Agregar promesa</button>
+            <div>
+                <p>Contraseña</p>
+                <input type="password" name="" id="">
+            </div>
         </div>
+        <a href="main.html">Iniciar sesión</a>
+    </div>
 
-        <table class="tabla">
-            <tr>
-                <th>Caso</th>
-                <th>ID</th>
-                <th>Canal</th>
-                <th>Site/Pais</th>
-                <th>Monto</th>
-                <th>Fecha de carga</th>
-                <th>Fecha de pago</th>
-                <th>Tipo de acuerdo</th>
-                <th>Operador</th>
-                <th>¿Cumplió?</th>
-                <th>Opciones</th>
-            </tr>
-        </table>
-    </main>
 </body>
-<script src="script.js"></script>
 
 </html>

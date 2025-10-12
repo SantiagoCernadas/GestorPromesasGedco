@@ -1,6 +1,7 @@
 const botonContenedorAgregarPP = document.getElementById("boton-contenedor-agregar");
 const botonContenedorFiltros = document.getElementById("boton-contenedor-filtros");
 const botonAgregarPromesa = document.getElementById("boton-agregar");
+const botonAgregarPromesaExcel = document.getElementById("boton-agregar-excel");
 
 const contenedorAgregarPP = document.querySelector('.contenedor-agregar-promesa');
 const contenedorFiltros = document.querySelector('.filtros-contenedor');
@@ -37,6 +38,10 @@ botonContenedorFiltros.addEventListener('click', () => {
 
 botonAgregarPromesa.addEventListener('click', () => {
     agregarPromesa();
+})
+
+botonAgregarPromesaExcel.addEventListener('click', () => {
+    alert("Proximamente");
 })
 
 function printTablaHTML(){
@@ -163,6 +168,8 @@ function insertarDato(fila,columna,valorColumna,dato){
 
 
 function agregarPromesa(){
+    const mensaje = document.getElementById("pp-mensaje");
+    mensaje.innerHTML = ''
     var sinErrores = true;
     //1px solid black;
     document.getElementById("input-pp-caso").style.border = '1px solid black';
@@ -191,44 +198,57 @@ function agregarPromesa(){
 
         if(nuevaPromesa.caso == ''){
             document.getElementById("input-pp-caso").style.border = '2px solid red';
+            mensaje.innerHTML += 'Ingresar Numero de caso. <br>'
             sinErrores = false;
         }
         if(nuevaPromesa.id == ''){
             document.getElementById("input-pp-id").style.border = '2px solid red';
+            mensaje.innerHTML += 'Ingresar ID.<br>'
             sinErrores = false;
         }
         if(nuevaPromesa.canal == '-'){
             document.getElementById("input-pp-canal").style.border = '2px solid red';
+            mensaje.innerHTML += 'Ingresar Canal.<br>'
             sinErrores = false;
         }
         if(nuevaPromesa.site == '-'){
             document.getElementById("input-pp-site").style.border = '2px solid red';
+            mensaje.innerHTML += 'Ingresar Site.<br>'
             sinErrores = false;
         }
         if(nuevaPromesa.monto == ''){
             document.getElementById("input-pp-monto").style.border = '2px solid red';
+            mensaje.innerHTML += 'Ingresar Monto valido (Misma forma que en engage).<br>'
             sinErrores = false;
         }
         if(nuevaPromesa.fechaCarga == ''){
             document.getElementById("input-pp-fecha-carga").style.border = '2px solid red';
+            mensaje.innerHTML += 'Ingresar fecha de carga valida.<br>'
             sinErrores = false;
         }
         if(nuevaPromesa.fechaPago == ''){
             document.getElementById("input-pp-fecha-pago").style.border = '2px solid red';
+            mensaje.innerHTML += 'Ingresar fecha de pago valida.<br>'
             sinErrores = false;
         }
         if(nuevaPromesa.tipoAcuerdo == '-'){
             document.getElementById("input-pp-tipo-acuerdo").style.border = '2px solid red';
+            mensaje.innerHTML += 'Ingresar tipo de acuerdo.<br>'
             sinErrores = false;
         }
         if(nuevaPromesa.nombreOperador == ''){
             document.getElementById("input-pp-operador").style.border = '2px solid red';
+            mensaje.innerHTML += 'Ingresar nombre de operador.<br>'
             sinErrores = false;
         }
         if(sinErrores){
-            console.log(JSON.stringify(nuevaPromesa));
+            mensaje.innerHTML += '¡Promesa agregada con exito!'
+            mensaje.style.color = 'green';
             listaPromesas.push(nuevaPromesa);
             printTablaHTML();
+        }
+        else{
+            mensaje.style.color = 'red';
         }
 
 }

@@ -71,7 +71,9 @@ a:hover{
     color: black;
 }
 
-
+#pp-mensaje{
+    text-align: center;
+}
 
 
 .tabla{
@@ -210,7 +212,7 @@ header div{
     width: 100px;
 }
 
-#boton-agregar{
+#boton-agregar,#boton-agregar-excel{
     border: none;
     font-size: 16px;
     padding: 10px 30px;
@@ -219,7 +221,7 @@ header div{
     border-radius: 10px;
 }
 
-#boton-agregar:hover{
+#boton-agregar:hover, #boton-agregar-excel:hover{
     cursor: pointer;
     background-color: rgb(124, 205, 255);
     color: black;
