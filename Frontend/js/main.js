@@ -59,7 +59,7 @@ function printTablaHTML(){
         insertarDato(fila,document.createElement('td'),document.createElement('p'),filaTabla.id);
         insertarCanal(fila,document.createElement('td'),document.createElement('p'),filaTabla.canal);
         insertarSite(fila,document.createElement('td'),document.createElement('p'),filaTabla.site);
-        insertarDato(fila,document.createElement('td'),document.createElement('p'),filaTabla.monto);
+        insertarMonto(fila,document.createElement('td'),document.createElement('p'),filaTabla.monto);
         insertarFecha(fila,document.createElement('td'),document.createElement('p'),filaTabla.fechaCarga);
         insertarFecha(fila,document.createElement('td'),document.createElement('p'),filaTabla.fechaPago);
         insertarTipoAcuerdo(fila,document.createElement('td'),document.createElement('p'),filaTabla.tipoAcuerdo);
@@ -157,6 +157,19 @@ function insertarFecha(fila,columna,valorColumna,fecha){
     date.setMinutes(date.getMinutes() + date.getTimezoneOffset())
 
     insertarDato(fila,columna,valorColumna,formatFecha.format(date))
+}
+
+function formatearAMonedaArgentina(numero) {
+  const formateador = new Intl.NumberFormat('es-AR', {
+    style: 'currency',
+    currency: 'ARS',
+    minimumFractionDigits: 2, // Muestra dos decimales, que es lo estándar para el ARS
+  });
+  return formateador.format(numero);
+}
+
+function insertarMonto(fila,columna,valorColumna,monto){
+    insertarDato(fila,columna,valorColumna,formatearAMonedaArgentina(monto));
 }
 
 function insertarDato(fila,columna,valorColumna,dato){
@@ -258,36 +271,36 @@ function tablaPrueba() {
     return [
         {
             caso: 123141243,
-            id: 1231412453,
+            id: 10000,
             canal: "CHAT",
             site: "MLA",
-            monto: 123124,
-            fechaCarga: "2025-09-25",
-            fechaPago: "2025-10-02",
+            monto: 852.42,
+            fechaCarga: "2025-10-13",
+            fechaPago: "2025-10-14",
             tipoAcuerdo: "Condonación",
             nombreOperador: "Pepito92",
             tipoCumplimiento: "En curso"
         },
         {
             caso: 123141243,
-            id: 123143435,
+            id: 20000,
             canal: "OFFLINE",
             site: "MLM",
-            monto: 123124,
-            fechaCarga: "2025-10-25",
-            fechaPago: "2025-10-27",
+            monto: 5000,
+            fechaCarga: "2025-10-13",
+            fechaPago: "2025-10-14",
             tipoAcuerdo: "Pago parcial",
             nombreOperador: "Santiago",
             tipoCumplimiento: "Cumplida"
         },
         {
             caso: 543636364,
-            id: 123143435,
+            id: 30000,
             canal: "C2C",
             site: "MLC",
-            monto: 123124,
-            fechaCarga: "2025-10-31",
-            fechaPago: "2025-11-04",
+            monto: 1000000,
+            fechaCarga: "2025-10-13",
+            fechaPago: "2025-10-14",
             tipoAcuerdo: "Parcelamento",
             nombreOperador: "Santiago",
             tipoCumplimiento: "Incumplida"

@@ -1,4 +1,6 @@
 const botonLogin = document.getElementById('boton-login');
+const inputUsuarioDoc = document.getElementById('input-usuario');
+const inputContraDoc = document.getElementById('input-contrasenia');
 
 const usuarios = [
     {
@@ -22,16 +24,26 @@ const usuarios = [
 ]
 
 botonLogin.addEventListener('click',iniciarSesion);
+inputUsuarioDoc.addEventListener('keydown',function(event){
+    if(event.key === 'Enter'){
+        iniciarSesion();
+    }
+})
+inputContraDoc.addEventListener('keydown',function(event){
+    if(event.key === 'Enter'){
+        iniciarSesion();
+    }
+})
 
 function iniciarSesion(){
-    const inputUsuario = document.getElementById('input-usuario').value;
-    const inputContrasenia = document.getElementById('input-contrasenia').value;
+    const inputUsuario = inputUsuarioDoc.value;
+    const inputContrasenia = inputContraDoc.value;
     usuarioEncontrado = false;
     usuarios.forEach((usuario,i) =>{
         if(usuario.nombreUsuario == inputUsuario){
             usuarioEncontrado = true
             if(usuario.contrasenia == inputContrasenia){
-                window.location.href = "http://127.0.0.1:5500/Frontend/main.html";
+                window.location.href = "/Frontend/main.html";
             }
             else{
                 document.getElementById("error-mensaje").innerHTML = "Contraseña Incorrecta."
