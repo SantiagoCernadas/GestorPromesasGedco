@@ -1,19 +1,19 @@
 const usuarios = [
     {
         nombreUsuario: "ext_admin",
-        nombre: "admin prueba",
+        nombre: "admin",
         contrasenia: "123456",
         rol:"ADMIN"
     },
     {
         nombreUsuario: "ext_usuario",
-        nombre: "usuario prueba",
+        nombre: "usuario",
         contrasenia: "123456",
         rol:"USUARIO"
     }
     ,{
         nombreUsuario: "ext_santiago",
-        nombre: "Santiago Cernadas",
+        nombre: "Santiago",
         contrasenia: "123456",
         rol:"USUARIO"
     }

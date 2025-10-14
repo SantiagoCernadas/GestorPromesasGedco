@@ -11,6 +11,10 @@ const botonCerrarSesion = document.getElementById("boton-cerrar-sesion");
 
 const listaPromesas = tablaPrueba();
 
+const sesion = JSON.parse(localStorage.getItem('sesionUsuario'));
+
+document.getElementById('nombre-operador-span').innerHTML = sesion.nombre;
+
 //Formatea un número a pesos argentinos.
 const formateadorDeMoneda = new Intl.NumberFormat('es-AR', {
   style: 'currency',
