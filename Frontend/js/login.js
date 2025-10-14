@@ -22,7 +22,7 @@ const usuarios = [
 const botonLogin = document.getElementById('boton-login');
 const inputUsuarioDoc = document.getElementById('input-usuario');
 const inputContraDoc = document.getElementById('input-contrasenia');
-console.log(localStorage.getItem('sesionUsuario'));
+
 botonLogin.addEventListener('click',iniciarSesion);
 inputUsuarioDoc.addEventListener('keydown',function(event){
     if(event.key === 'Enter'){
