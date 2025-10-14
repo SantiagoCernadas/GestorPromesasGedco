@@ -1,3 +1,4 @@
+
 const botonContenedorAgregarPP = document.getElementById("boton-contenedor-agregar");
 const botonContenedorFiltros = document.getElementById("boton-contenedor-filtros");
 const botonAgregarPromesa = document.getElementById("boton-agregar");
@@ -5,6 +6,8 @@ const botonAgregarPromesaExcel = document.getElementById("boton-agregar-excel");
 
 const contenedorAgregarPP = document.querySelector('.contenedor-agregar-promesa');
 const contenedorFiltros = document.querySelector('.filtros-contenedor');
+
+const botonCerrarSesion = document.getElementById("boton-cerrar-sesion");
 
 const listaPromesas = tablaPrueba();
 
@@ -42,6 +45,11 @@ botonAgregarPromesa.addEventListener('click', () => {
 
 botonAgregarPromesaExcel.addEventListener('click', () => {
     alert("Proximamente");
+})
+
+botonCerrarSesion.addEventListener('click', () => {
+    window.location.href = "/Frontend/index.html";
+    localStorage.removeItem('sesionUsuario');
 })
 
 function printTablaHTML(){
@@ -268,6 +276,7 @@ function agregarPromesa(){
 
 function tablaPrueba() {
     //Formato Fecha: YYYY-MM-DD
+    //Formato monto: Pesos Argentinos.
     return [
         {
             caso: 123141243,

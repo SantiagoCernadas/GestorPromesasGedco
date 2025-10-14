@@ -22,7 +22,8 @@ nav{
     gap: 20px;
 }
 
-a{
+nav button{
+    border: none;
     text-decoration: none;
     color: white;
     font-size: 20px;
@@ -31,7 +32,8 @@ a{
     border-radius: 5px;
 }
 
-a:hover{
+nav button:hover{
+    cursor: pointer;
     background-color: rgb(124, 205, 255);
     color: black;
 }
