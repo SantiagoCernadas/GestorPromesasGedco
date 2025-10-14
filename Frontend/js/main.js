@@ -205,8 +205,8 @@ function agregarPromesa(){
     document.getElementById("input-pp-cumplimiento").style.border = '1px solid black';
 
     const nuevaPromesa = {
-            caso: document.getElementById("input-pp-caso").value,
-            id: document.getElementById("input-pp-id").value,
+            caso: parseInt(document.getElementById("input-pp-caso").value),
+            id: parseInt(document.getElementById("input-pp-id").value),
             canal: document.getElementById("input-pp-canal").value,
             site: document.getElementById("input-pp-site").value,
             monto: document.getElementById("input-pp-monto").value,
@@ -217,12 +217,13 @@ function agregarPromesa(){
             tipoCumplimiento: document.getElementById("input-pp-cumplimiento").value
         }
 
-        if(nuevaPromesa.caso == ''){
+        
+        if(Number.isNaN(nuevaPromesa.caso)){
             document.getElementById("input-pp-caso").style.border = '2px solid red';
             mensaje.innerHTML += 'Ingresar Numero de caso. <br>'
             sinErrores = false;
         }
-        if(nuevaPromesa.id == ''){
+        if(Number.isNaN(nuevaPromesa.id)){
             document.getElementById("input-pp-id").style.border = '2px solid red';
             mensaje.innerHTML += 'Ingresar ID.<br>'
             sinErrores = false;
@@ -239,8 +240,17 @@ function agregarPromesa(){
         }
         if(nuevaPromesa.monto == ''){
             document.getElementById("input-pp-monto").style.border = '2px solid red';
-            mensaje.innerHTML += 'Ingresar Monto valido (Misma forma que en engage).<br>'
+            mensaje.innerHTML += 'Ingresar monto.<br>'
             sinErrores = false;
+        }
+        else{
+            nuevaPromesa.monto =  parseMonto(document.getElementById("input-pp-monto").value);
+            console.log(nuevaPromesa.monto);
+            if(Number.isNaN(nuevaPromesa.monto)) {
+                document.getElementById("input-pp-monto").style.border = '2px solid red';
+                mensaje.innerHTML += 'Formato de monto invalido.<br>';
+                sinErrores = false;
+            }
         }
         if(nuevaPromesa.fechaCarga == ''){
             document.getElementById("input-pp-fecha-carga").style.border = '2px solid red';
@@ -251,6 +261,19 @@ function agregarPromesa(){
             document.getElementById("input-pp-fecha-pago").style.border = '2px solid red';
             mensaje.innerHTML += 'Ingresar fecha de pago valida.<br>'
             sinErrores = false;
+        }
+        if(nuevaPromesa.fechaCarga != '' && nuevaPromesa.fechaPago != ''){
+            const difdias = diferenciaEnDias(nuevaPromesa.fechaCarga,nuevaPromesa.fechaPago);
+            if(difdias > 7){
+                document.getElementById("input-pp-fecha-pago").style.border = '2px solid red';
+                mensaje.innerHTML += 'La diferencia entre la fecha de carga y fecha de pago no puede ser mayor a 7 días.<br>'
+                sinErrores = false;
+            }
+            else if(difdias < 0){
+                document.getElementById("input-pp-fecha-pago").style.border = '2px solid red';
+                mensaje.innerHTML += 'La fecha de pago debe ser igual o posterior a la fecha de carga.<br>'
+                sinErrores = false;
+            }
         }
         if(nuevaPromesa.tipoAcuerdo == '-'){
             document.getElementById("input-pp-tipo-acuerdo").style.border = '2px solid red';
@@ -266,6 +289,7 @@ function agregarPromesa(){
             mensaje.innerHTML += '¡Promesa agregada con exito!'
             mensaje.style.color = 'green';
             listaPromesas.push(nuevaPromesa);
+            console.log(listaPromesas);
             printTablaHTML();
         }
         else{
@@ -273,6 +297,76 @@ function agregarPromesa(){
         }
 
 }
+
+
+
+function parseMonto(montoStr) {
+    montoStr = montoStr.trim().replace(/\$/g, '');
+
+    if (!montoStr || /[^0-9.,]/.test(montoStr)) return NaN;
+    
+
+  const tienePunto = montoStr.includes('.');
+  const tieneComa = montoStr.includes(',');
+
+  if (tienePunto && tieneComa) {
+    // 👉 Ambos separadores presentes
+    // Si la coma está al final -> formato argentino
+    if (montoStr.lastIndexOf(',') > montoStr.lastIndexOf('.')) {
+      montoStr = montoStr.replace(/\./g, '').replace(',', '.'); // "1.000.000,50" → "1000000.50"
+    } else {
+      // Formato mexicano: "1,000,000.50"
+      montoStr = montoStr.replace(/,/g, ''); // elimina comas
+    }
+  } else if (tieneComa && !tienePunto) {
+    // 👉 Solo comas
+    // Si hay más de una coma → son miles, quitarlas
+    if ((montoStr.match(/,/g) || []).length > 1) {
+      montoStr = montoStr.replace(/,/g, '');
+    } else {
+      // Si solo hay una coma, decidir si decimal o miles
+      const partes = montoStr.split(',');
+      if (partes[1]?.length === 3) {
+        montoStr = montoStr.replace(/,/g, '');
+      } else {
+        montoStr = montoStr.replace(',', '.');
+      }
+    }
+  } else if (tienePunto && !tieneComa) {
+    // 👉 Solo puntos
+    // Si hay más de un punto → son separadores de miles
+    if ((montoStr.match(/\./g) || []).length > 1) {
+      montoStr = montoStr.replace(/\./g, '');
+    } else {
+      // Si solo hay uno, verificar si decimal o miles
+      const partes = montoStr.split('.');
+      if (partes[1]?.length === 3) {
+        montoStr = montoStr.replace(/\./g, '');
+      }
+    }
+  }
+
+  const result = parseFloat(montoStr);
+  return isNaN(result) ? NaN : result;
+}
+
+function diferenciaEnDias(fecha1, fecha2) {
+  const f1 = new Date(fecha1);
+  const f2 = new Date(fecha2);
+
+  // Normalizar las horas para que solo cuente la diferencia de fechas
+  f1.setHours(0, 0, 0, 0);
+  f2.setHours(0, 0, 0, 0);
+
+  // Diferencia en milisegundos (fecha2 - fecha1)
+  const diffMs = f2 - f1;
+
+  // Convertir milisegundos → días (positivo o negativo)
+  const diffDias = diffMs / (1000 * 60 * 60 * 24);
+
+  return diffDias;
+}
+
 
 function tablaPrueba() {
     //Formato Fecha: YYYY-MM-DD
