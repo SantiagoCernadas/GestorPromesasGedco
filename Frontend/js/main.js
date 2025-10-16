@@ -3,13 +3,19 @@ const botonContenedorAgregarPP = document.getElementById("boton-contenedor-agreg
 const botonContenedorFiltros = document.getElementById("boton-contenedor-filtros");
 const botonAgregarPromesa = document.getElementById("boton-agregar");
 const botonAgregarPromesaExcel = document.getElementById("boton-agregar-excel");
-
+const mensajePP = document.getElementById("pp-mensaje");
 const contenedorAgregarPP = document.querySelector('.contenedor-agregar-promesa');
 const contenedorFiltros = document.querySelector('.filtros-contenedor');
 
 const botonCerrarSesion = document.getElementById("boton-cerrar-sesion");
 
-const listaPromesas = tablaPrueba();
+var listaPromesas = tablaPrueba();
+
+const formatFecha = new Intl.DateTimeFormat("es",{
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+})
 
 const sesion = JSON.parse(localStorage.getItem('sesionUsuario'));
 
@@ -31,6 +37,17 @@ botonContenedorAgregarPP.addEventListener('click', () => {
     }
     else {
         contenedorAgregarPP.style.display = 'flex';
+        mensajePP.innerHTML = ''
+        document.getElementById("input-pp-caso").style.border = '1px solid black';
+        document.getElementById("input-pp-id").style.border = '1px solid black';
+        document.getElementById("input-pp-canal").style.border = '1px solid black';
+        document.getElementById("input-pp-site").style.border = '1px solid black';
+        document.getElementById("input-pp-monto").style.border = '1px solid black';
+        document.getElementById("input-pp-fecha-carga").style.border = '1px solid black';
+        document.getElementById("input-pp-fecha-pago").style.border = '1px solid black';
+        document.getElementById("input-pp-tipo-acuerdo").style.border = '1px solid black';
+        document.getElementById("input-pp-operador").style.border = '1px solid black';
+        document.getElementById("input-pp-cumplimiento").style.border = '1px solid black';
     }
 });
 
@@ -65,9 +82,10 @@ function printTablaHTML(){
         }
     });
 
-    listaPromesas.forEach((filaTabla) => {
-        const fila = document.createElement('tr');   
-        insertarDato(fila,document.createElement('td'),document.createElement('p'),filaTabla.caso);
+    listaPromesas.forEach((filaTabla,i) => {
+        const fila = document.createElement('tr');
+        fila.id = 'tabla-fila-'+i;
+        insertarDato(fila,document.createElement('td'),document.createElement('p'),filaTabla.caso,'columna');
         insertarDato(fila,document.createElement('td'),document.createElement('p'),filaTabla.id);
         insertarCanal(fila,document.createElement('td'),document.createElement('p'),filaTabla.canal);
         insertarSite(fila,document.createElement('td'),document.createElement('p'),filaTabla.site);
@@ -83,13 +101,26 @@ function printTablaHTML(){
         botonEditar.classList.add('boton-editar');
         const botonEliminar = document.createElement('button');
         botonEliminar.innerHTML = "Eliminar";
-        botonEliminar.classList.add('boton-eliminar')
-        columnaBotones.classList.add('columna-botones')
+        botonEliminar.classList.add('boton-eliminar');
+        columnaBotones.classList.add('columna-botones');
         columnaBotones.appendChild(botonEditar);
         columnaBotones.appendChild(botonEliminar);
+
         fila.appendChild(columnaBotones);
         tabla.appendChild(fila);
+
+        botonEliminar.addEventListener('click',(e) => {
+            const fila = document.getElementById('tabla-fila-'+i);
+            fila.remove();
+            listaPromesas = listaPromesas.filter(promesa => !(promesa.id === filaTabla.id && promesa.fechaCarga === filaTabla.fechaCarga));
+            alert("Promesa con id: " +filaTabla.id +" y fecha de carga: "+ filaTabla.fechaCarga + ' eliminada correctamente.')
+        });
+
     });
+}
+
+function eliminarFila(){
+
 }
 
 function insertarCanal(fila,columna,valorColumna,canal){
@@ -160,15 +191,10 @@ function insertarTipoCumplimiento(fila,columna,valorColumna,tipoCumplimiento){
 }
 
 function insertarFecha(fila,columna,valorColumna,fecha){
-    const formatFecha = new Intl.DateTimeFormat("es",{
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    })
     const date = new Date(fecha);
-    date.setMinutes(date.getMinutes() + date.getTimezoneOffset())
+    date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
 
-    insertarDato(fila,columna,valorColumna,formatFecha.format(date))
+    insertarDato(fila,columna,valorColumna,formatFecha.format(date));
 }
 
 function formatearAMonedaArgentina(numero) {
@@ -193,8 +219,7 @@ function insertarDato(fila,columna,valorColumna,dato){
 
 
 function agregarPromesa(){
-    const mensaje = document.getElementById("pp-mensaje");
-    mensaje.innerHTML = ''
+    mensajePP.innerHTML = ''
     var sinErrores = true;
     //1px solid black;
     document.getElementById("input-pp-caso").style.border = '1px solid black';
@@ -224,80 +249,84 @@ function agregarPromesa(){
         
         if(Number.isNaN(nuevaPromesa.caso)){
             document.getElementById("input-pp-caso").style.border = '2px solid red';
-            mensaje.innerHTML += 'Ingresar Numero de caso. <br>'
+            mensajePP.innerHTML += 'Ingresar Numero de caso. <br>'
             sinErrores = false;
         }
         if(Number.isNaN(nuevaPromesa.id)){
             document.getElementById("input-pp-id").style.border = '2px solid red';
-            mensaje.innerHTML += 'Ingresar ID.<br>'
+            mensajePP.innerHTML += 'Ingresar ID.<br>'
             sinErrores = false;
         }
         if(nuevaPromesa.canal == '-'){
             document.getElementById("input-pp-canal").style.border = '2px solid red';
-            mensaje.innerHTML += 'Ingresar Canal.<br>'
+            mensajePP.innerHTML += 'Ingresar Canal.<br>'
             sinErrores = false;
         }
         if(nuevaPromesa.site == '-'){
             document.getElementById("input-pp-site").style.border = '2px solid red';
-            mensaje.innerHTML += 'Ingresar Site.<br>'
+            mensajePP.innerHTML += 'Ingresar Site.<br>'
             sinErrores = false;
         }
         if(nuevaPromesa.monto == ''){
             document.getElementById("input-pp-monto").style.border = '2px solid red';
-            mensaje.innerHTML += 'Ingresar monto.<br>'
+            mensajePP.innerHTML += 'Ingresar monto.<br>'
             sinErrores = false;
         }
         else{
             nuevaPromesa.monto =  parseMonto(document.getElementById("input-pp-monto").value);
-            console.log(nuevaPromesa.monto);
             if(Number.isNaN(nuevaPromesa.monto)) {
                 document.getElementById("input-pp-monto").style.border = '2px solid red';
-                mensaje.innerHTML += 'Formato de monto invalido.<br>';
+                mensajePP.innerHTML += 'Formato de monto invalido.<br>';
                 sinErrores = false;
             }
         }
         if(nuevaPromesa.fechaCarga == ''){
             document.getElementById("input-pp-fecha-carga").style.border = '2px solid red';
-            mensaje.innerHTML += 'Ingresar fecha de carga valida.<br>'
+            mensajePP.innerHTML += 'Ingresar fecha de carga valida.<br>'
             sinErrores = false;
         }
         if(nuevaPromesa.fechaPago == ''){
             document.getElementById("input-pp-fecha-pago").style.border = '2px solid red';
-            mensaje.innerHTML += 'Ingresar fecha de pago valida.<br>'
+            mensajePP.innerHTML += 'Ingresar fecha de pago valida.<br>'
             sinErrores = false;
         }
         if(nuevaPromesa.fechaCarga != '' && nuevaPromesa.fechaPago != ''){
             const difdias = diferenciaEnDias(nuevaPromesa.fechaCarga,nuevaPromesa.fechaPago);
             if(difdias > 7){
                 document.getElementById("input-pp-fecha-pago").style.border = '2px solid red';
-                mensaje.innerHTML += 'La diferencia entre la fecha de carga y fecha de pago no puede ser mayor a 7 días.<br>'
+                mensajePP.innerHTML += 'La diferencia entre la fecha de carga y fecha de pago no puede ser mayor a 7 días.<br>'
                 sinErrores = false;
             }
             else if(difdias < 0){
                 document.getElementById("input-pp-fecha-pago").style.border = '2px solid red';
-                mensaje.innerHTML += 'La fecha de pago debe ser igual o posterior a la fecha de carga.<br>'
+                mensajePP.innerHTML += 'La fecha de pago debe ser igual o posterior a la fecha de carga.<br>'
                 sinErrores = false;
             }
         }
         if(nuevaPromesa.tipoAcuerdo == '-'){
             document.getElementById("input-pp-tipo-acuerdo").style.border = '2px solid red';
-            mensaje.innerHTML += 'Ingresar tipo de acuerdo.<br>'
+            mensajePP.innerHTML += 'Ingresar tipo de acuerdo.<br>'
             sinErrores = false;
         }
         if(nuevaPromesa.nombreOperador == ''){
             document.getElementById("input-pp-operador").style.border = '2px solid red';
-            mensaje.innerHTML += 'Ingresar nombre de operador.<br>'
+            mensajePP.innerHTML += 'Ingresar nombre de operador.<br>'
             sinErrores = false;
         }
         if(sinErrores){
-            mensaje.innerHTML += '¡Promesa agregada con exito!'
-            mensaje.style.color = 'green';
-            listaPromesas.push(nuevaPromesa);
-            console.log(listaPromesas);
-            printTablaHTML();
+            if(listaPromesas.some(promesa => promesa.id === nuevaPromesa.id && promesa.fechaCarga === nuevaPromesa.fechaCarga)){
+                mensajePP.innerHTML += 'Ya existe una promesa con el id y la fecha de carga ingresada.'
+                mensajePP.style.color = 'red';
+            }
+            else{
+                mensajePP.innerHTML += '¡Promesa agregada con exito!'
+                mensajePP.style.color = 'green';
+                listaPromesas.unshift(nuevaPromesa);
+                printTablaHTML();
+            }     
         }
         else{
-            mensaje.style.color = 'red';
+            mensajePP.style.color = 'red';
         }
 
 }
