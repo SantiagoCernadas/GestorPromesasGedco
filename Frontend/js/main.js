@@ -219,8 +219,7 @@ function insertarDato(fila,columna,valorColumna,dato){
 
 
 function agregarPromesa(){
-    mensajePP.innerHTML = ''
-    var sinErrores = true;
+    mensajePP.innerHTML = '';
     //1px solid black;
     document.getElementById("input-pp-caso").style.border = '1px solid black';
     document.getElementById("input-pp-id").style.border = '1px solid black';
@@ -238,82 +237,17 @@ function agregarPromesa(){
             id: parseInt(document.getElementById("input-pp-id").value),
             canal: document.getElementById("input-pp-canal").value,
             site: document.getElementById("input-pp-site").value,
-            monto: document.getElementById("input-pp-monto").value,
+            monto: parseMonto(document.getElementById("input-pp-monto").value),
             fechaCarga: document.getElementById("input-pp-fecha-carga").value,
             fechaPago: document.getElementById("input-pp-fecha-pago").value,
             tipoAcuerdo: document.getElementById("input-pp-tipo-acuerdo").value,
             nombreOperador: document.getElementById("input-pp-operador").value,
             tipoCumplimiento: document.getElementById("input-pp-cumplimiento").value
         }
-
         
-        if(Number.isNaN(nuevaPromesa.caso)){
-            document.getElementById("input-pp-caso").style.border = '2px solid red';
-            mensajePP.innerHTML += 'Ingresar Numero de caso. <br>'
-            sinErrores = false;
-        }
-        if(Number.isNaN(nuevaPromesa.id)){
-            document.getElementById("input-pp-id").style.border = '2px solid red';
-            mensajePP.innerHTML += 'Ingresar ID.<br>'
-            sinErrores = false;
-        }
-        if(nuevaPromesa.canal == '-'){
-            document.getElementById("input-pp-canal").style.border = '2px solid red';
-            mensajePP.innerHTML += 'Ingresar Canal.<br>'
-            sinErrores = false;
-        }
-        if(nuevaPromesa.site == '-'){
-            document.getElementById("input-pp-site").style.border = '2px solid red';
-            mensajePP.innerHTML += 'Ingresar Site.<br>'
-            sinErrores = false;
-        }
-        if(nuevaPromesa.monto == ''){
-            document.getElementById("input-pp-monto").style.border = '2px solid red';
-            mensajePP.innerHTML += 'Ingresar monto.<br>'
-            sinErrores = false;
-        }
-        else{
-            nuevaPromesa.monto =  parseMonto(document.getElementById("input-pp-monto").value);
-            if(Number.isNaN(nuevaPromesa.monto)) {
-                document.getElementById("input-pp-monto").style.border = '2px solid red';
-                mensajePP.innerHTML += 'Formato de monto invalido.<br>';
-                sinErrores = false;
-            }
-        }
-        if(nuevaPromesa.fechaCarga == ''){
-            document.getElementById("input-pp-fecha-carga").style.border = '2px solid red';
-            mensajePP.innerHTML += 'Ingresar fecha de carga valida.<br>'
-            sinErrores = false;
-        }
-        if(nuevaPromesa.fechaPago == ''){
-            document.getElementById("input-pp-fecha-pago").style.border = '2px solid red';
-            mensajePP.innerHTML += 'Ingresar fecha de pago valida.<br>'
-            sinErrores = false;
-        }
-        if(nuevaPromesa.fechaCarga != '' && nuevaPromesa.fechaPago != ''){
-            const difdias = diferenciaEnDias(nuevaPromesa.fechaCarga,nuevaPromesa.fechaPago);
-            if(difdias > 7){
-                document.getElementById("input-pp-fecha-pago").style.border = '2px solid red';
-                mensajePP.innerHTML += 'La diferencia entre la fecha de carga y fecha de pago no puede ser mayor a 7 días.<br>'
-                sinErrores = false;
-            }
-            else if(difdias < 0){
-                document.getElementById("input-pp-fecha-pago").style.border = '2px solid red';
-                mensajePP.innerHTML += 'La fecha de pago debe ser igual o posterior a la fecha de carga.<br>'
-                sinErrores = false;
-            }
-        }
-        if(nuevaPromesa.tipoAcuerdo == '-'){
-            document.getElementById("input-pp-tipo-acuerdo").style.border = '2px solid red';
-            mensajePP.innerHTML += 'Ingresar tipo de acuerdo.<br>'
-            sinErrores = false;
-        }
-        if(nuevaPromesa.nombreOperador == ''){
-            document.getElementById("input-pp-operador").style.border = '2px solid red';
-            mensajePP.innerHTML += 'Ingresar nombre de operador.<br>'
-            sinErrores = false;
-        }
-        if(sinErrores){
+        promesaCorrecta = validarPromesa(nuevaPromesa);
+        
+        if(promesaCorrecta){
             if(listaPromesas.some(promesa => promesa.id === nuevaPromesa.id && promesa.fechaCarga === nuevaPromesa.fechaCarga)){
                 mensajePP.innerHTML += 'Ya existe una promesa con el id y la fecha de carga ingresada.'
                 mensajePP.style.color = 'red';
@@ -325,10 +259,80 @@ function agregarPromesa(){
                 printTablaHTML();
             }     
         }
-        else{
-            mensajePP.style.color = 'red';
-        }
 
+}
+
+function validarPromesa(nuevaPromesa){
+        var sinError = true;
+        if(Number.isNaN(nuevaPromesa.caso)){
+            document.getElementById("input-pp-caso").style.border = '2px solid red';
+            mensajePP.innerHTML += 'Ingresar Numero de caso. <br>'
+            mensajePP.style.color = 'red';
+            sinError = false;
+        }
+        if(Number.isNaN(nuevaPromesa.id)){
+            document.getElementById("input-pp-id").style.border = '2px solid red';
+            mensajePP.innerHTML += 'Ingresar ID.<br>'
+            mensajePP.style.color = 'red';
+            sinError = false;
+        }
+        if(nuevaPromesa.canal == '-'){
+            document.getElementById("input-pp-canal").style.border = '2px solid red';
+            mensajePP.innerHTML += 'Ingresar Canal.<br>'
+            mensajePP.style.color = 'red';
+            sinError = false;
+        }
+        if(nuevaPromesa.site == '-'){
+            document.getElementById("input-pp-site").style.border = '2px solid red';
+            mensajePP.innerHTML += 'Ingresar Site.<br>'
+            sinError = false;
+        }
+        if(Number.isNaN(nuevaPromesa.monto)) {
+            document.getElementById("input-pp-monto").style.border = '2px solid red';
+            mensajePP.innerHTML += 'Monto invalido.<br>';
+            mensajePP.style.color = 'red';
+            sinError = false;
+        }
+        if(nuevaPromesa.fechaCarga == ''){
+            document.getElementById("input-pp-fecha-carga").style.border = '2px solid red';
+            mensajePP.innerHTML += 'Ingresar fecha de carga valida.<br>';
+            mensajePP.style.color = 'red';
+            sinError = false;
+        }
+        if(nuevaPromesa.fechaPago == ''){
+            document.getElementById("input-pp-fecha-pago").style.border = '2px solid red';
+            mensajePP.innerHTML += 'Ingresar fecha de pago valida.<br>'
+            mensajePP.style.color = 'red';
+            sinError = false;
+        }
+        if(nuevaPromesa.fechaCarga != '' && nuevaPromesa.fechaPago != ''){
+            const difdias = diferenciaEnDias(nuevaPromesa.fechaCarga,nuevaPromesa.fechaPago);
+            if(difdias > 7){
+                document.getElementById("input-pp-fecha-pago").style.border = '2px solid red';
+                mensajePP.innerHTML += 'La diferencia entre la fecha de carga y fecha de pago no puede ser mayor a 7 días.<br>'
+                mensajePP.style.color = 'red';
+                sinError = false;
+            }
+            else if(difdias < 0){
+                document.getElementById("input-pp-fecha-pago").style.border = '2px solid red';
+                mensajePP.innerHTML += 'La fecha de pago debe ser igual o posterior a la fecha de carga.<br>'
+                mensajePP.style.color = 'red';
+                sinError = false;
+            }
+        }
+        if(nuevaPromesa.tipoAcuerdo == '-'){
+            document.getElementById("input-pp-tipo-acuerdo").style.border = '2px solid red';
+            mensajePP.innerHTML += 'Ingresar tipo de acuerdo.<br>'
+            mensajePP.style.color = 'red';
+            sinError = false;
+        }
+        if(nuevaPromesa.nombreOperador == ''){
+            document.getElementById("input-pp-operador").style.border = '2px solid red';
+            mensajePP.innerHTML += 'Ingresar nombre de operador.<br>'
+            mensajePP.style.color = 'red';
+            sinError = false;
+        }
+        return sinError;
 }
 
 
@@ -336,19 +340,22 @@ function agregarPromesa(){
 function parseMonto(montoStr) {
     montoStr = montoStr.trim().replace(/\$/g, '');
 
+    //Verifica que no tenga caracteres que no sean parseables
     if (!montoStr || /[^0-9.,]/.test(montoStr)) return NaN;
+
+    if (montoStr == '') return NaN;
     
 
   const tienePunto = montoStr.includes('.');
   const tieneComa = montoStr.includes(',');
 
   if (tienePunto && tieneComa) {
-    // 👉 Ambos separadores presentes
+    // Ambos separadores presentes
     // Si la coma está al final -> formato argentino
     if (montoStr.lastIndexOf(',') > montoStr.lastIndexOf('.')) {
-      montoStr = montoStr.replace(/\./g, '').replace(',', '.'); // "1.000.000,50" → "1000000.50"
+      montoStr = montoStr.replace(/\./g, '').replace(',', '.'); 
     } else {
-      // Formato mexicano: "1,000,000.50"
+      // Si el punto está al final -> formato mexicano
       montoStr = montoStr.replace(/,/g, ''); // elimina comas
     }
   } else if (tieneComa && !tienePunto) {
