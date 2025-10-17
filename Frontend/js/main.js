@@ -9,6 +9,10 @@ const contenedorFiltros = document.querySelector('.filtros-contenedor');
 
 const botonCerrarSesion = document.getElementById("boton-cerrar-sesion");
 
+const paginacionDiv = document.getElementById('paginacion');
+let paginaActual = 1;
+const cantFilasPagina = 5;
+
 var listaPromesas = tablaPrueba();
 
 const formatFecha = new Intl.DateTimeFormat("es",{
@@ -76,13 +80,19 @@ botonCerrarSesion.addEventListener('click', () => {
 function printTablaHTML(){
     const filas = document.querySelectorAll('.tabla tr');
 
+
     filas.forEach((p,i) => {
         if(i != 0){
             p.remove()
         }
     });
 
-    listaPromesas.forEach((filaTabla,i) => {
+    const inicio = (paginaActual - 1) * cantFilasPagina;
+    const fin = inicio + cantFilasPagina; 
+
+    const ppsPaginaActual = listaPromesas.slice(inicio,fin);
+
+    ppsPaginaActual.forEach((filaTabla,i) => {
         const fila = document.createElement('tr');
         fila.id = 'tabla-fila-'+i;
         insertarDato(fila,document.createElement('td'),document.createElement('p'),filaTabla.caso,'columna');
@@ -113,15 +123,53 @@ function printTablaHTML(){
             const fila = document.getElementById('tabla-fila-'+i);
             fila.remove();
             listaPromesas = listaPromesas.filter(promesa => !(promesa.id === filaTabla.id && promesa.fechaCarga === filaTabla.fechaCarga));
-            alert("Promesa con id: " +filaTabla.id +" y fecha de carga: "+ filaTabla.fechaCarga + ' eliminada correctamente.')
+            alert("Promesa con id: " +filaTabla.id +" y fecha de carga: "+ filaTabla.fechaCarga + ' eliminada correctamente.');
+            const totalPaginas = Math.ceil(listaPromesas.length / cantFilasPagina);
+            if (paginaActual > totalPaginas) paginaActual = totalPaginas;
+            printTablaHTML();
         });
 
     });
+    renderPaginacion();
+}
+function renderPaginacion() {
+  paginacionDiv.innerHTML = '';
+
+  const totalPaginas = Math.ceil(listaPromesas.length / cantFilasPagina);
+  if (totalPaginas <= 1) return;
+
+  const crearBoton = (texto, pagina, deshabilitado = false, esActual = false) => {
+    const btn = document.createElement('button');
+    btn.textContent = texto;
+    
+
+    if (esActual) {
+      btn.style.backgroundColor = '#007bff';
+      btn.style.color = 'white';
+      btn.style.fontWeight = 'bold';
+    }
+
+    if (!deshabilitado && !esActual) {
+      btn.addEventListener('click', () => {
+        paginaActual = pagina;
+        printTablaHTML();
+      });
+    }
+    return btn;
+  };
+
+  // Botón "Anterior"
+  paginacionDiv.appendChild(crearBoton('Anterior', paginaActual - 1, paginaActual === 1));  
+
+  paginaActualParrafo = document.createElement('p');
+  paginaActualParrafo.textContent = paginaActual + " de " + totalPaginas;
+  paginacionDiv.appendChild(paginaActualParrafo)
+
+
+  // Botón "Siguiente"
+  paginacionDiv.appendChild(crearBoton('Siguiente', paginaActual + 1, paginaActual === totalPaginas));
 }
 
-function eliminarFila(){
-
-}
 
 function insertarCanal(fila,columna,valorColumna,canal){
     valorColumna.innerHTML = canal;
@@ -259,7 +307,6 @@ function agregarPromesa(){
                 printTablaHTML();
             }     
         }
-
 }
 
 function validarPromesa(nuevaPromesa){
@@ -439,6 +486,78 @@ function tablaPrueba() {
         {
             caso: 543636364,
             id: 30000,
+            canal: "C2C",
+            site: "MLC",
+            monto: 1000000,
+            fechaCarga: "2025-10-13",
+            fechaPago: "2025-10-14",
+            tipoAcuerdo: "Parcelamento",
+            nombreOperador: "Santiago",
+            tipoCumplimiento: "Incumplida"
+        },
+        {
+            caso: 123141243,
+            id: 40000,
+            canal: "CHAT",
+            site: "MLA",
+            monto: 852.42,
+            fechaCarga: "2025-10-13",
+            fechaPago: "2025-10-14",
+            tipoAcuerdo: "Condonación",
+            nombreOperador: "Pepito92",
+            tipoCumplimiento: "En curso"
+        },
+        {
+            caso: 123141243,
+            id: 50000,
+            canal: "OFFLINE",
+            site: "MLM",
+            monto: 5000,
+            fechaCarga: "2025-10-13",
+            fechaPago: "2025-10-14",
+            tipoAcuerdo: "Pago parcial",
+            nombreOperador: "Santiago",
+            tipoCumplimiento: "Cumplida"
+        },
+        {
+            caso: 543636364,
+            id: 60000,
+            canal: "C2C",
+            site: "MLC",
+            monto: 1000000,
+            fechaCarga: "2025-10-13",
+            fechaPago: "2025-10-14",
+            tipoAcuerdo: "Parcelamento",
+            nombreOperador: "Santiago",
+            tipoCumplimiento: "Incumplida"
+        },
+        {
+            caso: 123141243,
+            id: 70000,
+            canal: "CHAT",
+            site: "MLA",
+            monto: 852.42,
+            fechaCarga: "2025-10-13",
+            fechaPago: "2025-10-14",
+            tipoAcuerdo: "Condonación",
+            nombreOperador: "Pepito92",
+            tipoCumplimiento: "En curso"
+        },
+        {
+            caso: 123141243,
+            id: 80000,
+            canal: "OFFLINE",
+            site: "MLM",
+            monto: 5000,
+            fechaCarga: "2025-10-13",
+            fechaPago: "2025-10-14",
+            tipoAcuerdo: "Pago parcial",
+            nombreOperador: "Santiago",
+            tipoCumplimiento: "Cumplida"
+        },
+        {
+            caso: 543636364,
+            id: 90000,
             canal: "C2C",
             site: "MLC",
             monto: 1000000,
