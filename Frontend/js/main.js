@@ -11,7 +11,7 @@ const botonCerrarSesion = document.getElementById("boton-cerrar-sesion");
 
 const paginacionDiv = document.getElementById('paginacion');
 let paginaActual = 1;
-const cantFilasPagina = 5;
+const cantFilasPagina = 2;
 
 var listaPromesas = tablaPrueba();
 
@@ -119,7 +119,7 @@ function printTablaHTML(){
         fila.appendChild(columnaBotones);
         tabla.appendChild(fila);
 
-        botonEliminar.addEventListener('click',(e) => {
+        botonEliminar.addEventListener('click',() => {
             const fila = document.getElementById('tabla-fila-'+i);
             fila.remove();
             listaPromesas = listaPromesas.filter(promesa => !(promesa.id === filaTabla.id && promesa.fechaCarga === filaTabla.fechaCarga));
@@ -136,20 +136,22 @@ function renderPaginacion() {
   paginacionDiv.innerHTML = '';
 
   const totalPaginas = Math.ceil(listaPromesas.length / cantFilasPagina);
-  if (totalPaginas <= 1) return;
 
-  const crearBoton = (texto, pagina, deshabilitado = false, esActual = false) => {
+  paginacionDiv.appendChild(crearBoton('Anterior', paginaActual - 1, paginaActual <= 1));  
+
+  paginaActualParrafo = document.createElement('p');
+  paginaActualParrafo.textContent = paginaActual + " de " + totalPaginas;
+  paginacionDiv.appendChild(paginaActualParrafo)
+
+  paginacionDiv.appendChild(crearBoton('Siguiente', paginaActual + 1, paginaActual === totalPaginas));
+}
+
+function crearBoton(texto, pagina, deshabilitado = false) {
     const btn = document.createElement('button');
     btn.textContent = texto;
     
 
-    if (esActual) {
-      btn.style.backgroundColor = '#007bff';
-      btn.style.color = 'white';
-      btn.style.fontWeight = 'bold';
-    }
-
-    if (!deshabilitado && !esActual) {
+    if (!deshabilitado) {
       btn.addEventListener('click', () => {
         paginaActual = pagina;
         printTablaHTML();
@@ -157,19 +159,6 @@ function renderPaginacion() {
     }
     return btn;
   };
-
-  // Botón "Anterior"
-  paginacionDiv.appendChild(crearBoton('Anterior', paginaActual - 1, paginaActual === 1));  
-
-  paginaActualParrafo = document.createElement('p');
-  paginaActualParrafo.textContent = paginaActual + " de " + totalPaginas;
-  paginacionDiv.appendChild(paginaActualParrafo)
-
-
-  // Botón "Siguiente"
-  paginacionDiv.appendChild(crearBoton('Siguiente', paginaActual + 1, paginaActual === totalPaginas));
-}
-
 
 function insertarCanal(fila,columna,valorColumna,canal){
     valorColumna.innerHTML = canal;
