@@ -1,14 +1,14 @@
-*{
+* {
     padding: 0px;
     margin: 0px;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-body{
+body {
     background-color: rgb(240, 240, 240);
 }
 
-header{
+header {
     display: flex;
     justify-content: space-around;
     height: 80px;
@@ -17,12 +17,12 @@ header{
     background-color: rgb(56, 150, 180);
 }
 
-nav{
+nav {
     display: flex;
     gap: 20px;
 }
 
-nav button{
+nav button {
     border: none;
     text-decoration: none;
     color: white;
@@ -32,7 +32,7 @@ nav button{
     border-radius: 5px;
 }
 
-nav button:hover{
+nav button:hover {
     cursor: pointer;
     background-color: rgb(124, 205, 255);
     color: black;
@@ -40,18 +40,18 @@ nav button:hover{
 
 
 
-.contenedor-principal{
+.contenedor-principal {
     padding: 2px;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.contenedor-botones{
+.contenedor-botones {
     display: flex;
 }
 
-.diseño-boton{
+.diseño-boton {
     border: none;
     font-size: 16px;
     padding: 5px 10px;
@@ -67,25 +67,25 @@ nav button:hover{
     gap: 20px;
 }
 
-.diseño-boton:hover{
+.diseño-boton:hover {
     cursor: pointer;
     background-color: rgb(124, 205, 255);
     color: black;
 }
 
-#pp-mensaje{
+#pp-mensaje {
     text-align: center;
     font-weight: bold;
 }
 
-#paginacion{
+#paginacion {
     display: flex;
     gap: 5px;
-    margin-top: 20px;
+    margin-top: 50px;
     align-items: center;
 }
 
-#paginacion button{
+#paginacion button {
     border: 1px solid black;
     background-color: white;
     font-size: 16px;
@@ -93,14 +93,14 @@ nav button:hover{
     border-radius: 5px;
 }
 
-#paginacion button:hover{
+#paginacion button:hover {
     background-color: rgb(124, 205, 255);
     cursor: pointer;
 }
 
-.tabla{
+.tabla {
     width: 100%;
-    border-collapse:collapse;
+    border-collapse: collapse;
     margin-top: 10px;
     margin-bottom: 20px;
     white-space: normal;
@@ -108,7 +108,7 @@ nav button:hover{
     align-self: flex-start;
 }
 
-.filtros-contenedor{
+.filtros-contenedor {
     display: none;
     flex-direction: column;
     align-items: center;
@@ -120,7 +120,7 @@ nav button:hover{
     gap: 20px;
 }
 
-.filtros{
+.filtros {
     display: flex;
     flex-direction: row;
     white-space: nowrap;
@@ -129,7 +129,8 @@ nav button:hover{
     gap: 20px;
 }
 
-.filtros input,select{
+.filtros input,
+select {
     padding: 5px;
     border: none;
     outline: none;
@@ -137,55 +138,56 @@ nav button:hover{
     border: 1px solid black;
 }
 
-.filtros input[type=number],input[type=date]{
+.filtros input[type=number],
+input[type=date] {
     width: 100px;
 }
 
-.filtros input[type=checkbox]{
+.filtros input[type=checkbox] {
     height: 25px;
     width: 25px;
 }
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 /* Firefox */
 input[type=number] {
-  -moz-appearance: textfield;
+    -moz-appearance: textfield;
 }
 
 
-.filtros-fila{
+.filtros-fila {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-.filtro p:first-child{
+.filtro p:first-child {
     font-weight: bold;
 }
 
-header div{
+header div {
     display: flex;
     gap: 20px;
 }
 
-.filtro{
+.filtro {
     display: flex;
     flex-direction: column;
     gap: 3px;
 }
 
-.duplica{
+.duplica {
     display: flex;
     flex-direction: row;
-    align-items: center;    
+    align-items: center;
 }
 
-#boton-filtrar{
+#boton-filtrar {
     border: none;
     font-size: 16px;
     padding: 10px 30px;
@@ -194,13 +196,13 @@ header div{
     border-radius: 10px;
 }
 
-#boton-filtrar:hover{
+#boton-filtrar:hover {
     cursor: pointer;
     background-color: rgb(124, 205, 255);
     color: black;
 }
 
-.contenedor-agregar-promesa{
+.contenedor-agregar-promesa {
     display: none;
     flex-direction: column;
     align-items: center;
@@ -212,7 +214,7 @@ header div{
     gap: 20px;
 }
 
-.agregar-promesa{
+.agregar-promesa {
     display: flex;
     flex-direction: row;
     white-space: nowrap;
@@ -222,7 +224,8 @@ header div{
 }
 
 
-.agregar-promesa input,select{
+.agregar-promesa input,
+select {
     padding: 5px;
     border: none;
     outline: none;
@@ -230,11 +233,13 @@ header div{
     border: 1px solid black;
 }
 
-.agregar-promesa input[type=number],input[type=date]{
+.agregar-promesa input[type=number],
+input[type=date] {
     width: 100px;
 }
 
-#boton-agregar,#boton-agregar-excel{
+#boton-agregar,
+#boton-agregar-excel {
     border: none;
     font-size: 16px;
     padding: 10px 30px;
@@ -243,20 +248,21 @@ header div{
     border-radius: 10px;
 }
 
-#boton-agregar:hover, #boton-agregar-excel:hover{
+#boton-agregar:hover,
+#boton-agregar-excel:hover {
     cursor: pointer;
     background-color: rgb(124, 205, 255);
     color: black;
 }
 
-th{
+th {
     padding: 2px;
     background-color: #1E8449;
     border: solid 1px black;
     color: white;
 }
 
-td{
+td {
     text-align: center;
     padding: 2px;
     border: 1px solid black;
@@ -265,29 +271,29 @@ td{
     font-weight: bold;
 }
 
-td button{
- font-size: 16px;
- padding: 3px 15px;
- color: white;
- border: none;
- border-radius: 3px;
- font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+td button {
+    font-size: 16px;
+    padding: 3px 15px;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
-td .boton-editar{
+td .boton-editar {
     background-color: rgb(56, 150, 180);
 }
 
-td .boton-eliminar{
+td .boton-eliminar {
     background-color: rgb(173, 13, 13);
 }
 
-td button{
+td button {
     cursor: pointer;
     margin: 0px 10px;
 }
 
-.columna-botones{
+.columna-botones {
     width: 0px;
     text-align: start;
     text-wrap: nowrap;
@@ -297,7 +303,7 @@ td button{
 
 
 
-footer{
+footer {
     background-color: gray;
     position: fixed;
     bottom: 0;
@@ -334,73 +340,134 @@ footer{
     INCUMPLIDA: ROJO
 */
 
-.columna-borde{
+.columna-borde {
     border-radius: 20px;
 }
 
 
 
-.columna-chat{
-    background-color: #58D68D; 
+.columna-chat {
+    background-color: #58D68D;
     color: #145A32;
 }
 
-.columna-offline{
+.columna-offline {
     background-color: #7aafff;
     color: #07227a;
 }
 
-.columna-c2c{
+.columna-c2c {
     background-color: #F0B13B;
     color: #7e2b04;
 }
 
-.columna-mla{
+.columna-mla {
     background-color: #7aafff;
     color: #07227a;
 }
 
-.columna-mlm{
+.columna-mlm {
     background-color: darksalmon;
     color: rgb(85, 30, 11);
 }
 
-.columna-mlc{
+.columna-mlc {
     background-color: #F0B13B;
     color: #7e2b04;
 }
 
-.columna-pagototal{
-    background-color: #58D68D; 
+.columna-pagototal {
+    background-color: #58D68D;
     color: #145A32;
 }
 
-.columna-condonacion{
-    background-color:#F4A8FF;
+.columna-condonacion {
+    background-color: #F4A8FF;
     color: #681b72;
 }
 
-.columna-parcelamento{
+.columna-parcelamento {
     background-color: #7aafff;
     color: #07227a;
 }
 
-.columna-pagoparcial{
+.columna-pagoparcial {
     background-color: darksalmon;
     color: rgb(85, 30, 11);
 }
 
-.columna-encurso{
+.columna-encurso {
     background-color: #F0B13B;
     color: #61280e;
 }
 
-.columna-cumplida{
-    background-color: #58D68D; 
+.columna-cumplida {
+    background-color: #58D68D;
     color: #145A32;
 }
 
-.columna-incumplida{
-    background-color: #FB2C36; 
+.columna-incumplida {
+    background-color: #FB2C36;
     color: #460809;
+}
+
+
+dialog {
+    border: none;
+    align-self: center;
+    place-self: center;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 0 5px 1px gray;
+    font-family: sans-serif;
+    place-items: center;
+    text-align: center;
+}
+
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+
+#form-editar-pp{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.contenedor-editar-pp{
+    text-align: center;
+    display: flex;
+    gap: 20px;
+    white-space: nowrap;
+    flex-wrap: wrap;
+}
+
+.contenedor-editar-pp input,
+select {
+    padding: 5px;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    border: 1px solid black;
+}
+
+.contenedor-editar-pp input[type=number],
+input[type=date] {
+    width: 100px;
+}
+
+dialog button{
+    border: none;
+    font-size: 16px;
+    padding: 10px 30px;
+    background: rgb(47 97 129);
+    color: white;
+    border-radius: 10px;
+}
+
+dialog button:hover{
+    cursor: pointer;
+    background-color: rgb(124, 205, 255);
+    color: black;
 }
