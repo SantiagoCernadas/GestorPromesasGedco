@@ -1,0 +1,473 @@
+* {
+    padding: 0px;
+    margin: 0px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+body {
+    background-color: rgb(240, 240, 240);
+}
+
+header {
+    display: flex;
+    justify-content: space-around;
+    height: 80px;
+    align-items: center;
+    color: white;
+    background-color: rgb(56, 150, 180);
+}
+
+nav {
+    display: flex;
+    gap: 20px;
+}
+
+nav button {
+    border: none;
+    text-decoration: none;
+    color: white;
+    font-size: 20px;
+    background: rgb(47 97 129);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+nav button:hover {
+    cursor: pointer;
+    background-color: rgb(124, 205, 255);
+    color: black;
+}
+
+
+
+.contenedor-principal {
+    padding: 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.contenedor-botones {
+    display: flex;
+}
+
+.diseño-boton {
+    border: none;
+    font-size: 16px;
+    padding: 5px 10px;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1;
+    margin-top: 10px;
+    font-size: 20px;
+    background-color: white;
+    border-radius: 10px;
+    color: black;
+    box-shadow: 0 0 5px 1px gray;
+    gap: 20px;
+}
+
+.diseño-boton:hover {
+    cursor: pointer;
+    background-color: rgb(124, 205, 255);
+    color: black;
+}
+
+#pp-mensaje {
+    text-align: center;
+    font-weight: bold;
+}
+
+#paginacion {
+    display: flex;
+    gap: 5px;
+    margin-top: 50px;
+    align-items: center;
+}
+
+#paginacion button {
+    border: 1px solid black;
+    background-color: white;
+    font-size: 16px;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+#paginacion button:hover {
+    background-color: rgb(124, 205, 255);
+    cursor: pointer;
+}
+
+.tabla {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    white-space: normal;
+    white-space: nowrap;
+    align-self: flex-start;
+}
+
+.filtros-contenedor {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    padding: 10px 30px;
+    border-radius: 10px;
+    color: black;
+    box-shadow: 0 0 5px 1px gray;
+    gap: 20px;
+}
+
+.filtros {
+    display: flex;
+    flex-direction: row;
+    white-space: nowrap;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+}
+
+.filtros input,
+select {
+    padding: 5px;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    border: 1px solid black;
+}
+
+.filtros input[type=number],
+input[type=date] {
+    width: 100px;
+}
+
+.filtros input[type=checkbox] {
+    height: 25px;
+    width: 25px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+
+.filtros-fila {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.filtro p:first-child {
+    font-weight: bold;
+}
+
+header div {
+    display: flex;
+    gap: 20px;
+}
+
+.filtro {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.duplica {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#boton-filtrar {
+    border: none;
+    font-size: 16px;
+    padding: 10px 30px;
+    background: rgb(47 97 129);
+    color: white;
+    border-radius: 10px;
+}
+
+#boton-filtrar:hover {
+    cursor: pointer;
+    background-color: rgb(124, 205, 255);
+    color: black;
+}
+
+.contenedor-agregar-promesa {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    padding: 10px 30px;
+    border-radius: 10px;
+    color: black;
+    box-shadow: 0 0 5px 1px gray;
+    gap: 20px;
+}
+
+.agregar-promesa {
+    display: flex;
+    flex-direction: row;
+    white-space: nowrap;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+}
+
+
+.agregar-promesa input,
+select {
+    padding: 5px;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    border: 1px solid black;
+}
+
+.agregar-promesa input[type=number],
+input[type=date] {
+    width: 100px;
+}
+
+#boton-agregar,
+#boton-agregar-excel {
+    border: none;
+    font-size: 16px;
+    padding: 10px 30px;
+    background: rgb(47 97 129);
+    color: white;
+    border-radius: 10px;
+}
+
+#boton-agregar:hover,
+#boton-agregar-excel:hover {
+    cursor: pointer;
+    background-color: rgb(124, 205, 255);
+    color: black;
+}
+
+th {
+    padding: 2px;
+    background-color: #1E8449;
+    border: solid 1px black;
+    color: white;
+}
+
+td {
+    text-align: center;
+    padding: 2px;
+    border: 1px solid black;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+td button {
+    font-size: 16px;
+    padding: 3px 15px;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+td .boton-editar {
+    background-color: rgb(56, 150, 180);
+}
+
+td .boton-eliminar {
+    background-color: rgb(173, 13, 13);
+}
+
+td button {
+    cursor: pointer;
+    margin: 0px 10px;
+}
+
+.columna-botones {
+    width: 0px;
+    text-align: start;
+    text-wrap: nowrap;
+}
+
+
+
+
+
+footer {
+    background-color: gray;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 40px;
+    color: white;
+}
+
+/*
+ RGB AZUL OSCURO: 47 97 129
+ RGB AZUL CLARO: 56 150 180
+*/
+
+/*
+    Sites:
+    MLA:CELESTE
+    MLM:NARANJA
+    MLC:AMARILLO
+
+    CANALES:
+    CHAT:VERDE
+    OFFLINE:CELESTE
+    C2C:NARANJA
+
+    TIPO ACUERDO:
+    PAGO TOTAL: VERDE
+    CONDONACIÓN: MORADO
+    PARCELAMENTO: AZUL
+    PARCIAL: NARANJA
+
+    TIPO CUMPLIMIENTO:
+    EN CURSO: AMARILLO
+    CUMPLIDA: VERDE
+    INCUMPLIDA: ROJO
+*/
+
+.columna-borde {
+    border-radius: 20px;
+}
+
+
+
+.columna-chat {
+    background-color: #58D68D;
+    color: #145A32;
+}
+
+.columna-offline {
+    background-color: #7aafff;
+    color: #07227a;
+}
+
+.columna-c2c {
+    background-color: #F0B13B;
+    color: #7e2b04;
+}
+
+.columna-mla {
+    background-color: #7aafff;
+    color: #07227a;
+}
+
+.columna-mlm {
+    background-color: darksalmon;
+    color: rgb(85, 30, 11);
+}
+
+.columna-mlc {
+    background-color: #F0B13B;
+    color: #7e2b04;
+}
+
+.columna-pagototal {
+    background-color: #58D68D;
+    color: #145A32;
+}
+
+.columna-condonacion {
+    background-color: #F4A8FF;
+    color: #681b72;
+}
+
+.columna-parcelamento {
+    background-color: #7aafff;
+    color: #07227a;
+}
+
+.columna-pagoparcial {
+    background-color: darksalmon;
+    color: rgb(85, 30, 11);
+}
+
+.columna-encurso {
+    background-color: #F0B13B;
+    color: #61280e;
+}
+
+.columna-cumplida {
+    background-color: #58D68D;
+    color: #145A32;
+}
+
+.columna-incumplida {
+    background-color: #FB2C36;
+    color: #460809;
+}
+
+
+dialog {
+    border: none;
+    align-self: center;
+    place-self: center;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 0 5px 1px gray;
+    font-family: sans-serif;
+    place-items: center;
+    text-align: center;
+}
+
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+
+#form-editar-pp{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.contenedor-editar-pp{
+    text-align: center;
+    display: flex;
+    gap: 20px;
+    white-space: nowrap;
+    flex-wrap: wrap;
+}
+
+.contenedor-editar-pp input,
+select {
+    padding: 5px;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    border: 1px solid black;
+}
+
+.contenedor-editar-pp input[type=number],
+input[type=date] {
+    width: 100px;
+}
+
+dialog button{
+    border: none;
+    font-size: 16px;
+    padding: 10px 30px;
+    background: rgb(47 97 129);
+    color: white;
+    border-radius: 10px;
+}
+
+dialog button:hover{
+    cursor: pointer;
+    background-color: rgb(124, 205, 255);
+    color: black;
+}
