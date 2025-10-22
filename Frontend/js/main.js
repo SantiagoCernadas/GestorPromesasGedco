@@ -10,8 +10,10 @@ const contenedorFiltros = document.querySelector('.filtros-contenedor');
 const botonCerrarSesion = document.getElementById("boton-cerrar-sesion");
 
 const paginacionDiv = document.getElementById('paginacion');
+
+const botonFiltrar = document.getElementById('boton-filtrar');
 let paginaActual = 1;
-const cantFilasPagina = 5;
+const cantFilasPagina = 8;
 
 var idOriginal = 0;
 var fechaOriginal = '';
@@ -20,6 +22,99 @@ const modal = document.getElementById('modal-editar-pp');
 const botonGuardarEditar = document.getElementById('boton-guardar-editar');
 
 var listaPromesas = tablaPrueba();
+var listaPromesasFiltrada = listaPromesas;
+
+var filtros = getFiltros();
+
+
+
+function getFiltros(){
+    return {
+    caso: parseInt(document.getElementById('input-filtro-caso').value),
+    id: parseInt(document.getElementById('input-filtro-id').value),
+    canal: document.getElementById('input-filtro-canal').value,
+    site: document.getElementById('input-filtro-site').value,
+    tipoAcuerdo: document.getElementById('input-filtro-tipo-acuerdo').value,
+    tipoCumplimiento: document.getElementById('input-filtro-cumplimiento').value,
+    fechaCargaDesde: document.getElementById('input-filtro-fecha-carga-desde').value,
+    fechaCargaHasta: document.getElementById('input-filtro-fecha-carga-hasta').value,
+    operador: document.getElementById('input-filtro-operador').value,
+    duplica: document.getElementById('input-filtro-duplica').checked,
+};
+}
+
+botonFiltrar.addEventListener('click',() =>{
+    filtros = getFiltros();
+    console.log(filtros);
+    listaPromesasFiltrada = listaPromesas;
+    console.log(listaPromesasFiltrada);
+    if(!isNaN(filtros.caso)){
+        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.caso === filtros.caso);
+    }
+    if(!isNaN(filtros.id)){
+        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.id === filtros.id);
+    }
+    if(filtros.canal != '-'){
+        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.canal === filtros.canal);
+    }
+    if(filtros.site != '-'){
+        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.site === filtros.site);
+    }
+    if(filtros.tipoAcuerdo != '-'){
+        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.tipoAcuerdo === filtros.tipoAcuerdo);
+    }
+    if(filtros.tipoCumplimiento != '-'){
+        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.tipoCumplimiento === filtros.tipoCumplimiento);
+    }
+
+    if(filtros.fechaCargaDesde != '' && filtros.fechaCargaHasta == ''){
+        filtros.fechaCargaHasta = filtros.fechaCargaDesde;
+        document.getElementById('input-filtro-fecha-carga-hasta').value = filtros.fechaCargaHasta
+    }
+    else if(filtros.fechaCargaDesde == '' && filtros.fechaCargaHasta != ''){
+        filtros.fechaCargaDesde = filtros.fechaCargaHasta;
+        document.getElementById('input-filtro-fecha-carga-desde').value = filtros.fechaCargaDesde;
+    }
+
+    if(filtros.fechaCargaDesde != '' && filtros.fechaCargaHasta != ''){
+        var fechaDesde = new Date(filtros.fechaCargaDesde);
+        var fechaHasta = new Date(filtros.fechaCargaHasta);
+        if(fechaHasta < fechaDesde) {
+            fechaHasta = fechaDesde;
+            filtros.fechaCargaHasta = filtros.fechaCargaDesde;
+            document.getElementById('input-filtro-fecha-carga-hasta').value = filtros.fechaCargaDesde;
+        }
+        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => {
+            const fechaCarga = new Date(promesa.fechaCarga);
+            return fechaCarga >= fechaDesde && fechaCarga <= fechaHasta;
+        })
+    }
+
+    if(filtros.duplica){
+        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => PromesaDuplica(promesa));
+    }
+    
+    if(filtros.operador != '-'){
+        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.nombreOperador === filtros.operador);
+    }
+    console.log(listaPromesasFiltrada);
+    printTablaHTML();
+})
+
+
+function PromesaDuplica(promesa){
+    /*Requisitos para que una promesa sea "duplicada" (mas valor):
+    
+    MLA= Monto mayor a 250.000
+    MLM= Monto mayor a 250.000
+    MLC= Monto mayor a 250.000
+    */
+    if(promesa.site  == 'MLA' && promesa.monto >= 250000) return true;
+    if(promesa.site  == 'MLM' && promesa.monto >= 5000) return true;
+    if(promesa.site  == 'MLC' && promesa.monto >= 200000) return true;
+
+    return false;
+}
 
 const formatFecha = new Intl.DateTimeFormat("es", {
     day: '2-digit',
@@ -93,10 +188,14 @@ function printTablaHTML() {
         }
     });
 
+    renderPaginacion();
+
     const inicio = (paginaActual - 1) * cantFilasPagina;
     const fin = inicio + cantFilasPagina;
 
-    const ppsPaginaActual = listaPromesas.slice(inicio, fin);
+    const ppsPaginaActual = listaPromesasFiltrada.slice(inicio, fin);
+
+    
 
     ppsPaginaActual.forEach((filaTabla, i) => {
         const fila = document.createElement('tr');
@@ -128,7 +227,10 @@ function printTablaHTML() {
         botonEliminar.addEventListener('click', () => {
             const fila = document.getElementById('tabla-fila-' + i);
             fila.remove();
+            listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => !(promesa.id === filaTabla.id && promesa.fechaCarga === filaTabla.fechaCarga));
             listaPromesas = listaPromesas.filter(promesa => !(promesa.id === filaTabla.id && promesa.fechaCarga === filaTabla.fechaCarga));
+            console.log(listaPromesas.length);
+            console.log(listaPromesasFiltrada.length);
             alert("Promesa con id: " + filaTabla.id + " y fecha de carga: " + filaTabla.fechaCarga + ' eliminada correctamente.');
             const totalPaginas = Math.ceil(listaPromesas.length / cantFilasPagina);
             if (paginaActual > totalPaginas) {
@@ -158,13 +260,22 @@ function printTablaHTML() {
 
     });
 
-    renderPaginacion();
+
 
 }
 function renderPaginacion() {
     paginacionDiv.innerHTML = '';
 
-    const totalPaginas = Math.ceil(listaPromesas.length / cantFilasPagina);
+    const totalPaginas = Math.ceil(listaPromesasFiltrada.length / cantFilasPagina);
+    
+    if (paginaActual > totalPaginas) {
+        paginaActual = totalPaginas
+    }
+    else if(paginaActual <= 0){
+        if(listaPromesasFiltrada.length >= 1){
+            paginaActual = 1;
+        }
+    }
 
     paginacionDiv.appendChild(crearBoton('Anterior', paginaActual - 1, paginaActual <= 1));
 
@@ -172,7 +283,7 @@ function renderPaginacion() {
     paginaActualParrafo.textContent = paginaActual + " de " + totalPaginas;
     paginacionDiv.appendChild(paginaActualParrafo)
 
-    paginacionDiv.appendChild(crearBoton('Siguiente', paginaActual + 1, paginaActual === totalPaginas));
+    paginacionDiv.appendChild(crearBoton('Siguiente', paginaActual + 1, paginaActual >= totalPaginas));
 }
 
 function crearBoton(texto, pagina, deshabilitado = false) {
@@ -227,8 +338,7 @@ botonGuardarEditar.addEventListener('click', () => {
         return;
     }
 
-    const promesa = listaPromesas.find(p => p.id === idOriginal && p.fechaCarga === fechaOriginal);
-    console.log(promesa);
+    var promesa = listaPromesas.find(p => p.id === idOriginal && p.fechaCarga === fechaOriginal);
     if (promesa) {
         promesa.caso = promesaEdit.caso;
         promesa.id = promesaEdit.id;
@@ -241,8 +351,6 @@ botonGuardarEditar.addEventListener('click', () => {
         promesa.nombreOperador = promesaEdit.nombreOperador;
         promesa.tipoCumplimiento = promesaEdit.tipoCumplimiento;
     }
-
-    console.log(promesa);
 
     alert('PP Modificada.');
     modal.close();
@@ -559,7 +667,7 @@ function tablaPrueba() {
             canal: "OFFLINE",
             site: "MLM",
             monto: 5000,
-            fechaCarga: "2025-10-13",
+            fechaCarga: "2025-10-14",
             fechaPago: "2025-10-14",
             tipoAcuerdo: "Pago parcial",
             nombreOperador: "Santiago",
@@ -571,8 +679,8 @@ function tablaPrueba() {
             canal: "C2C",
             site: "MLC",
             monto: 1000000,
-            fechaCarga: "2025-10-13",
-            fechaPago: "2025-10-14",
+            fechaCarga: "2025-10-15",
+            fechaPago: "2025-10-16",
             tipoAcuerdo: "Parcelamento",
             nombreOperador: "Santiago",
             tipoCumplimiento: "Incumplida"
@@ -583,8 +691,8 @@ function tablaPrueba() {
             canal: "CHAT",
             site: "MLA",
             monto: 852.42,
-            fechaCarga: "2025-10-13",
-            fechaPago: "2025-10-14",
+            fechaCarga: "2025-10-16",
+            fechaPago: "2025-10-20",
             tipoAcuerdo: "Condonación",
             nombreOperador: "Pepito92",
             tipoCumplimiento: "En curso"
@@ -594,9 +702,9 @@ function tablaPrueba() {
             id: 50000,
             canal: "OFFLINE",
             site: "MLM",
-            monto: 5000,
-            fechaCarga: "2025-10-13",
-            fechaPago: "2025-10-14",
+            monto: 3000,
+            fechaCarga: "2025-10-17",
+            fechaPago: "2025-10-17",
             tipoAcuerdo: "Pago parcial",
             nombreOperador: "Santiago",
             tipoCumplimiento: "Cumplida"
@@ -607,8 +715,8 @@ function tablaPrueba() {
             canal: "C2C",
             site: "MLC",
             monto: 1000000,
-            fechaCarga: "2025-10-13",
-            fechaPago: "2025-10-14",
+            fechaCarga: "2025-10-17",
+            fechaPago: "2025-10-17",
             tipoAcuerdo: "Parcelamento",
             nombreOperador: "Santiago",
             tipoCumplimiento: "Incumplida"
@@ -618,7 +726,7 @@ function tablaPrueba() {
             id: 70000,
             canal: "CHAT",
             site: "MLA",
-            monto: 852.42,
+            monto: 500000,
             fechaCarga: "2025-10-13",
             fechaPago: "2025-10-14",
             tipoAcuerdo: "Condonación",

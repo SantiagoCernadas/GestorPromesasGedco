@@ -26,18 +26,18 @@
                 <div class="filtros-fila fila1">
                     <div class="filtro caso">
                         <p>Caso</p>
-                        <input type="number" name="" id="">
+                        <input type="number" name="" id="input-filtro-caso">
                     </div>
                     <div class="filtro id">
                         <p>ID</p>
-                        <input type="number" name="" id="">
+                        <input type="number" name="" id="input-filtro-id">
                     </div>
                 </div>
                 <div class="filtros-fila fila2">
                     <div class="filtro canal">
                         <p>Canal</p>
-                        <select name="Sites" id="">
-                            <option value="canal-todos">Todos</option>
+                        <select name="Canales" id="input-filtro-canal">
+                            <option value="-">Todos</option>
                             <option value="OFFLINE">OFFLINE</option>
                             <option value="C2C">C2C</option>
                             <option value="CHAT">CHAT</option>
@@ -45,8 +45,8 @@
                     </div>
                     <div class="filtro Site-Pais">
                         <p>Site/Pais</p>
-                        <select name="Sites" id="">
-                            <option value="site-todos">Todos</option>
+                        <select name="Sites" id="input-filtro-site">
+                            <option value="-">Todos</option>
                             <option value="MLA">MLA</option>
                             <option value="MLM">MLM</option>
                             <option value="MLC">MLC</option>
@@ -56,21 +56,21 @@
                 <div class="filtros-fila fila3">
                     <div class="filtro tipo-acuerdo">
                         <p>Tipo de acuerdo</p>
-                        <select name="tipo-acuerdos" id="">
-                            <option value="pago-todos">Todos</option>
-                            <option value="pago-total">Pago total</option>
-                            <option value="condonacion">Condonación</option>
+                        <select name="tipo-acuerdos" id="input-filtro-tipo-acuerdo">
+                            <option value="-">Todos</option>
+                            <option value="Pago total">Pago total</option>
+                            <option value="Condonación">Condonación</option>
                             <option value="Parcelamento">Parcelamento</option>
-                            <option value="parcial">Pago Parcial</option>
+                            <option value="Pago parcial">Pago parcial</option>
                         </select>
                     </div>
                     <div class="filtro cumplimiento">
                         <p>Cumplimiento</p>
-                        <select name="cumplimientos" id="">
-                            <option value="cumplimiento-todos">Todos</option>
-                            <option value="cumplimiento-encurso">En curso</option>
-                            <option value="cumplimiento-cumplida">Cumplida</option>
-                            <option value="cumplimiento-incumplida">Incumplida</option>
+                        <select name="cumplimientos" id="input-filtro-cumplimiento">
+                            <option value="-">Todos</option>
+                            <option value="En curso">En curso</option>
+                            <option value="Cumplida">Cumplida</option>
+                            <option value="Incumplida">Incumplida</option>
                         </select>
                     </div>
                 </div>
@@ -79,32 +79,24 @@
                     <div class="filtro fecha-carga">
                         <p>Fecha de carga</p>
                         <p>Desde</p>
-                        <input type="date" name="" id="">
+                        <input type="date" name="" id="input-filtro-fecha-carga-desde">
                         <p>Hasta</p>
-                        <input type="date" name="" id="">
+                        <input type="date" name="" id="input-filtro-fecha-carga-hasta">
                     </div>
+                </div>
 
-                </div>
-                <div class="filtros-fila fila5">
-                    <div class="filtro fecha-pago">
-                        <p>Fecha de pago</p>
-                        <p>Desde</p>
-                        <input type="date" name="" id="">
-                        <p>Hasta</p>
-                        <input type="date" name="" id="">
-                    </div>
-                </div>
                 <div class="filtros-fila fila6">
                     <div class="filtro operador">
                         <p>Operador</p>
-                        <select name="operadores" id="">
-                            <option value="operador-todos">Todos</option>
-                            <option value="operador-nombre1">Santiago</option>
+                        <select name="operadores" id="input-filtro-operador">
+                            <option value="-">Todos</option>
+                            <option value="Santiago">Santiago</option>
+                            <option value="Pepito92">Pepito92</option>
                         </select>
                     </div>
                     <div class="filtro duplica">
                         <p> <strong> PP Duplica:</strong></p>
-                        <input type="checkbox" name="" id="">
+                        <input type="checkbox" name="" id="input-filtro-duplica">
                     </div>
 
                 </div>
