@@ -3,6 +3,7 @@ package com.crmpps.Backend.config;
 import com.crmpps.Backend.repository.UsuarioRepository;
 import com.crmpps.Backend.service.UserDetailsServiceImpl;
 import com.crmpps.Backend.util.JwtUtils;
+import jakarta.servlet.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +23,11 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 public class SecurityConfig {
@@ -46,9 +51,11 @@ public class SecurityConfig {
         JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtUtils);
         jwtAuthenticationFilter.setAuthenticationManager(authenticationManager);
         jwtAuthenticationFilter.setFilterProcessesUrl("/login");
+        jwtAuthenticationFilter.setAuthenticationFailureHandler(new CustomAuthenticationFailureHandler());
 
         return httpSecurity
                 .csrf(config -> config.disable())
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth ->{
                     auth.requestMatchers("/hello").permitAll();
                     auth.requestMatchers("/helloSeguro").hasAnyRole("SUPERVISOR","OPERADOR");

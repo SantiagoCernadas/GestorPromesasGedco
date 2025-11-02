@@ -28,6 +28,7 @@ var filtros = getFiltros();
 
 
 
+
 function getFiltros(){
     return {
     caso: parseInt(document.getElementById('input-filtro-caso').value),
@@ -124,7 +125,7 @@ const formatFecha = new Intl.DateTimeFormat("es", {
 
 const sesion = JSON.parse(localStorage.getItem('sesionUsuario'));
 
-document.getElementById('nombre-operador-span').innerHTML = sesion.nombre;
+document.getElementById('nombre-operador-span').innerHTML = "";
 
 //Formatea un número a pesos argentinos.
 const formateadorDeMoneda = new Intl.NumberFormat('es-AR', {
@@ -174,8 +175,8 @@ botonAgregarPromesaExcel.addEventListener('click', () => {
 })
 
 botonCerrarSesion.addEventListener('click', () => {
+    document.cookie = "session_token=; path=/; max-age=0;"
     window.location.href = "/Frontend/index.html";
-    localStorage.removeItem('sesionUsuario');
 })
 
 function printTablaHTML() {
