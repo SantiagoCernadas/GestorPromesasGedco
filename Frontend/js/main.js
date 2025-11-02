@@ -494,6 +494,7 @@ function agregarPromesa() {
             mensajePP.innerHTML += '¡Promesa agregada con exito!'
             mensajePP.style.color = 'green';
             listaPromesas.unshift(nuevaPromesa);
+            listaPromesasFiltrada.unshift(nuevaPromesa);
             printTablaHTML();
         }
     }
