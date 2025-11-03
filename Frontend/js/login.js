@@ -55,26 +55,25 @@ async function iniciarSesion() {
             'Content-Type': 'application/json'
         }
     }).then(response => {
-        if (!response.ok) {
-            throw new Error("Credenciales Incorrectas")
-        }
-        else {
+        if (response.ok) {
             document.getElementById("error-mensaje").textContent = ""
             return response.json();
         }
-    })
+        else {
+             throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+        }
+        })
         .then(data => {
             document.cookie = `session_token=${data.token}; path=/; max-age=86400`;
-            
-            const token = document.cookie
-                .split("; ")
-                .find(row => row.startsWith("session_token="))
-                ?.split("=")[1];
-            console.log(token);
             window.location.href = "/Frontend/main.html";
         })
         .catch(error => {
-            document.getElementById("error-mensaje").textContent = error.message;
+            if (error.message.includes('401')) {
+                document.getElementById("error-mensaje").textContent = "Credenciales incorrectas";
+            }
+            else{
+                document.getElementById("error-mensaje").textContent = "Error inesperado.";
+            }
         });
 
 }
