@@ -1,3 +1,4 @@
+import * as api from "./api.js";
 
 const botonContenedorAgregarPP = document.getElementById("boton-contenedor-agregar");
 const botonContenedorFiltros = document.getElementById("boton-contenedor-filtros");
@@ -31,32 +32,9 @@ const token = document.cookie
     .find(row => row.startsWith("session_token="))
     ?.split("=")[1];
 
+const datosUsuario = await api.getDatosUsuario(token);
 
-const apiUrl = 'http://localhost:8080/';
-
-async function getPrueba() {
-
-    await fetch(apiUrl + 'helloSeguro', {
-        method: 'Get',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        }
-    }).then(response => {
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
-        }
-        return response.text();
-    })
-        .then(data => {
-            console.log(data); // Procesa los datos
-        })
-        .catch(error => {
-            console.error('Hubo un problema con la operación fetch:', error);
-        });
-}
-
-getPrueba();
+document.getElementById("nombre-operador-span").textContent = datosUsuario.nombre;
 
 function getFiltros() {
     return {
@@ -151,10 +129,6 @@ const formatFecha = new Intl.DateTimeFormat("es", {
     month: '2-digit',
     year: 'numeric'
 })
-
-const sesion = JSON.parse(localStorage.getItem('sesionUsuario'));
-
-document.getElementById('nombre-operador-span').innerHTML = "";
 
 //Formatea un número a pesos argentinos.
 const formateadorDeMoneda = new Intl.NumberFormat('es-AR', {
@@ -309,7 +283,7 @@ function renderPaginacion() {
 
     paginacionDiv.appendChild(crearBoton('Anterior', paginaActual - 1, paginaActual <= 1));
 
-    paginaActualParrafo = document.createElement('p');
+    const paginaActualParrafo = document.createElement('p');
     paginaActualParrafo.textContent = paginaActual + " de " + totalPaginas;
     paginacionDiv.appendChild(paginaActualParrafo)
 
