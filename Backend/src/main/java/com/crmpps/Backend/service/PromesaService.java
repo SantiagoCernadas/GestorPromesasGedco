@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,10 +30,10 @@ public class PromesaService {
     @Autowired
     private PromesaRepository promesaRepository;
 
-    public PromesaEntity agregarUsuario(@Valid PromesaDTO promesaDTO) {
+    public PromesaEntity agregarPromesa(@Valid PromesaDTO promesaDTO) {
 
         UsuarioEntity usuarioEntity = usuarioRepository.findById(promesaDTO.getOperador())
-                .orElseThrow();
+                .orElseThrow(() -> new NoSuchElementException("No se encontro al usuario con id: " + promesaDTO.getOperador()));
 
         PromesaEntity promesaEntity = PromesaEntity.builder()
                 .idUsuarioML(promesaDTO.getIdUsuarioML())
@@ -87,5 +89,26 @@ public class PromesaService {
         }
 
         return listaResponse;
+    }
+
+    public PromesaResponse obtenerPromesa(Long id) {
+        PromesaEntity promesa = promesaRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("No se encontro la promesa con id:" + id));
+
+        PromesaResponse response = PromesaResponse.builder()
+                .id(promesa.getId())
+                .idUsuarioML(promesa.getIdUsuarioML())
+                .numCaso(promesa.getNumCaso())
+                .monto(promesa.getMonto())
+                .site(promesa.getSite())
+                .canal(promesa.getCanal())
+                .tipoAcuerdo(promesa.getTipoAcuerdo())
+                .cumplimiento(promesa.getCumplimiento())
+                .fechaCarga(promesa.getFechaCarga())
+                .fechaPago(promesa.getFechaPago())
+                .operador(promesa.getOperador().getNombre())
+                .build();
+
+        return response;
     }
 }

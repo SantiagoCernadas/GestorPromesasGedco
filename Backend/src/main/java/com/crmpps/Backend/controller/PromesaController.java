@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/promesa")
@@ -26,12 +28,20 @@ public class PromesaController {
 
     @Operation(summary = "Agregar una nueva promesa.")
     @PostMapping()
-    public ResponseEntity<PromesaEntity> agregarPromesa(@Valid @RequestBody PromesaDTO promesaDTO){
-        return ResponseEntity.ok(promesaService.agregarUsuario(promesaDTO));
+    public ResponseEntity<PromesaEntity> agregarPromesa(@RequestHeader Map<String,String> headers, @Valid @RequestBody PromesaDTO promesaDTO){
+        return ResponseEntity.ok(promesaService.agregarPromesa(promesaDTO));
     }
 
-    @GetMapping("/usuario/{idOperador}")
-    public ResponseEntity<List<PromesaResponse>> getPromesasOperadorFiltros(@RequestParam(required = true) Integer caso,
+    @Operation(summary = "Obtener promesa por ID.")
+    @GetMapping("/{id}")
+    public ResponseEntity<PromesaResponse> obtenerPromesa(@RequestHeader Map<String,String> headers,@PathVariable Long id){
+        return ResponseEntity.ok(promesaService.obtenerPromesa(id));
+    }
+
+    @Operation(summary = "Obtener conjunto de promesas mediante filtros.")
+    @GetMapping()
+    public ResponseEntity<List<PromesaResponse>> getPromesasOperadorFiltros(@RequestHeader Map<String,String> headers,
+                                                                        @RequestParam(required = false) Integer caso,
                                                                         @RequestParam(required = false) Integer usuarioML,
                                                                         @RequestParam(required = false) String canal,
                                                                         @RequestParam(required = false) String site,

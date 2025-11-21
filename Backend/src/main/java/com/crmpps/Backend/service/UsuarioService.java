@@ -23,6 +23,7 @@ public class UsuarioService {
         UsuarioEntity usuarioEntity = usuarioRepository.findByNombreUsuario(nombreUsuario).orElseThrow();
 
         return UsuarioResponse.builder()
+                .id(usuarioEntity.getId())
                 .nombreUsuario(usuarioEntity.getNombreUsuario())
                 .rol(usuarioEntity.getRol())
                 .nombre(usuarioEntity.getNombre())

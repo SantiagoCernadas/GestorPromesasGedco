@@ -14,11 +14,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UsuarioResponse {
-
+    private Long id;
     private String nombreUsuario;
-
     @Enumerated(EnumType.STRING)
     private Rol rol;
-
     private String nombre;
 }
