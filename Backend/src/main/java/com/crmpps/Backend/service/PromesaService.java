@@ -11,7 +11,6 @@ import com.crmpps.Backend.repository.UsuarioRepository;
 import com.crmpps.Backend.util.JwtUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -151,5 +150,19 @@ public class PromesaService {
 
     public String getNombreUsuarioToken(String token){
         return jwtUtils.getNombreUsuarioFromToken(token.substring(7));
+    }
+
+    public void eliminarPromesa(Map<String, String> headers, Long id) throws NoAutorizadoException {
+        PromesaEntity promesa = promesaRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("No se encontro la promesa con id:" + id));
+
+        String tokenHeader = headers.get("authorization");
+
+        if (getRolToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
+                !promesa.getOperador().getNombreUsuario().equals(getNombreUsuarioToken(tokenHeader))){
+            throw new NoAutorizadoException("Credenciales invalidas.");
+        }
+
+        promesaRepository.deleteById(id);
     }
 }
