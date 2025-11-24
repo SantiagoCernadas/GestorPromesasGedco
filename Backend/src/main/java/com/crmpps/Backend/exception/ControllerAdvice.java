@@ -1,15 +1,15 @@
-package com.crmpps.Backend.controller;
+package com.crmpps.Backend.exception;
 
 
 import com.crmpps.Backend.dto.ErrorDTO;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestControllerAdvice
@@ -34,5 +34,12 @@ public class ControllerAdvice {
     public ResponseEntity<ErrorDTO> errorNotFound(Exception ex) {
         ErrorDTO error = ErrorDTO.builder().codigo("404").mensaje(ex.getMessage()).build();
         return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    @Hidden
+    public ResponseEntity<ErrorDTO> badCredentials(Exception ex) {
+        ErrorDTO error = ErrorDTO.builder().codigo("403").mensaje("Usuario o contraseña invalidos.").build();
+        return new ResponseEntity<>(error,HttpStatus.UNAUTHORIZED);
     }
 }

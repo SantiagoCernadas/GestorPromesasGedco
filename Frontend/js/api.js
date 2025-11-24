@@ -6,7 +6,7 @@ export async function iniciarSesion(){
         "contrasenia": document.getElementById('input-contrasenia').value
     }
 
-    const response = await fetch(apiUrl + 'login', {
+    const response = await fetch(apiUrl + 'auth/login', {
         method: 'POST',
         body: JSON.stringify(bodyLogin),
         headers: {
@@ -23,7 +23,7 @@ export async function iniciarSesion(){
         })
         .then(data => {
             document.cookie = `session_token=${data.token}; path=/; max-age=86400`;
-            window.location.href = "/Frontend/main.html";
+            window.location.href = "/main.html";
         })
         .catch(error => {
             if (error.message.includes('401')) {

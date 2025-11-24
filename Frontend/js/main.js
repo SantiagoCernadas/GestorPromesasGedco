@@ -179,7 +179,7 @@ botonAgregarPromesaExcel.addEventListener('click', () => {
 
 botonCerrarSesion.addEventListener('click', () => {
     document.cookie = "session_token=; path=/; max-age=0;"
-    window.location.href = "/Frontend/index.html";
+    window.location.href = "/index.html";
 })
 
 function printTablaHTML() {

@@ -28,19 +28,19 @@ public class PromesaController {
 
     @Operation(summary = "Agregar una nueva promesa.")
     @PostMapping()
-    public ResponseEntity<PromesaEntity> agregarPromesa(@RequestHeader Map<String,String> headers, @Valid @RequestBody PromesaDTO promesaDTO){
+    public ResponseEntity<PromesaEntity> agregarPromesa(@Valid @RequestBody PromesaDTO promesaDTO){
         return ResponseEntity.ok(promesaService.agregarPromesa(promesaDTO));
     }
 
     @Operation(summary = "Obtener promesa por ID.")
     @GetMapping("/{id}")
-    public ResponseEntity<PromesaResponse> obtenerPromesa(@RequestHeader Map<String,String> headers,@PathVariable Long id){
+    public ResponseEntity<PromesaResponse> obtenerPromesa(@PathVariable Long id){
         return ResponseEntity.ok(promesaService.obtenerPromesa(id));
     }
 
     @Operation(summary = "Obtener conjunto de promesas mediante filtros.")
     @GetMapping()
-    public ResponseEntity<List<PromesaResponse>> getPromesasOperadorFiltros(@RequestHeader Map<String,String> headers,
+    public ResponseEntity<List<PromesaResponse>> getPromesasOperadorFiltros(
                                                                         @RequestParam(required = false) Integer caso,
                                                                         @RequestParam(required = false) Integer usuarioML,
                                                                         @RequestParam(required = false) String canal,

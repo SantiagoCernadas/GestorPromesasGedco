@@ -8,10 +8,13 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 @Component
@@ -23,17 +26,16 @@ public class JwtUtils {
     @Value("${jwt.time.expiration}")
     private String tiempoExpiracion;
 
-    //Generar Token de acceso
-    public String generarToken(String nombreUsuario){
+    public String generarToken(UserDetails userDetails) {
         return Jwts.builder()
-                .setSubject(nombreUsuario)
+                .setSubject(userDetails.getUsername())
+                .claim("roles", userDetails.getAuthorities())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + Long.parseLong(tiempoExpiracion)))
                 .signWith(getClaveFirma(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    //Validar Token
     public boolean tokenValido(String token){
         try {
             Jwts.parserBuilder()
@@ -41,26 +43,29 @@ public class JwtUtils {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-
-            //Si a la hora de parsear el jwt, este tira una excepción, significa que el token es invalido.
-            // De lo contrario, es valido
             return  true;
         } catch (Exception e){
             return false;
         }
     }
 
-    public String getNombreUsuarioFromToken(String token){
-        return getClaim(token,Claims::getSubject);
+    public String getNombreUsuarioFromToken(String token) {
+        return getClaim(token, Claims::getSubject);
     }
 
-    //Obtener un solo claim
+    public String getRolFromToken(String token){
+        Claims claims = extraerClaims(token);
+
+        List<Map<String, String>> roles = claims.get("roles", List.class);
+
+        return roles.get(0).get("authority");
+    }
+
     public <T> T getClaim(String token, Function<Claims,T> claimsTFunction){
         Claims claims = extraerClaims(token);
         return claimsTFunction.apply(claims);
     }
 
-    //Obtener todos los "claims" (Data/Payloads) del token
     public Claims extraerClaims(String token){
         return Jwts.parserBuilder()
                 .setSigningKey(getClaveFirma())
