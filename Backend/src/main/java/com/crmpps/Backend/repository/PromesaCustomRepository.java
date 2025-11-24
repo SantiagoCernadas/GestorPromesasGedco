@@ -24,7 +24,7 @@ public class PromesaCustomRepository {
             String tipoCumplimiento,
             LocalDate fechaCargaDesde,
             LocalDate fechaCargaHasta,
-            Integer operador,
+            Long operador,
             Boolean duplica
     ) {
         StringBuilder sb = new StringBuilder("SELECT a FROM promesa_pago a WHERE 1=1 ");

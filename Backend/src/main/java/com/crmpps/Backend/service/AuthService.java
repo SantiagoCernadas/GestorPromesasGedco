@@ -10,6 +10,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @Service
 public class AuthService {
 
@@ -20,7 +22,7 @@ public class AuthService {
     private JwtUtils jwtUtils;
 
 
-    public LoginResponse getToken(LoginRequest loginRequest){
+    public LoginResponse getToken(Map<String, String> headers, LoginRequest loginRequest){
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

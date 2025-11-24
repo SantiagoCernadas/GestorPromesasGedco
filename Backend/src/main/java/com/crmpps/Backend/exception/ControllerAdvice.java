@@ -39,7 +39,14 @@ public class ControllerAdvice {
     @ExceptionHandler(BadCredentialsException.class)
     @Hidden
     public ResponseEntity<ErrorDTO> badCredentials(Exception ex) {
-        ErrorDTO error = ErrorDTO.builder().codigo("403").mensaje("Usuario o contraseña invalidos.").build();
+        ErrorDTO error = ErrorDTO.builder().codigo("401").mensaje("Usuario o contraseña invalidos.").build();
         return new ResponseEntity<>(error,HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(NoAutorizadoException.class)
+    @Hidden
+    public ResponseEntity<ErrorDTO> noAutorizado(Exception ex) {
+        ErrorDTO error = ErrorDTO.builder().codigo("403").mensaje(ex.getMessage()).build();
+        return new ResponseEntity<>(error,HttpStatus.FORBIDDEN);
     }
 }

@@ -4,8 +4,10 @@ import com.crmpps.Backend.dto.PromesaDTO;
 import com.crmpps.Backend.dto.PromesaResponse;
 import com.crmpps.Backend.entity.PromesaEntity;
 import com.crmpps.Backend.entity.UsuarioEntity;
+import com.crmpps.Backend.exception.NoAutorizadoException;
 import com.crmpps.Backend.service.PromesaService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,19 +30,19 @@ public class PromesaController {
 
     @Operation(summary = "Agregar una nueva promesa.")
     @PostMapping()
-    public ResponseEntity<PromesaEntity> agregarPromesa(@Valid @RequestBody PromesaDTO promesaDTO){
-        return ResponseEntity.ok(promesaService.agregarPromesa(promesaDTO));
+    public ResponseEntity<PromesaEntity> agregarPromesa(@RequestHeader Map<String,String> headers,@Valid @RequestBody PromesaDTO promesaDTO) throws NoAutorizadoException {
+        return ResponseEntity.ok(promesaService.agregarPromesa(headers,promesaDTO));
     }
 
     @Operation(summary = "Obtener promesa por ID.")
     @GetMapping("/{id}")
-    public ResponseEntity<PromesaResponse> obtenerPromesa(@PathVariable Long id){
-        return ResponseEntity.ok(promesaService.obtenerPromesa(id));
+    public ResponseEntity<PromesaResponse> obtenerPromesa(@RequestHeader Map<String,String> headers,@PathVariable Long id) throws NoAutorizadoException {
+        return ResponseEntity.ok(promesaService.obtenerPromesa(headers,id));
     }
 
     @Operation(summary = "Obtener conjunto de promesas mediante filtros.")
     @GetMapping()
-    public ResponseEntity<List<PromesaResponse>> getPromesasOperadorFiltros(
+    public ResponseEntity<List<PromesaResponse>> getPromesasOperadorFiltros(@RequestHeader Map<String,String> headers,
                                                                         @RequestParam(required = false) Integer caso,
                                                                         @RequestParam(required = false) Integer usuarioML,
                                                                         @RequestParam(required = false) String canal,
@@ -49,10 +51,10 @@ public class PromesaController {
                                                                         @RequestParam(required = false) String tipoCumplimiento,
                                                                         @RequestParam(required = false) LocalDate fechaCargaDesde,
                                                                         @RequestParam(required = false) LocalDate fechaCargaHasta,
-                                                                        @RequestParam(required = false) Integer operador,
-                                                                        @RequestParam(required = false) Boolean duplica){
+                                                                        @RequestParam(required = false) Long operador,
+                                                                        @RequestParam(required = false) Boolean duplica)    throws NoAutorizadoException {
 
-        return ResponseEntity.ok(promesaService.getPromesasOperadorFiltros(caso, usuarioML, canal, site, tipoAcuerdo, tipoCumplimiento,
+        return ResponseEntity.ok(promesaService.getPromesasOperadorFiltros(headers,caso, usuarioML, canal, site, tipoAcuerdo, tipoCumplimiento,
                 fechaCargaDesde, fechaCargaHasta, operador, duplica));
     }
 }
