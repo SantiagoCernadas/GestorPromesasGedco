@@ -16,7 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-//OncePerRequest siempre valida una vez para cada request.
+
 @Component
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
@@ -38,7 +38,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 String nombreUsuario = jwtUtils.getNombreUsuarioFromToken(token);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(nombreUsuario);
 
-                UsernamePasswordAuthenticationToken authenticationToken = //Spring security toma la contra de UserDetails
+                UsernamePasswordAuthenticationToken authenticationToken =
                         new UsernamePasswordAuthenticationToken(nombreUsuario,null,userDetails.getAuthorities());
 
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);

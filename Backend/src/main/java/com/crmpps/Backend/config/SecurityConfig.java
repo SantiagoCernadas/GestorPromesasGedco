@@ -35,8 +35,6 @@ public class SecurityConfig {
                 .csrf(config -> config.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth ->{
-                    auth.requestMatchers("/hello").permitAll();
-                    auth.requestMatchers("/helloSeguro").hasAnyRole("SUPERVISOR","OPERADOR");
                     auth.requestMatchers(
                             "/swagger-ui/**",
                             "/swagger-ui.html",

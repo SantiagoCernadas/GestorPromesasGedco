@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -15,4 +16,7 @@ public interface UsuarioRepository extends CrudRepository<UsuarioEntity,Long> {
 
     @Query(value = "SELECT u FROM usuario u Where u.nombreUsuario = ?1")
     Optional<UsuarioEntity> getNombreUsuario(String nombreUsuario);
+
+    @Query(value = "Select u from usuario u where u.rol = 'OPERADOR'")
+    List<UsuarioEntity> getOperadores();
 }

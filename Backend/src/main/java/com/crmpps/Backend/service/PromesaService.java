@@ -144,14 +144,6 @@ public class PromesaService {
         return response;
     }
 
-    public String getRolToken(String token) {
-        return jwtUtils.getRolFromToken(token.substring(7));
-    }
-
-    public String getNombreUsuarioToken(String token){
-        return jwtUtils.getNombreUsuarioFromToken(token.substring(7));
-    }
-
     public void eliminarPromesa(Map<String, String> headers, Long id) throws NoAutorizadoException {
         PromesaEntity promesa = promesaRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("No se encontro la promesa con id:" + id));
@@ -164,5 +156,13 @@ public class PromesaService {
         }
 
         promesaRepository.deleteById(id);
+    }
+
+    public String getRolToken(String token) {
+        return jwtUtils.getRolFromToken(token.substring(7));
+    }
+
+    public String getNombreUsuarioToken(String token){
+        return jwtUtils.getNombreUsuarioFromToken(token.substring(7));
     }
 }

@@ -23,7 +23,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/promesa")
-@Tag(name = "Servicios para la promesas")
+@Tag(name = "Servicios para la gestion de promesas")
 public class PromesaController {
 
     @Autowired
@@ -61,8 +61,8 @@ public class PromesaController {
 
     @Operation(summary = "Eliminar promesa por ID.")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminarPromesa(@RequestHeader Map<String,String> headers,@PathVariable Long id) throws NoAutorizadoException {
+    public ResponseEntity<PromesaResponse> eliminarPromesa(@RequestHeader Map<String,String> headers,@PathVariable Long id) throws NoAutorizadoException {
         promesaService.eliminarPromesa(headers,id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
