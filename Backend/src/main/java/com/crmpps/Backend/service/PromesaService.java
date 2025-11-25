@@ -165,4 +165,53 @@ public class PromesaService {
     public String getNombreUsuarioToken(String token){
         return jwtUtils.getNombreUsuarioFromToken(token.substring(7));
     }
+
+    public PromesaResponse modificarPromesa(Map<String, String> headers, Long id, PromesaDTO promesaDTO) throws NoAutorizadoException {
+
+        String tokenHeader = headers.get("authorization");
+
+        PromesaEntity promesa = promesaRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("No se encontro la promesa con id:" + id));
+
+        UsuarioEntity usuario = usuarioRepository.findById(promesaDTO.getOperador())
+                .orElseThrow(() -> new NoSuchElementException("No se encontro al usuario con id:" + promesa.getOperador()));
+
+        if (getRolToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
+                !promesa.getOperador().getNombreUsuario().equals(getNombreUsuarioToken(tokenHeader))){
+            throw new NoAutorizadoException("Credenciales invalidas.");
+        }
+
+
+        PromesaEntity promesaModificada = PromesaEntity.builder().
+                id(promesa.getId())
+                .idUsuarioML(promesaDTO.getIdUsuarioML())
+                .numCaso(promesaDTO.getNumCaso())
+                .monto(promesaDTO.getMonto())
+                .site(promesaDTO.getSite())
+                .canal(promesaDTO.getCanal())
+                .tipoAcuerdo(promesaDTO.getTipoAcuerdo())
+                .cumplimiento(promesaDTO.getCumplimiento())
+                .fechaCarga(promesaDTO.getFechaCarga())
+                .fechaPago(promesaDTO.getFechaPago())
+                .operador(usuario)
+                .build();
+
+        promesaRepository.save(promesaModificada);
+
+        PromesaResponse response = PromesaResponse.builder().
+                id(promesaModificada.getId())
+                .idUsuarioML(promesaModificada.getIdUsuarioML())
+                .numCaso(promesaModificada.getNumCaso())
+                .monto(promesaModificada.getMonto())
+                .site(promesaModificada.getSite())
+                .canal(promesaModificada.getCanal())
+                .tipoAcuerdo(promesaModificada.getTipoAcuerdo())
+                .cumplimiento(promesaModificada.getCumplimiento())
+                .fechaCarga(promesaModificada.getFechaCarga())
+                .fechaPago(promesaModificada.getFechaPago())
+                .operador(promesaModificada.getOperador().getNombre())
+                .build();
+
+        return response;
+    }
 }

@@ -65,4 +65,13 @@ public class PromesaController {
         promesaService.eliminarPromesa(headers,id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+    @Operation(summary = "Modificar una promesa por ID")
+    @PatchMapping("/{id}")
+    public ResponseEntity <PromesaResponse> modificarPromesa(@RequestHeader Map<String,String> headers,
+                                                             @PathVariable Long id,
+                                                             @RequestBody PromesaDTO promesaDTO) throws NoAutorizadoException {
+        return ResponseEntity.ok(promesaService.modificarPromesa(headers,id,promesaDTO));
+    }
+
 }
