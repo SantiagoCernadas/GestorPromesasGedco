@@ -1,7 +1,12 @@
-if(localStorage.getItem('sesionUsuario') == null && window.location.pathname == "/Frontend/main.html"){
-    window.location.replace('/Frontend/index.html');
+function isCookiePresent(name) {
+  const cookies = document.cookie.split(";").map(c => c.trim());
+  return cookies.some(c => c.startsWith(name + "="));
 }
 
-if(localStorage.getItem('sesionUsuario') != null && window.location.pathname == "/Frontend/index.html"){
-    window.location.replace('/Frontend/main.html');
+if (!isCookiePresent("session_token") && window.location.pathname == "/main.html") {
+    window.location.replace('/index.html');
+}
+
+if (isCookiePresent("session_token") && window.location.pathname == "/index.html") {
+    window.location.replace('/main.html');
 }

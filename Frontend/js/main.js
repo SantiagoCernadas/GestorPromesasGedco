@@ -1,3 +1,4 @@
+import * as api from "./api.js";
 
 const botonContenedorAgregarPP = document.getElementById("boton-contenedor-agregar");
 const botonContenedorFiltros = document.getElementById("boton-contenedor-filtros");
@@ -26,60 +27,67 @@ var listaPromesasFiltrada = listaPromesas;
 
 var filtros = getFiltros();
 
+const token = document.cookie
+    .split("; ")
+    .find(row => row.startsWith("session_token="))
+    ?.split("=")[1];
 
+const datosUsuario = await api.getDatosUsuario(token);
 
-function getFiltros(){
+document.getElementById("nombre-operador-span").textContent = datosUsuario.nombre;
+
+function getFiltros() {
     return {
-    caso: parseInt(document.getElementById('input-filtro-caso').value),
-    id: parseInt(document.getElementById('input-filtro-id').value),
-    canal: document.getElementById('input-filtro-canal').value,
-    site: document.getElementById('input-filtro-site').value,
-    tipoAcuerdo: document.getElementById('input-filtro-tipo-acuerdo').value,
-    tipoCumplimiento: document.getElementById('input-filtro-cumplimiento').value,
-    fechaCargaDesde: document.getElementById('input-filtro-fecha-carga-desde').value,
-    fechaCargaHasta: document.getElementById('input-filtro-fecha-carga-hasta').value,
-    operador: document.getElementById('input-filtro-operador').value,
-    duplica: document.getElementById('input-filtro-duplica').checked,
-};
+        caso: parseInt(document.getElementById('input-filtro-caso').value),
+        id: parseInt(document.getElementById('input-filtro-id').value),
+        canal: document.getElementById('input-filtro-canal').value,
+        site: document.getElementById('input-filtro-site').value,
+        tipoAcuerdo: document.getElementById('input-filtro-tipo-acuerdo').value,
+        tipoCumplimiento: document.getElementById('input-filtro-cumplimiento').value,
+        fechaCargaDesde: document.getElementById('input-filtro-fecha-carga-desde').value,
+        fechaCargaHasta: document.getElementById('input-filtro-fecha-carga-hasta').value,
+        operador: document.getElementById('input-filtro-operador').value,
+        duplica: document.getElementById('input-filtro-duplica').checked,
+    };
 }
 
-botonFiltrar.addEventListener('click',() =>{
+botonFiltrar.addEventListener('click', () => {
     filtros = getFiltros();
     console.log(filtros);
     listaPromesasFiltrada = listaPromesas;
     console.log(listaPromesasFiltrada);
-    if(!isNaN(filtros.caso)){
+    if (!isNaN(filtros.caso)) {
         listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.caso === filtros.caso);
     }
-    if(!isNaN(filtros.id)){
+    if (!isNaN(filtros.id)) {
         listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.id === filtros.id);
     }
-    if(filtros.canal != '-'){
+    if (filtros.canal != '-') {
         listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.canal === filtros.canal);
     }
-    if(filtros.site != '-'){
+    if (filtros.site != '-') {
         listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.site === filtros.site);
     }
-    if(filtros.tipoAcuerdo != '-'){
+    if (filtros.tipoAcuerdo != '-') {
         listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.tipoAcuerdo === filtros.tipoAcuerdo);
     }
-    if(filtros.tipoCumplimiento != '-'){
+    if (filtros.tipoCumplimiento != '-') {
         listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.tipoCumplimiento === filtros.tipoCumplimiento);
     }
 
-    if(filtros.fechaCargaDesde != '' && filtros.fechaCargaHasta == ''){
+    if (filtros.fechaCargaDesde != '' && filtros.fechaCargaHasta == '') {
         filtros.fechaCargaHasta = filtros.fechaCargaDesde;
         document.getElementById('input-filtro-fecha-carga-hasta').value = filtros.fechaCargaHasta
     }
-    else if(filtros.fechaCargaDesde == '' && filtros.fechaCargaHasta != ''){
+    else if (filtros.fechaCargaDesde == '' && filtros.fechaCargaHasta != '') {
         filtros.fechaCargaDesde = filtros.fechaCargaHasta;
         document.getElementById('input-filtro-fecha-carga-desde').value = filtros.fechaCargaDesde;
     }
 
-    if(filtros.fechaCargaDesde != '' && filtros.fechaCargaHasta != ''){
+    if (filtros.fechaCargaDesde != '' && filtros.fechaCargaHasta != '') {
         var fechaDesde = new Date(filtros.fechaCargaDesde);
         var fechaHasta = new Date(filtros.fechaCargaHasta);
-        if(fechaHasta < fechaDesde) {
+        if (fechaHasta < fechaDesde) {
             fechaHasta = fechaDesde;
             filtros.fechaCargaHasta = filtros.fechaCargaDesde;
             document.getElementById('input-filtro-fecha-carga-hasta').value = filtros.fechaCargaDesde;
@@ -90,11 +98,11 @@ botonFiltrar.addEventListener('click',() =>{
         })
     }
 
-    if(filtros.duplica){
+    if (filtros.duplica) {
         listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => PromesaDuplica(promesa));
     }
-    
-    if(filtros.operador != '-'){
+
+    if (filtros.operador != '-') {
         listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.nombreOperador === filtros.operador);
     }
     console.log(listaPromesasFiltrada);
@@ -102,16 +110,16 @@ botonFiltrar.addEventListener('click',() =>{
 })
 
 
-function PromesaDuplica(promesa){
+function PromesaDuplica(promesa) {
     /*Requisitos para que una promesa sea "duplicada" (mas valor):
     
     MLA= Monto mayor a 250.000
     MLM= Monto mayor a 250.000
     MLC= Monto mayor a 250.000
     */
-    if(promesa.site  == 'MLA' && promesa.monto >= 250000) return true;
-    if(promesa.site  == 'MLM' && promesa.monto >= 5000) return true;
-    if(promesa.site  == 'MLC' && promesa.monto >= 200000) return true;
+    if (promesa.site == 'MLA' && promesa.monto >= 250000) return true;
+    if (promesa.site == 'MLM' && promesa.monto >= 5000) return true;
+    if (promesa.site == 'MLC' && promesa.monto >= 200000) return true;
 
     return false;
 }
@@ -121,10 +129,6 @@ const formatFecha = new Intl.DateTimeFormat("es", {
     month: '2-digit',
     year: 'numeric'
 })
-
-const sesion = JSON.parse(localStorage.getItem('sesionUsuario'));
-
-document.getElementById('nombre-operador-span').innerHTML = sesion.nombre;
 
 //Formatea un número a pesos argentinos.
 const formateadorDeMoneda = new Intl.NumberFormat('es-AR', {
@@ -174,8 +178,8 @@ botonAgregarPromesaExcel.addEventListener('click', () => {
 })
 
 botonCerrarSesion.addEventListener('click', () => {
-    window.location.href = "/Frontend/index.html";
-    localStorage.removeItem('sesionUsuario');
+    document.cookie = "session_token=; path=/; max-age=0;"
+    window.location.href = "/index.html";
 })
 
 function printTablaHTML() {
@@ -195,7 +199,7 @@ function printTablaHTML() {
 
     const ppsPaginaActual = listaPromesasFiltrada.slice(inicio, fin);
 
-    
+
 
     ppsPaginaActual.forEach((filaTabla, i) => {
         const fila = document.createElement('tr');
@@ -251,7 +255,7 @@ function printTablaHTML() {
             document.getElementById("input-pp-tipo-acuerdo-edit").value = filaTabla.tipoAcuerdo;
             document.getElementById("input-pp-operador-edit").value = filaTabla.nombreOperador;
             document.getElementById("input-pp-cumplimiento-edit").value = filaTabla.tipoCumplimiento;
-            
+
             fechaOriginal = filaTabla.fechaCarga;
             idOriginal = filaTabla.id;
 
@@ -267,19 +271,19 @@ function renderPaginacion() {
     paginacionDiv.innerHTML = '';
 
     const totalPaginas = Math.ceil(listaPromesasFiltrada.length / cantFilasPagina);
-    
+
     if (paginaActual > totalPaginas) {
         paginaActual = totalPaginas
     }
-    else if(paginaActual <= 0){
-        if(listaPromesasFiltrada.length >= 1){
+    else if (paginaActual <= 0) {
+        if (listaPromesasFiltrada.length >= 1) {
             paginaActual = 1;
         }
     }
 
     paginacionDiv.appendChild(crearBoton('Anterior', paginaActual - 1, paginaActual <= 1));
 
-    paginaActualParrafo = document.createElement('p');
+    const paginaActualParrafo = document.createElement('p');
     paginaActualParrafo.textContent = paginaActual + " de " + totalPaginas;
     paginacionDiv.appendChild(paginaActualParrafo)
 
@@ -323,7 +327,7 @@ botonGuardarEditar.addEventListener('click', () => {
 
     promesaCorrecta = validarPromesa(promesaEdit);
 
-    if(!promesaCorrecta){
+    if (!promesaCorrecta) {
         alert('ERROR AL GENERAR LA NUEVA PROMESA.');
         return;
     }
@@ -332,7 +336,7 @@ botonGuardarEditar.addEventListener('click', () => {
         p.id === nuevoId && p.fechaCarga === nuevaFecha &&
         !(p.id === idOriginal && p.fechaCarga === fechaOriginal)
     );
- 
+
     if (duplicado) {
         alert('⚠️ Ya existe una persona con ese ID y fecha de carga.');
         return;
@@ -494,6 +498,7 @@ function agregarPromesa() {
             mensajePP.innerHTML += '¡Promesa agregada con exito!'
             mensajePP.style.color = 'green';
             listaPromesas.unshift(nuevaPromesa);
+            listaPromesasFiltrada.unshift(nuevaPromesa);
             printTablaHTML();
         }
     }
