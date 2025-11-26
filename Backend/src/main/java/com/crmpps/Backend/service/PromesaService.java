@@ -174,7 +174,7 @@ public class PromesaService {
                 .orElseThrow(() -> new NoSuchElementException("No se encontro la promesa con id:" + id));
 
         UsuarioEntity usuario = usuarioRepository.findById(promesaDTO.getOperador())
-                .orElseThrow(() -> new NoSuchElementException("No se encontro al usuario con id:" + promesa.getOperador()));
+                .orElseThrow(() -> new NoSuchElementException("No se encontro al usuario con id:" + promesaDTO.getOperador()));
 
         if (getRolToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
                 !promesa.getOperador().getNombreUsuario().equals(getNombreUsuarioToken(tokenHeader))){
