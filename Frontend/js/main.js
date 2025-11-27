@@ -34,6 +34,34 @@ const token = document.cookie
 
 const datosUsuario = await api.getDatosUsuario(token);
 
+const usuarios = await api.getOperadores(token);
+
+const filtroOperadorInput = document.getElementById("input-filtro-operador");
+const agregarPPOperadorInput = document.getElementById("input-pp-operador");
+
+console.log(datosUsuario.rol);
+
+if (datosUsuario.rol === "SUPERVISOR") {
+    const opcionPP = document.createElement('option');
+    const opcionFiltro = document.createElement('option');
+    opcionPP.value = "-";
+    opcionPP.textContent = "Todos";
+    opcionFiltro.value = "-";
+    opcionFiltro.textContent = "-";
+    filtroOperadorInput.add(opcionPP)
+    agregarPPOperadorInput.add(opcionFiltro);
+}
+usuarios.forEach((usuario, i) => {
+    const opcionPP = document.createElement('option');
+    const opcionFiltro = document.createElement('option');
+    opcionPP.value = usuario.id;
+    opcionPP.textContent = usuario.nombre;
+    opcionFiltro.value = usuario.id;
+    opcionFiltro.textContent = usuario.nombre;
+    agregarPPOperadorInput.add(opcionPP);
+    filtroOperadorInput.add(opcionFiltro);
+})
+
 document.getElementById("nombre-operador-span").textContent = datosUsuario.nombre;
 
 function getFiltros() {
@@ -53,26 +81,32 @@ function getFiltros() {
 
 botonFiltrar.addEventListener('click', () => {
     filtros = getFiltros();
-    console.log(filtros);
+    var query = "?1=1";
     listaPromesasFiltrada = listaPromesas;
     console.log(listaPromesasFiltrada);
     if (!isNaN(filtros.caso)) {
         listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.caso === filtros.caso);
+        query += "&caso=" + filtros.caso;
     }
     if (!isNaN(filtros.id)) {
         listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.id === filtros.id);
+        query += "&usuarioML=" + filtros.id;
     }
     if (filtros.canal != '-') {
         listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.canal === filtros.canal);
+        query += "&canal=" + filtros.canal;
     }
     if (filtros.site != '-') {
         listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.site === filtros.site);
+        query += "&site=" + filtros.site;
     }
     if (filtros.tipoAcuerdo != '-') {
         listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.tipoAcuerdo === filtros.tipoAcuerdo);
+        query += "&tipoAcuerdo=" + filtros.tipoAcuerdo;
     }
     if (filtros.tipoCumplimiento != '-') {
         listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.tipoCumplimiento === filtros.tipoCumplimiento);
+        query += "&tipoCumplimiento=" + filtros.tipoCumplimiento;
     }
 
     if (filtros.fechaCargaDesde != '' && filtros.fechaCargaHasta == '') {
@@ -82,30 +116,54 @@ botonFiltrar.addEventListener('click', () => {
     else if (filtros.fechaCargaDesde == '' && filtros.fechaCargaHasta != '') {
         filtros.fechaCargaDesde = filtros.fechaCargaHasta;
         document.getElementById('input-filtro-fecha-carga-desde').value = filtros.fechaCargaDesde;
-    }
 
-    if (filtros.fechaCargaDesde != '' && filtros.fechaCargaHasta != '') {
+    }
+    else if (filtros.fechaCargaDesde != '' && filtros.fechaCargaHasta != '') {
         var fechaDesde = new Date(filtros.fechaCargaDesde);
         var fechaHasta = new Date(filtros.fechaCargaHasta);
         if (fechaHasta < fechaDesde) {
             fechaHasta = fechaDesde;
             filtros.fechaCargaHasta = filtros.fechaCargaDesde;
             document.getElementById('input-filtro-fecha-carga-hasta').value = filtros.fechaCargaDesde;
+
+
         }
-        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => {
+    }
+    else {
+        const hoy = new Date();
+
+        const mesAntes = new Date();
+        mesAntes.setMonth(hoy.getMonth() - 1);
+
+        const format = (fecha) => {
+            const year = fecha.getFullYear();
+            const month = String(fecha.getMonth() + 1).padStart(2, "0");
+            const day = String(fecha.getDate()).padStart(2, "0");
+            return `${year}-${month}-${day}`;
+        };
+
+        filtros.fechaCargaDesde = format(mesAntes);
+        filtros.fechaCargaHasta = format(hoy);
+        document.getElementById('input-filtro-fecha-carga-hasta').value = filtros.fechaCargaHasta;
+        document.getElementById('input-filtro-fecha-carga-desde').value = filtros.fechaCargaDesde;
+    }
+
+    query += "&fechaCargaDesde=" + filtros.fechaCargaDesde;
+    query += "&fechaCargaHasta=" + filtros.fechaCargaHasta;
+
+    listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => {
             const fechaCarga = new Date(promesa.fechaCarga);
             return fechaCarga >= fechaDesde && fechaCarga <= fechaHasta;
         })
+    if (!isNaN(filtros.operador)) {
+        query += "&operador=" + filtros.operador;
     }
 
     if (filtros.duplica) {
         listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => PromesaDuplica(promesa));
+        query += "&duplica=" + filtros.duplica;
     }
-
-    if (filtros.operador != '-') {
-        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.nombreOperador === filtros.operador);
-    }
-    console.log(listaPromesasFiltrada);
+    console.log(query);
     printTablaHTML();
 })
 
@@ -487,22 +545,28 @@ function agregarPromesa() {
         tipoCumplimiento: document.getElementById("input-pp-cumplimiento").value
     }
 
-    promesaCorrecta = validarPromesa(nuevaPromesa);
+    const promesaCorrecta = validarPromesa(nuevaPromesa);
 
     if (promesaCorrecta) {
-        if (listaPromesas.some(promesa => promesa.id === nuevaPromesa.id && promesa.fechaCarga === nuevaPromesa.fechaCarga)) {
-            mensajePP.innerHTML += 'Ya existe una promesa con el id y la fecha de carga ingresada.'
-            mensajePP.style.color = 'red';
-        }
-        else {
-            mensajePP.innerHTML += '¡Promesa agregada con exito!'
-            mensajePP.style.color = 'green';
-            listaPromesas.unshift(nuevaPromesa);
-            listaPromesasFiltrada.unshift(nuevaPromesa);
-            printTablaHTML();
-        }
+        mensajePP.innerHTML += '¡Promesa agregada con exito!'
+        mensajePP.style.color = 'green';
+        listaPromesas.unshift(nuevaPromesa);
+
+        document.getElementById("input-pp-caso").value = '';
+        document.getElementById("input-pp-id").value = '';
+        document.getElementById("input-pp-canal").value = document.getElementById("input-pp-canal").options[0].value;
+        document.getElementById("input-pp-site").value =  document.getElementById("input-pp-site").options[0].value;
+        document.getElementById("input-pp-monto").value = '';
+        document.getElementById("input-pp-fecha-carga").value = '';
+        document.getElementById("input-pp-fecha-pago").value = '';
+        document.getElementById("input-pp-tipo-acuerdo").value = document.getElementById("input-pp-tipo-acuerdo").options[0].value;
+        document.getElementById("input-pp-operador").value = filtroOperadorInput.options[0].value;
+        document.getElementById("input-pp-cumplimiento").value =  document.getElementById("input-pp-cumplimiento").options[0].value;
+
+        printTablaHTML();
     }
 }
+
 
 function validarPromesa(nuevaPromesa) {
     var sinError = true;
@@ -568,7 +632,7 @@ function validarPromesa(nuevaPromesa) {
         mensajePP.style.color = 'red';
         sinError = false;
     }
-    if (nuevaPromesa.nombreOperador == '') {
+    if (nuevaPromesa.nombreOperador == '-') {
         document.getElementById("input-pp-operador").style.border = '2px solid red';
         mensajePP.innerHTML += 'Ingresar nombre de operador.<br>'
         mensajePP.style.color = 'red';

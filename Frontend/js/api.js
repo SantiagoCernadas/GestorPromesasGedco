@@ -80,3 +80,27 @@ export async function getDatosUsuario(token) {
 
     return responseBody;
 }
+
+export async function getOperadores(token) {
+    var responseBody;
+    await fetch(apiUrl + 'usuario/operadores', {
+        method: 'Get',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        }
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+            responseBody = data;
+        })
+    .catch(error => {
+            console.error('Hubo un problema con la operación fetch:', error);
+        });
+
+    return responseBody;
+}
