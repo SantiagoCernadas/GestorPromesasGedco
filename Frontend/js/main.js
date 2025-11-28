@@ -137,7 +137,7 @@ async function filtrarPromesas(){
         const hoy = new Date();
 
         const mesAntes = new Date();
-        mesAntes.setMonth(hoy.getMonth() - 1);
+        mesAntes.setMonth(hoy.getMonth() - 3);
 
         const format = (fecha) => {
             const year = fecha.getFullYear();
@@ -163,11 +163,8 @@ async function filtrarPromesas(){
         query += "&duplica=" + filtros.duplica;
     }
 
-   
-    console.log(query);
     const PromesasFiltros = await api.getPromesas(token,query);
     listaPromesas = PromesasFiltros;
-    console.log(listaPromesas)
     printTablaHTML();
 }
 
