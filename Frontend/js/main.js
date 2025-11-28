@@ -16,21 +16,21 @@ const botonFiltrar = document.getElementById('boton-filtrar');
 let paginaActual = 1;
 const cantFilasPagina = 8;
 
-var idOriginal = 0;
-var fechaOriginal = '';
+let listaPromesas;
 
 const modal = document.getElementById('modal-editar-pp');
 const botonGuardarEditar = document.getElementById('boton-guardar-editar');
-
-var listaPromesas = tablaPrueba();
-var listaPromesasFiltrada = listaPromesas;
+let idEdit;
 
 var filtros = getFiltros();
+
 
 const token = document.cookie
     .split("; ")
     .find(row => row.startsWith("session_token="))
     ?.split("=")[1];
+
+
 
 const datosUsuario = await api.getDatosUsuario(token);
 
@@ -38,31 +38,43 @@ const usuarios = await api.getOperadores(token);
 
 const filtroOperadorInput = document.getElementById("input-filtro-operador");
 const agregarPPOperadorInput = document.getElementById("input-pp-operador");
+const editarPPOperadorInput = document.getElementById("input-pp-operador-edit");
 
-console.log(datosUsuario.rol);
+
 
 if (datosUsuario.rol === "SUPERVISOR") {
     const opcionPP = document.createElement('option');
     const opcionFiltro = document.createElement('option');
+    const opcionEditar = document.createElement('option');
     opcionPP.value = "-";
     opcionPP.textContent = "Todos";
     opcionFiltro.value = "-";
     opcionFiltro.textContent = "-";
+    opcionEditar.textContent = "-";
+    opcionEditar.value = "-";
     filtroOperadorInput.add(opcionPP)
     agregarPPOperadorInput.add(opcionFiltro);
+    editarPPOperadorInput.add(opcionEditar);
 }
 usuarios.forEach((usuario, i) => {
     const opcionPP = document.createElement('option');
     const opcionFiltro = document.createElement('option');
+    const opcionEditar = document.createElement('option');
     opcionPP.value = usuario.id;
     opcionPP.textContent = usuario.nombre;
     opcionFiltro.value = usuario.id;
     opcionFiltro.textContent = usuario.nombre;
+    opcionEditar.value = usuario.id;
+    opcionEditar.textContent = usuario.nombre;
     agregarPPOperadorInput.add(opcionPP);
     filtroOperadorInput.add(opcionFiltro);
+    editarPPOperadorInput.add(opcionEditar);
 })
 
 document.getElementById("nombre-operador-span").textContent = datosUsuario.nombre;
+
+filtrarPromesas();
+
 
 function getFiltros() {
     return {
@@ -79,33 +91,27 @@ function getFiltros() {
     };
 }
 
-botonFiltrar.addEventListener('click', () => {
+botonFiltrar.addEventListener('click',filtrarPromesas)
+
+async function filtrarPromesas(){
     filtros = getFiltros();
     var query = "?1=1";
-    listaPromesasFiltrada = listaPromesas;
-    console.log(listaPromesasFiltrada);
     if (!isNaN(filtros.caso)) {
-        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.caso === filtros.caso);
         query += "&caso=" + filtros.caso;
     }
     if (!isNaN(filtros.id)) {
-        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.id === filtros.id);
         query += "&usuarioML=" + filtros.id;
     }
     if (filtros.canal != '-') {
-        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.canal === filtros.canal);
         query += "&canal=" + filtros.canal;
     }
     if (filtros.site != '-') {
-        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.site === filtros.site);
         query += "&site=" + filtros.site;
     }
     if (filtros.tipoAcuerdo != '-') {
-        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.tipoAcuerdo === filtros.tipoAcuerdo);
         query += "&tipoAcuerdo=" + filtros.tipoAcuerdo;
     }
     if (filtros.tipoCumplimiento != '-') {
-        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.tipoCumplimiento === filtros.tipoCumplimiento);
         query += "&tipoCumplimiento=" + filtros.tipoCumplimiento;
     }
 
@@ -125,8 +131,6 @@ botonFiltrar.addEventListener('click', () => {
             fechaHasta = fechaDesde;
             filtros.fechaCargaHasta = filtros.fechaCargaDesde;
             document.getElementById('input-filtro-fecha-carga-hasta').value = filtros.fechaCargaDesde;
-
-
         }
     }
     else {
@@ -151,35 +155,20 @@ botonFiltrar.addEventListener('click', () => {
     query += "&fechaCargaDesde=" + filtros.fechaCargaDesde;
     query += "&fechaCargaHasta=" + filtros.fechaCargaHasta;
 
-    listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => {
-            const fechaCarga = new Date(promesa.fechaCarga);
-            return fechaCarga >= fechaDesde && fechaCarga <= fechaHasta;
-        })
     if (!isNaN(filtros.operador)) {
         query += "&operador=" + filtros.operador;
     }
 
     if (filtros.duplica) {
-        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => PromesaDuplica(promesa));
         query += "&duplica=" + filtros.duplica;
     }
+
+   
     console.log(query);
+    const PromesasFiltros = await api.getPromesas(token,query);
+    listaPromesas = PromesasFiltros;
+    console.log(listaPromesas)
     printTablaHTML();
-})
-
-
-function PromesaDuplica(promesa) {
-    /*Requisitos para que una promesa sea "duplicada" (mas valor):
-    
-    MLA= Monto mayor a 250.000
-    MLM= Monto mayor a 250.000
-    MLC= Monto mayor a 250.000
-    */
-    if (promesa.site == 'MLA' && promesa.monto >= 250000) return true;
-    if (promesa.site == 'MLM' && promesa.monto >= 5000) return true;
-    if (promesa.site == 'MLC' && promesa.monto >= 200000) return true;
-
-    return false;
 }
 
 const formatFecha = new Intl.DateTimeFormat("es", {
@@ -196,7 +185,7 @@ const formateadorDeMoneda = new Intl.NumberFormat('es-AR', {
 });
 
 const tabla = document.querySelector('.tabla').querySelector('tbody');
-printTablaHTML();
+
 
 botonContenedorAgregarPP.addEventListener('click', () => {
     if (contenedorAgregarPP.style.display == 'flex') {
@@ -255,23 +244,23 @@ function printTablaHTML() {
     const inicio = (paginaActual - 1) * cantFilasPagina;
     const fin = inicio + cantFilasPagina;
 
-    const ppsPaginaActual = listaPromesasFiltrada.slice(inicio, fin);
+    const ppsPaginaActual = listaPromesas.slice(inicio, fin);
 
 
 
     ppsPaginaActual.forEach((filaTabla, i) => {
         const fila = document.createElement('tr');
         fila.id = 'tabla-fila-' + i;
-        insertarDato(fila, document.createElement('td'), document.createElement('p'), filaTabla.caso, 'columna');
-        insertarDato(fila, document.createElement('td'), document.createElement('p'), filaTabla.id);
+        insertarDato(fila, document.createElement('td'), document.createElement('p'), filaTabla.numCaso, 'columna');
+        insertarDato(fila, document.createElement('td'), document.createElement('p'), filaTabla.idUsuarioML);
         insertarCanal(fila, document.createElement('td'), document.createElement('p'), filaTabla.canal);
         insertarSite(fila, document.createElement('td'), document.createElement('p'), filaTabla.site);
         insertarMonto(fila, document.createElement('td'), document.createElement('p'), filaTabla.monto);
         insertarFecha(fila, document.createElement('td'), document.createElement('p'), filaTabla.fechaCarga);
         insertarFecha(fila, document.createElement('td'), document.createElement('p'), filaTabla.fechaPago);
         insertarTipoAcuerdo(fila, document.createElement('td'), document.createElement('p'), filaTabla.tipoAcuerdo);
-        insertarDato(fila, document.createElement('td'), document.createElement('p'), filaTabla.nombreOperador);
-        insertarTipoCumplimiento(fila, document.createElement('td'), document.createElement('p'), filaTabla.tipoCumplimiento);
+        insertarDato(fila, document.createElement('td'), document.createElement('p'), filaTabla.operador);
+        insertarTipoCumplimiento(fila, document.createElement('td'), document.createElement('p'), filaTabla.cumplimiento);
         const columnaBotones = document.createElement('td');
         const botonEditar = document.createElement('button');
         botonEditar.innerHTML = "Editar";
@@ -289,10 +278,9 @@ function printTablaHTML() {
         botonEliminar.addEventListener('click', () => {
             const fila = document.getElementById('tabla-fila-' + i);
             fila.remove();
-            listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => !(promesa.id === filaTabla.id && promesa.fechaCarga === filaTabla.fechaCarga));
             listaPromesas = listaPromesas.filter(promesa => !(promesa.id === filaTabla.id && promesa.fechaCarga === filaTabla.fechaCarga));
             console.log(listaPromesas.length);
-            console.log(listaPromesasFiltrada.length);
+            console.log(listaPromesas.length);
             alert("Promesa con id: " + filaTabla.id + " y fecha de carga: " + filaTabla.fechaCarga + ' eliminada correctamente.');
             const totalPaginas = Math.ceil(listaPromesas.length / cantFilasPagina);
             if (paginaActual > totalPaginas) {
@@ -301,9 +289,9 @@ function printTablaHTML() {
             printTablaHTML();
         });
         botonEditar.addEventListener('click', () => {
-            //const fila = document.getElementById('tabla-fila-'+i);
-            document.getElementById("input-pp-caso-edit").value = filaTabla.caso;
-            document.getElementById("input-pp-id-edit").value = filaTabla.id;
+            idEdit = filaTabla.id;
+            document.getElementById("input-pp-caso-edit").value = filaTabla.numCaso;
+            document.getElementById("input-pp-id-edit").value = filaTabla.idUsuarioML;
             document.getElementById("input-pp-canal-edit").value = filaTabla.canal;
             document.getElementById("input-pp-site-edit").value = filaTabla.site;
             document.getElementById("input-pp-monto-edit").value = filaTabla.monto;
@@ -311,12 +299,8 @@ function printTablaHTML() {
             document.getElementById("input-pp-fecha-carga-edit").value = filaTabla.fechaCarga;
             document.getElementById("input-pp-fecha-pago-edit").value = filaTabla.fechaPago;
             document.getElementById("input-pp-tipo-acuerdo-edit").value = filaTabla.tipoAcuerdo;
-            document.getElementById("input-pp-operador-edit").value = filaTabla.nombreOperador;
-            document.getElementById("input-pp-cumplimiento-edit").value = filaTabla.tipoCumplimiento;
-
-            fechaOriginal = filaTabla.fechaCarga;
-            idOriginal = filaTabla.id;
-
+            document.getElementById("input-pp-operador-edit").value = getIdOperador(filaTabla.operador);
+            document.getElementById("input-pp-cumplimiento-edit").value = filaTabla.cumplimiento;
             modal.showModal();
         });
 
@@ -325,16 +309,22 @@ function printTablaHTML() {
 
 
 }
+
+function getIdOperador(nombreOperador){
+    return usuarios.filter(u => u.nombre == nombreOperador)[0].id;
+}
+
+
 function renderPaginacion() {
     paginacionDiv.innerHTML = '';
 
-    const totalPaginas = Math.ceil(listaPromesasFiltrada.length / cantFilasPagina);
+    const totalPaginas = Math.ceil(listaPromesas.length / cantFilasPagina);
 
     if (paginaActual > totalPaginas) {
         paginaActual = totalPaginas
     }
     else if (paginaActual <= 0) {
-        if (listaPromesasFiltrada.length >= 1) {
+        if (listaPromesas.length >= 1) {
             paginaActual = 1;
         }
     }
@@ -367,8 +357,9 @@ botonGuardarEditar.addEventListener('click', () => {
 
 
     const promesaEdit = {
+        id: idEdit,
         caso: parseInt(document.getElementById("input-pp-caso-edit").value),
-        id: parseInt(document.getElementById("input-pp-id-edit").value),
+        idUsuarioML: parseInt(document.getElementById("input-pp-id-edit").value),
         canal: document.getElementById("input-pp-canal-edit").value,
         site: document.getElementById("input-pp-site-edit").value,
         monto: parseMonto(document.getElementById("input-pp-monto-edit").value),
@@ -379,31 +370,20 @@ botonGuardarEditar.addEventListener('click', () => {
         tipoCumplimiento: document.getElementById("input-pp-cumplimiento-edit").value
     }
 
-    const nuevoId = promesaEdit.id;
-    const nuevaFecha = promesaEdit.fechaCarga;
+    console.log(promesaEdit.id);
 
 
-    promesaCorrecta = validarPromesa(promesaEdit);
+    let promesaCorrecta = validarPromesa(promesaEdit);
 
     if (!promesaCorrecta) {
         alert('ERROR AL GENERAR LA NUEVA PROMESA.');
         return;
     }
 
-    const duplicado = listaPromesas.some(p =>
-        p.id === nuevoId && p.fechaCarga === nuevaFecha &&
-        !(p.id === idOriginal && p.fechaCarga === fechaOriginal)
-    );
-
-    if (duplicado) {
-        alert('⚠️ Ya existe una persona con ese ID y fecha de carga.');
-        return;
-    }
-
-    var promesa = listaPromesas.find(p => p.id === idOriginal && p.fechaCarga === fechaOriginal);
+    var promesa = listaPromesas.find(p => p.id === promesaEdit.id);
     if (promesa) {
-        promesa.caso = promesaEdit.caso;
-        promesa.id = promesaEdit.id;
+        promesa.numCaso = promesaEdit.caso;
+        promesa.idUsuarioML = promesaEdit.id;
         promesa.canal = promesaEdit.canal;
         promesa.site = promesaEdit.site;
         promesa.monto = promesaEdit.monto;
@@ -411,13 +391,15 @@ botonGuardarEditar.addEventListener('click', () => {
         promesa.fechaPago = promesaEdit.fechaPago;
         promesa.tipoAcuerdo = promesaEdit.tipoAcuerdo;
         promesa.nombreOperador = promesaEdit.nombreOperador;
-        promesa.tipoCumplimiento = promesaEdit.tipoCumplimiento;
+        promesa.cumplimiento = promesaEdit.tipoCumplimiento;
     }
 
     alert('PP Modificada.');
     modal.close();
     printTablaHTML();
 });
+
+
 
 document.getElementById('boton-cancelar-editar').addEventListener('click', () => {
     modal.close();
@@ -718,21 +700,23 @@ function tablaPrueba() {
     //Formato Fecha: YYYY-MM-DD
     //Formato monto: Pesos Argentinos.
     return [
-        {
+        {   
+            id:1,
             caso: 123141243,
-            id: 10000,
+            idUsuarioML: 10000,
             canal: "CHAT",
             site: "MLA",
             monto: 852.42,
             fechaCarga: "2025-10-13",
             fechaPago: "2025-10-14",
             tipoAcuerdo: "Condonación",
-            nombreOperador: "Pepito92",
+            nombreOperador: "Jose",
             tipoCumplimiento: "En curso"
         },
-        {
+        {   
+            id:2,
             caso: 123141243,
-            id: 20000,
+            idUsuarioML: 20000,
             canal: "OFFLINE",
             site: "MLM",
             monto: 5000,
@@ -742,9 +726,10 @@ function tablaPrueba() {
             nombreOperador: "Santiago",
             tipoCumplimiento: "Cumplida"
         },
-        {
+        {   
+            id:3,
             caso: 543636364,
-            id: 30000,
+            idUsuarioML: 30000,
             canal: "C2C",
             site: "MLC",
             monto: 1000000,
@@ -754,33 +739,36 @@ function tablaPrueba() {
             nombreOperador: "Santiago",
             tipoCumplimiento: "Incumplida"
         },
-        {
+        {   
+            id:4,
             caso: 123141243,
-            id: 40000,
+            idUsuarioML: 40000,
             canal: "CHAT",
             site: "MLA",
             monto: 852.42,
             fechaCarga: "2025-10-16",
             fechaPago: "2025-10-20",
             tipoAcuerdo: "Condonación",
-            nombreOperador: "Pepito92",
+            nombreOperador: "Jose",
             tipoCumplimiento: "En curso"
         },
-        {
+        {   
+            id:5,
             caso: 123141243,
-            id: 50000,
+            idUsuarioML: 50000,
             canal: "OFFLINE",
             site: "MLM",
             monto: 3000,
             fechaCarga: "2025-10-17",
             fechaPago: "2025-10-17",
             tipoAcuerdo: "Pago parcial",
-            nombreOperador: "Santiago",
+            nombreOperador: "Jose",
             tipoCumplimiento: "Cumplida"
         },
         {
+            id:6,
             caso: 543636364,
-            id: 60000,
+            idUsuarioML: 60000,
             canal: "C2C",
             site: "MLC",
             monto: 1000000,
@@ -791,20 +779,22 @@ function tablaPrueba() {
             tipoCumplimiento: "Incumplida"
         },
         {
+            id:7,
             caso: 123141243,
-            id: 70000,
+            idUsuarioML: 70000,
             canal: "CHAT",
             site: "MLA",
             monto: 500000,
             fechaCarga: "2025-10-13",
             fechaPago: "2025-10-14",
             tipoAcuerdo: "Condonación",
-            nombreOperador: "Pepito92",
+            nombreOperador: "Jose",
             tipoCumplimiento: "En curso"
         },
         {
+            id:8,
             caso: 123141243,
-            id: 80000,
+            idUsuarioML: 80000,
             canal: "OFFLINE",
             site: "MLM",
             monto: 5000,
@@ -815,8 +805,9 @@ function tablaPrueba() {
             tipoCumplimiento: "Cumplida"
         },
         {
+            id:9,
             caso: 543636364,
-            id: 90000,
+            idUsuarioML: 90000,
             canal: "C2C",
             site: "MLC",
             monto: 1000000,
