@@ -503,7 +503,7 @@ function insertarDato(fila, columna, valorColumna, dato) {
 }
 
 
-function agregarPromesa() {
+async function agregarPromesa() {
     mensajePP.innerHTML = '';
     //1px solid black;
     document.getElementById("input-pp-caso").style.border = '1px solid black';
@@ -530,15 +530,27 @@ function agregarPromesa() {
         cumplimiento: document.getElementById("input-pp-cumplimiento").value
     }
 
+    
     const promesaCorrecta = validarPromesa(nuevaPromesa);
 
     if (promesaCorrecta) {
+        try{
+            console.log(nuevaPromesa)
+            await api.agregarPromesa(token,nuevaPromesa);
+        }
+        catch(err){
+            mensajePP.innerHTML += 'No fue posible generar la promesa. ' + err.message;
+            return;
+        }
+        
+
         mensajePP.innerHTML += '¡Promesa agregada con exito!'
         mensajePP.style.color = 'green';
 
-        nuevaPromesa.operador =getNombreOperador(nuevaPromesa.operador);
-        listaPromesas.unshift(nuevaPromesa);
 
+
+        //nuevaPromesa.operador = getNombreOperador(nuevaPromesa.operador);
+        listaPromesas.unshift(nuevaPromesa);
         document.getElementById("input-pp-caso").value = '';
         document.getElementById("input-pp-id").value = '';
         document.getElementById("input-pp-canal").value = document.getElementById("input-pp-canal").options[0].value;

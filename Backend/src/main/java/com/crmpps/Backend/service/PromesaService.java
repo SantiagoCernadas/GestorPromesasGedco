@@ -31,7 +31,7 @@ public class PromesaService {
     @Autowired
     private JwtUtils jwtUtils;
 
-    public PromesaEntity agregarPromesa(Map<String, String> headers, @Valid PromesaDTO promesaDTO) throws NoAutorizadoException {
+    public PromesaResponse agregarPromesa(Map<String, String> headers, @Valid PromesaDTO promesaDTO) throws NoAutorizadoException {
         String tokenHeader = headers.get("authorization");
         UsuarioEntity usuarioEntity = usuarioRepository.findById(promesaDTO.getOperador())
                 .orElseThrow(() -> new NoSuchElementException("No se encontro al usuario con id: " + promesaDTO.getOperador()));
@@ -56,7 +56,21 @@ public class PromesaService {
 
         promesaRepository.save(promesaEntity);
 
-        return promesaEntity;
+        PromesaResponse response = PromesaResponse.builder()
+                .id(promesaEntity.getId())
+                .idUsuarioML(promesaEntity.getIdUsuarioML())
+                .numCaso(promesaEntity.getNumCaso())
+                .monto(promesaEntity.getMonto())
+                .site(promesaEntity.getSite())
+                .canal(promesaEntity.getCanal())
+                .tipoAcuerdo(promesaEntity.getTipoAcuerdo())
+                .cumplimiento(promesaEntity.getCumplimiento())
+                .fechaCarga(promesaEntity.getFechaCarga())
+                .fechaPago(promesaEntity.getFechaPago())
+                .operador(promesaEntity.getOperador().getNombre())
+                .build();
+
+        return response;
     }
 
     public List<PromesaResponse> getPromesasOperadorFiltros(Map<String, String> headers,

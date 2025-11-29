@@ -130,3 +130,28 @@ export async function getPromesas(token,query) {
     return responseBody;
 }
 
+export async function agregarPromesa(token,promesa) {
+    var responseBody;
+    await fetch(apiUrl + 'promesa',{
+        method: 'POST',
+        body: JSON.stringify(promesa),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        }
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+            responseBody = data;
+        })
+    .catch(error => {
+            console.error('Hubo un problema con la operación fetch:', error);
+        });
+
+    return responseBody;
+}
+

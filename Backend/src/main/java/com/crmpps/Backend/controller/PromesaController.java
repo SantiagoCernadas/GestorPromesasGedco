@@ -31,7 +31,7 @@ public class PromesaController {
 
     @Operation(summary = "Agregar una nueva promesa.")
     @PostMapping()
-    public ResponseEntity<PromesaEntity> agregarPromesa(@RequestHeader Map<String,String> headers,@Valid @RequestBody PromesaDTO promesaDTO) throws NoAutorizadoException {
+    public ResponseEntity<PromesaResponse> agregarPromesa(@RequestHeader Map<String,String> headers,@Valid @RequestBody PromesaDTO promesaDTO) throws NoAutorizadoException {
         return ResponseEntity.status(HttpStatus.CREATED).body(promesaService.agregarPromesa(headers,promesaDTO));
     }
 
