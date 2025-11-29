@@ -91,9 +91,9 @@ function getFiltros() {
     };
 }
 
-botonFiltrar.addEventListener('click',filtrarPromesas)
+botonFiltrar.addEventListener('click', filtrarPromesas)
 
-async function filtrarPromesas(){
+async function filtrarPromesas() {
     filtros = getFiltros();
     var query = "?1=1";
     if (!isNaN(filtros.caso)) {
@@ -163,7 +163,7 @@ async function filtrarPromesas(){
         query += "&duplica=" + filtros.duplica;
     }
 
-    const PromesasFiltros = await api.getPromesas(token,query);
+    const PromesasFiltros = await api.getPromesas(token, query);
     listaPromesas = PromesasFiltros;
     printTablaHTML();
 }
@@ -277,17 +277,7 @@ function printTablaHTML() {
         tabla.appendChild(fila);
 
         botonEliminar.addEventListener('click', () => {
-            const fila = document.getElementById('tabla-fila-' + i);
-            fila.remove();
-            listaPromesas = listaPromesas.filter(promesa => !(promesa.id === filaTabla.id && promesa.fechaCarga === filaTabla.fechaCarga));
-            console.log(listaPromesas.length);
-            console.log(listaPromesas.length);
-            alert("Promesa con id: " + filaTabla.id + " y fecha de carga: " + filaTabla.fechaCarga + ' eliminada correctamente.');
-            const totalPaginas = Math.ceil(listaPromesas.length / cantFilasPagina);
-            if (paginaActual > totalPaginas) {
-                paginaActual = totalPaginas
-            };
-            printTablaHTML();
+            eliminarPromesa(filaTabla);
         });
         botonEditar.addEventListener('click', () => {
             idEdit = filaTabla.id;
@@ -311,11 +301,28 @@ function printTablaHTML() {
 
 }
 
-function getIdOperador(nombreOperador){
+async function eliminarPromesa(filaTabla){
+        try {
+            await api.eliminarPromesa(token, filaTabla.id);
+            listaPromesas = listaPromesas.filter(promesa => !(promesa.id === filaTabla.id && promesa.fechaCarga === filaTabla.fechaCarga));
+            alert("Promesa con id: " + filaTabla.id + 'eliminada correctamente.');
+            const totalPaginas = Math.ceil(listaPromesas.length / cantFilasPagina);
+            if (paginaActual > totalPaginas) {
+                paginaActual = totalPaginas
+            };
+            printTablaHTML();
+        }
+        catch (err) {
+            alert("No fue posible eliminar la promesa: "+ err.message);
+            return;
+        }
+}
+
+function getIdOperador(nombreOperador) {
     return usuarios.filter(u => u.nombre == nombreOperador)[0].id;
 }
 
-function getNombreOperador(idOperador){
+function getNombreOperador(idOperador) {
     return usuarios.filter(u => u.id == idOperador)[0].nombre;
 }
 
@@ -357,13 +364,12 @@ function crearBoton(texto, pagina, deshabilitado = false) {
     return btn;
 };
 
-botonGuardarEditar.addEventListener('click', () => {
+botonGuardarEditar.addEventListener('click', async () => {
 
 
 
     const promesaEdit = {
-        id: idEdit,
-        caso: parseInt(document.getElementById("input-pp-caso-edit").value),
+        numCaso: parseInt(document.getElementById("input-pp-caso-edit").value),
         idUsuarioML: parseInt(document.getElementById("input-pp-id-edit").value),
         canal: document.getElementById("input-pp-canal-edit").value,
         site: document.getElementById("input-pp-site-edit").value,
@@ -383,9 +389,17 @@ botonGuardarEditar.addEventListener('click', () => {
         return;
     }
 
-    var promesa = listaPromesas.find(p => p.id === promesaEdit.id);
+    try {
+        await api.modificarPromesa(token,idEdit,promesaEdit);
+    }
+    catch (err) {
+        alert('No fue posible generar la promesa. ' + err.message);
+        return;
+    }
+
+    var promesa = listaPromesas.find(p => p.id === idEdit);
     if (promesa) {
-        promesa.numCaso = promesaEdit.caso;
+        promesa.numCaso = promesaEdit.numCaso;
         promesa.idUsuarioML = promesaEdit.idUsuarioML;
         promesa.canal = promesaEdit.canal;
         promesa.site = promesaEdit.site;
@@ -530,37 +544,36 @@ async function agregarPromesa() {
         cumplimiento: document.getElementById("input-pp-cumplimiento").value
     }
 
-    
+
     const promesaCorrecta = validarPromesa(nuevaPromesa);
 
     if (promesaCorrecta) {
-        try{
-            console.log(nuevaPromesa)
-            await api.agregarPromesa(token,nuevaPromesa);
+        try {
+            await api.agregarPromesa(token, nuevaPromesa);
         }
-        catch(err){
+        catch (err) {
             mensajePP.innerHTML += 'No fue posible generar la promesa. ' + err.message;
             return;
         }
-        
+
 
         mensajePP.innerHTML += '¡Promesa agregada con exito!'
         mensajePP.style.color = 'green';
 
 
 
-        //nuevaPromesa.operador = getNombreOperador(nuevaPromesa.operador);
+        nuevaPromesa.operador = getNombreOperador(nuevaPromesa.operador);
         listaPromesas.unshift(nuevaPromesa);
         document.getElementById("input-pp-caso").value = '';
         document.getElementById("input-pp-id").value = '';
         document.getElementById("input-pp-canal").value = document.getElementById("input-pp-canal").options[0].value;
-        document.getElementById("input-pp-site").value =  document.getElementById("input-pp-site").options[0].value;
+        document.getElementById("input-pp-site").value = document.getElementById("input-pp-site").options[0].value;
         document.getElementById("input-pp-monto").value = '';
         document.getElementById("input-pp-fecha-carga").value = '';
         document.getElementById("input-pp-fecha-pago").value = '';
         document.getElementById("input-pp-tipo-acuerdo").value = document.getElementById("input-pp-tipo-acuerdo").options[0].value;
         document.getElementById("input-pp-operador").value = filtroOperadorInput.options[0].value;
-        document.getElementById("input-pp-cumplimiento").value =  document.getElementById("input-pp-cumplimiento").options[0].value;
+        document.getElementById("input-pp-cumplimiento").value = document.getElementById("input-pp-cumplimiento").options[0].value;
 
         printTablaHTML();
     }

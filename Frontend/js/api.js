@@ -155,3 +155,53 @@ export async function agregarPromesa(token,promesa) {
     return responseBody;
 }
 
+export async function modificarPromesa(token,id,promesa) {
+    var responseBody;
+    await fetch(apiUrl + 'promesa/'+id,{
+        method: 'PUT',
+        body: JSON.stringify(promesa),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        }
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+            responseBody = data;
+        })
+    .catch(error => {
+            console.error('Hubo un problema con la operación fetch:', error);
+        });
+
+    return responseBody;
+}
+
+
+export async function eliminarPromesa(token,id) {
+    var responseBody;
+    await fetch(apiUrl + 'promesa/'+id,{
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        }
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+            responseBody = data;
+        })
+    .catch(error => {
+            console.error('Hubo un problema con la operación fetch:', error);
+        });
+
+    return responseBody;
+}
+

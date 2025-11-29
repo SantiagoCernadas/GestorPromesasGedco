@@ -67,10 +67,10 @@ public class PromesaController {
     }
 
     @Operation(summary = "Modificar una promesa por ID")
-    @PatchMapping("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity <PromesaResponse> modificarPromesa(@RequestHeader Map<String,String> headers,
                                                              @PathVariable Long id,
-                                                             @RequestBody PromesaDTO promesaDTO) throws NoAutorizadoException {
+                                                             @Valid @RequestBody PromesaDTO promesaDTO) throws NoAutorizadoException {
         return ResponseEntity.ok(promesaService.modificarPromesa(headers,id,promesaDTO));
     }
 
