@@ -217,9 +217,13 @@ botonAgregarPromesa.addEventListener('click', () => {
     agregarPromesa();
 })
 
+
+
+/*
 botonAgregarPromesaExcel.addEventListener('click', () => {
     alert("Proximamente");
 })
+*/
 
 botonCerrarSesion.addEventListener('click', () => {
     document.cookie = "session_token=; path=/; max-age=0;"
@@ -311,6 +315,10 @@ function getIdOperador(nombreOperador){
     return usuarios.filter(u => u.nombre == nombreOperador)[0].id;
 }
 
+function getNombreOperador(idOperador){
+    return usuarios.filter(u => u.id == idOperador)[0].nombre;
+}
+
 
 function renderPaginacion() {
     paginacionDiv.innerHTML = '';
@@ -363,11 +371,9 @@ botonGuardarEditar.addEventListener('click', () => {
         fechaCarga: document.getElementById("input-pp-fecha-carga-edit").value,
         fechaPago: document.getElementById("input-pp-fecha-pago-edit").value,
         tipoAcuerdo: document.getElementById("input-pp-tipo-acuerdo-edit").value,
-        nombreOperador: document.getElementById("input-pp-operador-edit").value,
-        tipoCumplimiento: document.getElementById("input-pp-cumplimiento-edit").value
+        operador: parseInt(document.getElementById("input-pp-operador-edit").value),
+        cumplimiento: document.getElementById("input-pp-cumplimiento-edit").value
     }
-
-    console.log(promesaEdit.id);
 
 
     let promesaCorrecta = validarPromesa(promesaEdit);
@@ -380,15 +386,15 @@ botonGuardarEditar.addEventListener('click', () => {
     var promesa = listaPromesas.find(p => p.id === promesaEdit.id);
     if (promesa) {
         promesa.numCaso = promesaEdit.caso;
-        promesa.idUsuarioML = promesaEdit.id;
+        promesa.idUsuarioML = promesaEdit.idUsuarioML;
         promesa.canal = promesaEdit.canal;
         promesa.site = promesaEdit.site;
         promesa.monto = promesaEdit.monto;
         promesa.fechaCarga = promesaEdit.fechaCarga;
         promesa.fechaPago = promesaEdit.fechaPago;
         promesa.tipoAcuerdo = promesaEdit.tipoAcuerdo;
-        promesa.nombreOperador = promesaEdit.nombreOperador;
-        promesa.cumplimiento = promesaEdit.tipoCumplimiento;
+        promesa.operador = getNombreOperador(promesaEdit.operador);
+        promesa.cumplimiento = promesaEdit.cumplimiento;
     }
 
     alert('PP Modificada.');
@@ -512,16 +518,16 @@ function agregarPromesa() {
     document.getElementById("input-pp-cumplimiento").style.border = '1px solid black';
 
     const nuevaPromesa = {
-        caso: parseInt(document.getElementById("input-pp-caso").value),
-        id: parseInt(document.getElementById("input-pp-id").value),
+        numCaso: parseInt(document.getElementById("input-pp-caso").value),
+        idUsuarioML: parseInt(document.getElementById("input-pp-id").value),
         canal: document.getElementById("input-pp-canal").value,
         site: document.getElementById("input-pp-site").value,
         monto: parseMonto(document.getElementById("input-pp-monto").value),
         fechaCarga: document.getElementById("input-pp-fecha-carga").value,
         fechaPago: document.getElementById("input-pp-fecha-pago").value,
         tipoAcuerdo: document.getElementById("input-pp-tipo-acuerdo").value,
-        nombreOperador: document.getElementById("input-pp-operador").value,
-        tipoCumplimiento: document.getElementById("input-pp-cumplimiento").value
+        operador: parseInt(document.getElementById("input-pp-operador").value),
+        cumplimiento: document.getElementById("input-pp-cumplimiento").value
     }
 
     const promesaCorrecta = validarPromesa(nuevaPromesa);
@@ -529,6 +535,8 @@ function agregarPromesa() {
     if (promesaCorrecta) {
         mensajePP.innerHTML += '¡Promesa agregada con exito!'
         mensajePP.style.color = 'green';
+
+        nuevaPromesa.operador =getNombreOperador(nuevaPromesa.operador);
         listaPromesas.unshift(nuevaPromesa);
 
         document.getElementById("input-pp-caso").value = '';
@@ -549,13 +557,13 @@ function agregarPromesa() {
 
 function validarPromesa(nuevaPromesa) {
     var sinError = true;
-    if (Number.isNaN(nuevaPromesa.caso)) {
+    if (Number.isNaN(nuevaPromesa.numCaso)) {
         document.getElementById("input-pp-caso").style.border = '2px solid red';
         mensajePP.innerHTML += 'Ingresar Numero de caso. <br>'
         mensajePP.style.color = 'red';
         sinError = false;
     }
-    if (Number.isNaN(nuevaPromesa.id)) {
+    if (Number.isNaN(nuevaPromesa.idUsuarioML)) {
         document.getElementById("input-pp-id").style.border = '2px solid red';
         mensajePP.innerHTML += 'Ingresar ID.<br>'
         mensajePP.style.color = 'red';
@@ -611,7 +619,7 @@ function validarPromesa(nuevaPromesa) {
         mensajePP.style.color = 'red';
         sinError = false;
     }
-    if (nuevaPromesa.nombreOperador == '-') {
+    if (Number.isNaN(nuevaPromesa.operador)) {
         document.getElementById("input-pp-operador").style.border = '2px solid red';
         mensajePP.innerHTML += 'Ingresar nombre de operador.<br>'
         mensajePP.style.color = 'red';
@@ -690,129 +698,4 @@ function diferenciaEnDias(fecha1, fecha2) {
     const diffDias = diffMs / (1000 * 60 * 60 * 24);
 
     return diffDias;
-}
-
-
-function tablaPrueba() {
-    //Formato Fecha: YYYY-MM-DD
-    //Formato monto: Pesos Argentinos.
-    return [
-        {   
-            id:1,
-            caso: 123141243,
-            idUsuarioML: 10000,
-            canal: "CHAT",
-            site: "MLA",
-            monto: 852.42,
-            fechaCarga: "2025-10-13",
-            fechaPago: "2025-10-14",
-            tipoAcuerdo: "Condonación",
-            nombreOperador: "Jose",
-            tipoCumplimiento: "En curso"
-        },
-        {   
-            id:2,
-            caso: 123141243,
-            idUsuarioML: 20000,
-            canal: "OFFLINE",
-            site: "MLM",
-            monto: 5000,
-            fechaCarga: "2025-10-14",
-            fechaPago: "2025-10-14",
-            tipoAcuerdo: "Pago parcial",
-            nombreOperador: "Santiago",
-            tipoCumplimiento: "Cumplida"
-        },
-        {   
-            id:3,
-            caso: 543636364,
-            idUsuarioML: 30000,
-            canal: "C2C",
-            site: "MLC",
-            monto: 1000000,
-            fechaCarga: "2025-10-15",
-            fechaPago: "2025-10-16",
-            tipoAcuerdo: "Parcelamento",
-            nombreOperador: "Santiago",
-            tipoCumplimiento: "Incumplida"
-        },
-        {   
-            id:4,
-            caso: 123141243,
-            idUsuarioML: 40000,
-            canal: "CHAT",
-            site: "MLA",
-            monto: 852.42,
-            fechaCarga: "2025-10-16",
-            fechaPago: "2025-10-20",
-            tipoAcuerdo: "Condonación",
-            nombreOperador: "Jose",
-            tipoCumplimiento: "En curso"
-        },
-        {   
-            id:5,
-            caso: 123141243,
-            idUsuarioML: 50000,
-            canal: "OFFLINE",
-            site: "MLM",
-            monto: 3000,
-            fechaCarga: "2025-10-17",
-            fechaPago: "2025-10-17",
-            tipoAcuerdo: "Pago parcial",
-            nombreOperador: "Jose",
-            tipoCumplimiento: "Cumplida"
-        },
-        {
-            id:6,
-            caso: 543636364,
-            idUsuarioML: 60000,
-            canal: "C2C",
-            site: "MLC",
-            monto: 1000000,
-            fechaCarga: "2025-10-17",
-            fechaPago: "2025-10-17",
-            tipoAcuerdo: "Parcelamento",
-            nombreOperador: "Santiago",
-            tipoCumplimiento: "Incumplida"
-        },
-        {
-            id:7,
-            caso: 123141243,
-            idUsuarioML: 70000,
-            canal: "CHAT",
-            site: "MLA",
-            monto: 500000,
-            fechaCarga: "2025-10-13",
-            fechaPago: "2025-10-14",
-            tipoAcuerdo: "Condonación",
-            nombreOperador: "Jose",
-            tipoCumplimiento: "En curso"
-        },
-        {
-            id:8,
-            caso: 123141243,
-            idUsuarioML: 80000,
-            canal: "OFFLINE",
-            site: "MLM",
-            monto: 5000,
-            fechaCarga: "2025-10-13",
-            fechaPago: "2025-10-14",
-            tipoAcuerdo: "Pago parcial",
-            nombreOperador: "Santiago",
-            tipoCumplimiento: "Cumplida"
-        },
-        {
-            id:9,
-            caso: 543636364,
-            idUsuarioML: 90000,
-            canal: "C2C",
-            site: "MLC",
-            monto: 1000000,
-            fechaCarga: "2025-10-13",
-            fechaPago: "2025-10-14",
-            tipoAcuerdo: "Parcelamento",
-            nombreOperador: "Santiago",
-            tipoCumplimiento: "Incumplida"
-        }
-    ];
 }
