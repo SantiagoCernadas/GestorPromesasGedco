@@ -1,5 +1,6 @@
 package com.crmpps.Backend.controller;
 
+import com.crmpps.Backend.dto.EstadisticaResponse;
 import com.crmpps.Backend.dto.PromesaDTO;
 import com.crmpps.Backend.dto.PromesaResponse;
 import com.crmpps.Backend.entity.PromesaEntity;
@@ -72,6 +73,12 @@ public class PromesaController {
                                                              @PathVariable Long id,
                                                              @Valid @RequestBody PromesaDTO promesaDTO) throws NoAutorizadoException {
         return ResponseEntity.ok(promesaService.modificarPromesa(headers,id,promesaDTO));
+    }
+
+    @GetMapping("/estadisticas")
+    public ResponseEntity<EstadisticaResponse> getEstadisticas(@RequestHeader Map<String,String> headers,
+                                                               @Valid @RequestBody List<PromesaDTO> promesas) throws NoAutorizadoException {
+        return ResponseEntity.ok(promesaService.getEstadisticas(headers,promesas));
     }
 
 }

@@ -1,7 +1,10 @@
 package com.crmpps.Backend.service;
 
+import com.crmpps.Backend.dto.EstadisticaResponse;
 import com.crmpps.Backend.dto.PromesaDTO;
 import com.crmpps.Backend.dto.PromesaResponse;
+import com.crmpps.Backend.dto.enums.EstadosCumplimiento;
+import com.crmpps.Backend.dto.enums.Sites;
 import com.crmpps.Backend.entity.PromesaEntity;
 import com.crmpps.Backend.entity.UsuarioEntity;
 import com.crmpps.Backend.exception.NoAutorizadoException;
@@ -15,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
+
+import static com.crmpps.Backend.dto.enums.Sites.*;
 
 @Service
 public class PromesaService {
@@ -228,4 +233,70 @@ public class PromesaService {
 
         return response;
     }
+
+    public EstadisticaResponse getEstadisticas(Map<String, String> headers, @Valid List<PromesaDTO> promesas) throws NoAutorizadoException {
+        EstadisticaResponse response = new EstadisticaResponse();
+        response.setCantPromesas(promesas.size());
+
+        String tokenHeader = headers.get("authorization");
+
+        for (PromesaDTO promesaDTO: promesas){
+
+            UsuarioEntity usuarioEntity = usuarioRepository.findById(promesaDTO.getOperador())
+                    .orElseThrow(() -> new NoSuchElementException("No se encontro el operador con id:" + promesaDTO.getOperador()));
+
+            if (getRolToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
+                    !usuarioEntity.getNombreUsuario().equals(getNombreUsuarioToken(tokenHeader))){
+                throw new NoAutorizadoException("Credenciales invalidas.");
+            }
+
+            if(promesaDTO.getSite().equals(MLA.getSite())){
+                response.setCantPromesasMLA(response.getCantPromesasMLA()+1);
+            }
+            else if(promesaDTO.getSite().equals(MLM.getSite())){
+                response.setCantPromesasMLM(response.getCantPromesasMLM()+1);
+            }
+            else if(promesaDTO.getSite().equals(Sites.MLC.getSite())){
+                response.setCantPromesasMLC(response.getCantPromesasMLC()+1);
+            }
+
+            if (promesaDTO.getCumplimiento().equals(EstadosCumplimiento.EN_CURSO.getEstado())){
+                response.setCantPromesasEnCurso(response.getCantPromesasEnCurso()+1);
+                if (promesaDuplica(promesaDTO.getSite(),promesaDTO.getMonto())){
+                    response.setCantPromesasDuplicadas(response.getCantPromesasDuplicadas()+1);
+                    response.setCantPromesasDuplicadasEnCurso(response.getCantPromesasDuplicadasEnCurso()+1);
+                }
+            }
+            else if (promesaDTO.getCumplimiento().equals(EstadosCumplimiento.CUMPLIDA.getEstado())){
+                response.setCantPromesasCumplidas(response.getCantPromesasCumplidas()+1);
+                if (promesaDuplica(promesaDTO.getSite(),promesaDTO.getMonto())){
+                    response.setCantPromesasDuplicadas(response.getCantPromesasDuplicadas()+1);
+                    response.setCantPromesasDuplicadasCumplidas(response.getCantPromesasDuplicadasCumplidas()+1);
+                }
+            }
+            else if (promesaDTO.getCumplimiento().equals(EstadosCumplimiento.INCUMPLIDA.getEstado())){
+                response.setCantPromesasIncumplidas(response.getCantPromesasIncumplidas()+1);
+                if (promesaDuplica(promesaDTO.getSite(),promesaDTO.getMonto())){
+                    response.setCantPromesasDuplicadas(response.getCantPromesasDuplicadas()+1);
+                    response.setCantPromesasDuplicadasIncumplidas(response.getCantPromesasDuplicadasIncumplidas()+1);
+                }
+            }
+        }
+
+        return response;
+    }
+
+    public boolean promesaDuplica(String site, Double monto){
+        if(site.equals(MLA.getSite()) && monto >= 250000){
+            return true;
+        }
+        if(site.equals(MLC.getSite()) && monto >= 250000){
+            return true;
+        }
+        if(site.equals(MLM.getSite()) && monto >= 5000){
+            return true;
+        }
+        return false;
+    }
+
 }
