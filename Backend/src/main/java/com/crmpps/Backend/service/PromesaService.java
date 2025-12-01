@@ -13,9 +13,15 @@ import com.crmpps.Backend.repository.PromesaRepository;
 import com.crmpps.Backend.repository.UsuarioRepository;
 import com.crmpps.Backend.util.JwtUtils;
 import jakarta.validation.Valid;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -299,7 +305,94 @@ public class PromesaService {
         return false;
     }
 
-    public Byte[] getExcelTabla(Map<String, String> headers, @Valid List<PromesaDTO> promesas) {
-        return null;
+    public byte[] getExcelTabla(Map<String, String> headers, @Valid List<PromesaDTO> promesas) throws NoAutorizadoException, IOException {
+        String tokenHeader = headers.get("authorization");
+
+        ClassPathResource plantilla = new ClassPathResource("PlantillaPromesas.xlsx");
+        InputStream inputStream = plantilla.getInputStream();
+
+        Workbook libro = new XSSFWorkbook(inputStream);
+        Sheet hoja = libro.getSheetAt(0);
+
+        int filaIndex = 1;
+
+        for (PromesaDTO promesaDTO: promesas){
+
+            UsuarioEntity usuarioEntity = usuarioRepository.findById(promesaDTO.getOperador())
+                    .orElseThrow(() -> new NoSuchElementException("No se encontro el operador con id:" + promesaDTO.getOperador()));
+
+            if (getRolToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
+                    !usuarioEntity.getNombreUsuario().equals(getNombreUsuarioToken(tokenHeader))){
+                throw new NoAutorizadoException("Credenciales invalidas.");
+            }
+
+            Font fuente = libro.createFont();
+            fuente.setBold(true);
+
+            CellStyle estilo = libro.createCellStyle();
+            estilo.setFont(fuente);
+            estilo.setAlignment(HorizontalAlignment.CENTER);
+            estilo.setVerticalAlignment(VerticalAlignment.CENTER);
+
+            estilo.setBorderTop(BorderStyle.THIN);
+            estilo.setBorderBottom(BorderStyle.THIN);
+            estilo.setBorderLeft(BorderStyle.THIN);
+            estilo.setBorderRight(BorderStyle.THIN);
+
+            estilo.setTopBorderColor(IndexedColors.BLACK.getIndex());
+            estilo.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+            estilo.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+            estilo.setRightBorderColor(IndexedColors.BLACK.getIndex());
+
+
+            Row fila = hoja.createRow(filaIndex++);
+            Cell numCaso = fila.createCell(0);
+            numCaso.setCellValue(promesaDTO.getNumCaso());
+            numCaso.setCellStyle(estilo);
+
+            Cell id = fila.createCell(1);
+            id.setCellValue(promesaDTO.getIdUsuarioML());
+            id.setCellStyle(estilo);
+
+            Cell canal = fila.createCell(2);
+            canal.setCellValue(promesaDTO.getCanal());
+            canal.setCellStyle(estilo);
+
+            Cell site = fila.createCell(3);
+            site.setCellValue(promesaDTO.getSite());
+            site.setCellStyle(estilo);
+
+            Cell monto = fila.createCell(4);
+            monto.setCellValue(promesaDTO.getMonto());
+            monto.setCellStyle(estilo);
+
+            CellStyle estiloFecha = libro.createCellStyle();
+            estiloFecha.cloneStyleFrom(estilo);
+            CreationHelper helper = libro.getCreationHelper();
+            estiloFecha.setDataFormat(helper.createDataFormat().getFormat("dd/MM/yyyy"));
+
+
+            Cell fechaCarga = fila.createCell(5);
+            fechaCarga.setCellValue(promesaDTO.getFechaCarga());
+            fechaCarga.setCellStyle(estiloFecha);
+
+            Cell fechaPago = fila.createCell(6);
+            fechaPago.setCellValue(promesaDTO.getFechaPago());
+            fechaPago.setCellStyle(estiloFecha);
+
+            Cell tipoAcuerdo = fila.createCell(7);
+            tipoAcuerdo.setCellValue(promesaDTO.getTipoAcuerdo());
+            tipoAcuerdo.setCellStyle(estilo);
+
+            Cell operador = fila.createCell(8);
+            operador.setCellValue(usuarioEntity.getNombre());
+            operador.setCellStyle(estilo);
+        }
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        libro.write(outputStream);
+        libro.close();
+
+        return outputStream.toByteArray();
     }
 }

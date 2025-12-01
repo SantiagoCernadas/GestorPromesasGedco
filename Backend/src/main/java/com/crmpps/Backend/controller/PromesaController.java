@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
@@ -82,8 +83,8 @@ public class PromesaController {
     }
 
     @GetMapping("/excel")
-    public ResponseEntity<Byte[]> getExcelTabla(@RequestHeader Map<String,String> headers,
-                                                @Valid @RequestBody List<PromesaDTO> promesas){
+    public ResponseEntity<byte[]> getExcelTabla(@RequestHeader Map<String,String> headers,
+                                                @Valid @RequestBody List<PromesaDTO> promesas) throws IOException, NoAutorizadoException {
 
         return ResponseEntity.ok(promesaService.getExcelTabla(headers,promesas));
     }
