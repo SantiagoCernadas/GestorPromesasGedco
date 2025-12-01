@@ -81,4 +81,11 @@ public class PromesaController {
         return ResponseEntity.ok(promesaService.getEstadisticas(headers,promesas));
     }
 
+    @GetMapping("/excel")
+    public ResponseEntity<Byte[]> getExcelTabla(@RequestHeader Map<String,String> headers,
+                                                @Valid @RequestBody List<PromesaDTO> promesas){
+
+        return ResponseEntity.ok(promesaService.getExcelTabla(headers,promesas));
+    }
+
 }

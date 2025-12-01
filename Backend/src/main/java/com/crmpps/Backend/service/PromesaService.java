@@ -299,4 +299,7 @@ public class PromesaService {
         return false;
     }
 
+    public Byte[] getExcelTabla(Map<String, String> headers, @Valid List<PromesaDTO> promesas) {
+        return null;
+    }
 }
