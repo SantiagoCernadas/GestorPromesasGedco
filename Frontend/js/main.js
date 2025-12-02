@@ -9,6 +9,7 @@ const contenedorAgregarPP = document.querySelector('.contenedor-agregar-promesa'
 const contenedorFiltros = document.querySelector('.filtros-contenedor');
 
 const botonCerrarSesion = document.getElementById("boton-cerrar-sesion");
+const botonDescargarExcel = document.getElementById("boton-descargar-excel");
 
 const paginacionDiv = document.getElementById('paginacion');
 
@@ -301,21 +302,21 @@ function printTablaHTML() {
 
 }
 
-async function eliminarPromesa(filaTabla){
-        try {
-            await api.eliminarPromesa(token, filaTabla.id);
-            listaPromesas = listaPromesas.filter(promesa => !(promesa.id === filaTabla.id && promesa.fechaCarga === filaTabla.fechaCarga));
-            alert("Promesa con id: " + filaTabla.id + 'eliminada correctamente.');
-            const totalPaginas = Math.ceil(listaPromesas.length / cantFilasPagina);
-            if (paginaActual > totalPaginas) {
-                paginaActual = totalPaginas
-            };
-            printTablaHTML();
-        }
-        catch (err) {
-            alert("No fue posible eliminar la promesa: "+ err.message);
-            return;
-        }
+async function eliminarPromesa(filaTabla) {
+    try {
+        await api.eliminarPromesa(token, filaTabla.id);
+        listaPromesas = listaPromesas.filter(promesa => !(promesa.id === filaTabla.id && promesa.fechaCarga === filaTabla.fechaCarga));
+        alert("Promesa con id: " + filaTabla.id + 'eliminada correctamente.');
+        const totalPaginas = Math.ceil(listaPromesas.length / cantFilasPagina);
+        if (paginaActual > totalPaginas) {
+            paginaActual = totalPaginas
+        };
+        printTablaHTML();
+    }
+    catch (err) {
+        alert("No fue posible eliminar la promesa: " + err.message);
+        return;
+    }
 }
 
 function getIdOperador(nombreOperador) {
@@ -390,7 +391,7 @@ botonGuardarEditar.addEventListener('click', async () => {
     }
 
     try {
-        await api.modificarPromesa(token,idEdit,promesaEdit);
+        await api.modificarPromesa(token, idEdit, promesaEdit);
     }
     catch (err) {
         alert('No fue posible generar la promesa. ' + err.message);
@@ -723,4 +724,33 @@ function diferenciaEnDias(fecha1, fecha2) {
     const diffDias = diffMs / (1000 * 60 * 60 * 24);
 
     return diffDias;
+}
+
+botonDescargarExcel.addEventListener('click', async () => {
+    await descargarExcel(listaPromesas);
+});
+
+async function descargarExcel(tabla) {
+    try {
+        if(tabla.length == 0){
+            alert("La tabla actual no tiene ninguna promesa.");
+            return;
+        }
+        const responseExcel = await api.getExcelTabla(token, tabla);
+        const blob = await responseExcel.blob();
+        console.log(responseExcel);
+        let filename = "plantillaPromesas.xlsx";
+        // Creamos link oculto
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename; // nombre real
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+
+    } catch (err) {
+        alert(err)
+    }
 }

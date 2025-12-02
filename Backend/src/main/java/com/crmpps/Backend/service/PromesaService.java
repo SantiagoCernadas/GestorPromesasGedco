@@ -1,7 +1,8 @@
 package com.crmpps.Backend.service;
 
 import com.crmpps.Backend.dto.EstadisticaResponse;
-import com.crmpps.Backend.dto.PromesaDTO;
+import com.crmpps.Backend.dto.PromesaExcelRequest;
+import com.crmpps.Backend.dto.PromesaRequest;
 import com.crmpps.Backend.dto.PromesaResponse;
 import com.crmpps.Backend.dto.enums.EstadosCumplimiento;
 import com.crmpps.Backend.dto.enums.Sites;
@@ -42,10 +43,10 @@ public class PromesaService {
     @Autowired
     private JwtUtils jwtUtils;
 
-    public PromesaResponse agregarPromesa(Map<String, String> headers, @Valid PromesaDTO promesaDTO) throws NoAutorizadoException {
+    public PromesaResponse agregarPromesa(Map<String, String> headers, @Valid PromesaRequest promesaRequest) throws NoAutorizadoException {
         String tokenHeader = headers.get("authorization");
-        UsuarioEntity usuarioEntity = usuarioRepository.findById(promesaDTO.getOperador())
-                .orElseThrow(() -> new NoSuchElementException("No se encontro al usuario con id: " + promesaDTO.getOperador()));
+        UsuarioEntity usuarioEntity = usuarioRepository.findById(promesaRequest.getOperador())
+                .orElseThrow(() -> new NoSuchElementException("No se encontro al usuario con id: " + promesaRequest.getOperador()));
 
         if (getRolToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
                 !usuarioEntity.getNombreUsuario().equals(getNombreUsuarioToken(tokenHeader))){
@@ -53,15 +54,15 @@ public class PromesaService {
         }
 
         PromesaEntity promesaEntity = PromesaEntity.builder()
-                .idUsuarioML(promesaDTO.getIdUsuarioML())
-                .numCaso(promesaDTO.getNumCaso())
-                .monto(promesaDTO.getMonto())
-                .site(promesaDTO.getSite())
-                .canal(promesaDTO.getCanal())
-                .tipoAcuerdo(promesaDTO.getTipoAcuerdo())
-                .cumplimiento(promesaDTO.getCumplimiento())
-                .fechaCarga(promesaDTO.getFechaCarga())
-                .fechaPago(promesaDTO.getFechaPago())
+                .idUsuarioML(promesaRequest.getIdUsuarioML())
+                .numCaso(promesaRequest.getNumCaso())
+                .monto(promesaRequest.getMonto())
+                .site(promesaRequest.getSite())
+                .canal(promesaRequest.getCanal())
+                .tipoAcuerdo(promesaRequest.getTipoAcuerdo())
+                .cumplimiento(promesaRequest.getCumplimiento())
+                .fechaCarga(promesaRequest.getFechaCarga())
+                .fechaPago(promesaRequest.getFechaPago())
                 .operador(usuarioEntity)
                 .build();
 
@@ -191,15 +192,15 @@ public class PromesaService {
         return jwtUtils.getNombreUsuarioFromToken(token.substring(7));
     }
 
-    public PromesaResponse modificarPromesa(Map<String, String> headers, Long id, PromesaDTO promesaDTO) throws NoAutorizadoException {
+    public PromesaResponse modificarPromesa(Map<String, String> headers, Long id, PromesaRequest promesaRequest) throws NoAutorizadoException {
 
         String tokenHeader = headers.get("authorization");
 
         PromesaEntity promesa = promesaRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("No se encontro la promesa con id:" + id));
 
-        UsuarioEntity usuario = usuarioRepository.findById(promesaDTO.getOperador())
-                .orElseThrow(() -> new NoSuchElementException("No se encontro al usuario con id:" + promesaDTO.getOperador()));
+        UsuarioEntity usuario = usuarioRepository.findById(promesaRequest.getOperador())
+                .orElseThrow(() -> new NoSuchElementException("No se encontro al usuario con id:" + promesaRequest.getOperador()));
 
         if (getRolToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
                 !promesa.getOperador().getNombreUsuario().equals(getNombreUsuarioToken(tokenHeader))){
@@ -209,15 +210,15 @@ public class PromesaService {
 
         PromesaEntity promesaModificada = PromesaEntity.builder().
                 id(promesa.getId())
-                .idUsuarioML(promesaDTO.getIdUsuarioML())
-                .numCaso(promesaDTO.getNumCaso())
-                .monto(promesaDTO.getMonto())
-                .site(promesaDTO.getSite())
-                .canal(promesaDTO.getCanal())
-                .tipoAcuerdo(promesaDTO.getTipoAcuerdo())
-                .cumplimiento(promesaDTO.getCumplimiento())
-                .fechaCarga(promesaDTO.getFechaCarga())
-                .fechaPago(promesaDTO.getFechaPago())
+                .idUsuarioML(promesaRequest.getIdUsuarioML())
+                .numCaso(promesaRequest.getNumCaso())
+                .monto(promesaRequest.getMonto())
+                .site(promesaRequest.getSite())
+                .canal(promesaRequest.getCanal())
+                .tipoAcuerdo(promesaRequest.getTipoAcuerdo())
+                .cumplimiento(promesaRequest.getCumplimiento())
+                .fechaCarga(promesaRequest.getFechaCarga())
+                .fechaPago(promesaRequest.getFechaPago())
                 .operador(usuario)
                 .build();
 
@@ -240,49 +241,39 @@ public class PromesaService {
         return response;
     }
 
-    public EstadisticaResponse getEstadisticas(Map<String, String> headers, @Valid List<PromesaDTO> promesas) throws NoAutorizadoException {
+    public EstadisticaResponse getEstadisticas(Map<String, String> headers, @Valid List<PromesaExcelRequest> promesas) throws NoAutorizadoException {
         EstadisticaResponse response = new EstadisticaResponse();
         response.setCantPromesas(promesas.size());
 
-        String tokenHeader = headers.get("authorization");
+        for (PromesaExcelRequest promesaRequest : promesas){
 
-        for (PromesaDTO promesaDTO: promesas){
-
-            UsuarioEntity usuarioEntity = usuarioRepository.findById(promesaDTO.getOperador())
-                    .orElseThrow(() -> new NoSuchElementException("No se encontro el operador con id:" + promesaDTO.getOperador()));
-
-            if (getRolToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
-                    !usuarioEntity.getNombreUsuario().equals(getNombreUsuarioToken(tokenHeader))){
-                throw new NoAutorizadoException("Credenciales invalidas.");
-            }
-
-            if(promesaDTO.getSite().equals(MLA.getSite())){
+            if(promesaRequest.getSite().equals(MLA.getSite())){
                 response.setCantPromesasMLA(response.getCantPromesasMLA()+1);
             }
-            else if(promesaDTO.getSite().equals(MLM.getSite())){
+            else if(promesaRequest.getSite().equals(MLM.getSite())){
                 response.setCantPromesasMLM(response.getCantPromesasMLM()+1);
             }
-            else if(promesaDTO.getSite().equals(Sites.MLC.getSite())){
+            else if(promesaRequest.getSite().equals(Sites.MLC.getSite())){
                 response.setCantPromesasMLC(response.getCantPromesasMLC()+1);
             }
 
-            if (promesaDTO.getCumplimiento().equals(EstadosCumplimiento.EN_CURSO.getEstado())){
+            if (promesaRequest.getCumplimiento().equals(EstadosCumplimiento.EN_CURSO.getEstado())){
                 response.setCantPromesasEnCurso(response.getCantPromesasEnCurso()+1);
-                if (promesaDuplica(promesaDTO.getSite(),promesaDTO.getMonto())){
+                if (promesaDuplica(promesaRequest.getSite(), promesaRequest.getMonto())){
                     response.setCantPromesasDuplicadas(response.getCantPromesasDuplicadas()+1);
                     response.setCantPromesasDuplicadasEnCurso(response.getCantPromesasDuplicadasEnCurso()+1);
                 }
             }
-            else if (promesaDTO.getCumplimiento().equals(EstadosCumplimiento.CUMPLIDA.getEstado())){
+            else if (promesaRequest.getCumplimiento().equals(EstadosCumplimiento.CUMPLIDA.getEstado())){
                 response.setCantPromesasCumplidas(response.getCantPromesasCumplidas()+1);
-                if (promesaDuplica(promesaDTO.getSite(),promesaDTO.getMonto())){
+                if (promesaDuplica(promesaRequest.getSite(), promesaRequest.getMonto())){
                     response.setCantPromesasDuplicadas(response.getCantPromesasDuplicadas()+1);
                     response.setCantPromesasDuplicadasCumplidas(response.getCantPromesasDuplicadasCumplidas()+1);
                 }
             }
-            else if (promesaDTO.getCumplimiento().equals(EstadosCumplimiento.INCUMPLIDA.getEstado())){
+            else if (promesaRequest.getCumplimiento().equals(EstadosCumplimiento.INCUMPLIDA.getEstado())){
                 response.setCantPromesasIncumplidas(response.getCantPromesasIncumplidas()+1);
-                if (promesaDuplica(promesaDTO.getSite(),promesaDTO.getMonto())){
+                if (promesaDuplica(promesaRequest.getSite(), promesaRequest.getMonto())){
                     response.setCantPromesasDuplicadas(response.getCantPromesasDuplicadas()+1);
                     response.setCantPromesasDuplicadasIncumplidas(response.getCantPromesasDuplicadasIncumplidas()+1);
                 }
@@ -305,7 +296,7 @@ public class PromesaService {
         return false;
     }
 
-    public byte[] getExcelTabla(Map<String, String> headers, @Valid List<PromesaDTO> promesas) throws NoAutorizadoException, IOException {
+    public byte[] getExcelTabla(Map<String, String> headers, @Valid List<PromesaExcelRequest> promesas) throws NoAutorizadoException, IOException {
         String tokenHeader = headers.get("authorization");
 
         ClassPathResource plantilla = new ClassPathResource("PlantillaPromesas.xlsx");
@@ -316,15 +307,7 @@ public class PromesaService {
 
         int filaIndex = 1;
 
-        for (PromesaDTO promesaDTO: promesas){
-
-            UsuarioEntity usuarioEntity = usuarioRepository.findById(promesaDTO.getOperador())
-                    .orElseThrow(() -> new NoSuchElementException("No se encontro el operador con id:" + promesaDTO.getOperador()));
-
-            if (getRolToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
-                    !usuarioEntity.getNombreUsuario().equals(getNombreUsuarioToken(tokenHeader))){
-                throw new NoAutorizadoException("Credenciales invalidas.");
-            }
+        for (PromesaExcelRequest promesaRequest : promesas){
 
             Font fuente = libro.createFont();
             fuente.setBold(true);
@@ -347,23 +330,23 @@ public class PromesaService {
 
             Row fila = hoja.createRow(filaIndex++);
             Cell numCaso = fila.createCell(0);
-            numCaso.setCellValue(promesaDTO.getNumCaso());
+            numCaso.setCellValue(promesaRequest.getNumCaso());
             numCaso.setCellStyle(estilo);
 
             Cell id = fila.createCell(1);
-            id.setCellValue(promesaDTO.getIdUsuarioML());
+            id.setCellValue(promesaRequest.getIdUsuarioML());
             id.setCellStyle(estilo);
 
             Cell canal = fila.createCell(2);
-            canal.setCellValue(promesaDTO.getCanal());
+            canal.setCellValue(promesaRequest.getCanal());
             canal.setCellStyle(estilo);
 
             Cell site = fila.createCell(3);
-            site.setCellValue(promesaDTO.getSite());
+            site.setCellValue(promesaRequest.getSite());
             site.setCellStyle(estilo);
 
             Cell monto = fila.createCell(4);
-            monto.setCellValue(promesaDTO.getMonto());
+            monto.setCellValue(promesaRequest.getMonto());
             monto.setCellStyle(estilo);
 
             CellStyle estiloFecha = libro.createCellStyle();
@@ -373,19 +356,19 @@ public class PromesaService {
 
 
             Cell fechaCarga = fila.createCell(5);
-            fechaCarga.setCellValue(promesaDTO.getFechaCarga());
+            fechaCarga.setCellValue(promesaRequest.getFechaCarga());
             fechaCarga.setCellStyle(estiloFecha);
 
             Cell fechaPago = fila.createCell(6);
-            fechaPago.setCellValue(promesaDTO.getFechaPago());
+            fechaPago.setCellValue(promesaRequest.getFechaPago());
             fechaPago.setCellStyle(estiloFecha);
 
             Cell tipoAcuerdo = fila.createCell(7);
-            tipoAcuerdo.setCellValue(promesaDTO.getTipoAcuerdo());
+            tipoAcuerdo.setCellValue(promesaRequest.getTipoAcuerdo());
             tipoAcuerdo.setCellStyle(estilo);
 
             Cell operador = fila.createCell(8);
-            operador.setCellValue(usuarioEntity.getNombre());
+            operador.setCellValue(promesaRequest.getOperador());
             operador.setCellStyle(estilo);
         }
 

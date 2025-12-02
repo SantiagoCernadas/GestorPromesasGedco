@@ -205,3 +205,28 @@ export async function eliminarPromesa(token,id) {
     return responseBody;
 }
 
+export async function getExcelTabla(token,tabla) {
+    var responseBody;
+    await fetch(apiUrl + 'promesa/excel',{
+        method: 'POST',
+        body: JSON.stringify(tabla),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        }
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+        }
+        return response;
+    })
+    .then(data => {
+            responseBody = data;
+        })
+    .catch(error => {
+            console.error('Hubo un problema con la operación fetch:', error);
+        });
+
+    return responseBody;
+}
+

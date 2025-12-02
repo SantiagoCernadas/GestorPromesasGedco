@@ -262,7 +262,10 @@ th {
     color: white;
 }
 
+
+
 td {
+    width: 150px;
     text-align: center;
     padding: 2px;
     border: 1px solid black;

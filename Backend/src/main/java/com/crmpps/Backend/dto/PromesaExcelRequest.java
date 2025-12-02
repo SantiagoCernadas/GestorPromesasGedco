@@ -1,8 +1,5 @@
 package com.crmpps.Backend.dto;
 
-import com.crmpps.Backend.entity.UsuarioEntity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -11,11 +8,11 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PromesaDTO {
-
+public class PromesaExcelRequest {
     @NotNull
     private Long idUsuarioML;
     @NotNull
@@ -35,5 +32,5 @@ public class PromesaDTO {
     @NotNull
     private LocalDate fechaPago;
     @NotNull
-    private Long operador;
+    private String operador;
 }
