@@ -20,8 +20,11 @@ const cantFilasPagina = 8;
 
 let listaPromesas;
 
-const modal = document.getElementById('modal-editar-pp');
+const modalEditar = document.getElementById('modal-editar-pp');
+const modalEstadisticas = document.getElementById('modal-estadisticas');
 const botonGuardarEditar = document.getElementById('boton-guardar-editar');
+const botonCerrarEstadistica = document.getElementById("boton-cerrar-estadisticas");
+
 let idEdit;
 
 var filtros = getFiltros();
@@ -294,7 +297,7 @@ function printTablaHTML() {
             document.getElementById("input-pp-tipo-acuerdo-edit").value = filaTabla.tipoAcuerdo;
             document.getElementById("input-pp-operador-edit").value = getIdOperador(filaTabla.operador);
             document.getElementById("input-pp-cumplimiento-edit").value = filaTabla.cumplimiento;
-            modal.showModal();
+            modalEditar.showModal();
         });
 
     });
@@ -414,14 +417,14 @@ botonGuardarEditar.addEventListener('click', async () => {
     }
 
     alert('PP Modificada.');
-    modal.close();
+    modalEditar.close();
     printTablaHTML();
 });
 
 
 
 document.getElementById('boton-cancelar-editar').addEventListener('click', () => {
-    modal.close();
+    modalEditar.close();
 });
 
 function insertarCanal(fila, columna, valorColumna, canal) {
@@ -657,10 +660,11 @@ function validarPromesa(nuevaPromesa) {
 
 
 
+//Parsear montos mexicanos o argentinos a tipo de dato FLOAT
 function parseMonto(montoStr) {
     montoStr = montoStr.trim().replace(/\$/g, '');
 
-    //Verifica que no tenga caracteres que no sean parseables
+
     if (!montoStr || /[^0-9.,]/.test(montoStr)) return NaN;
 
     if (montoStr == '') return NaN;
@@ -670,21 +674,17 @@ function parseMonto(montoStr) {
     const tieneComa = montoStr.includes(',');
 
     if (tienePunto && tieneComa) {
-        // Ambos separadores presentes
-        // Si la coma está al final -> formato argentino
+        
         if (montoStr.lastIndexOf(',') > montoStr.lastIndexOf('.')) {
             montoStr = montoStr.replace(/\./g, '').replace(',', '.');
         } else {
-            // Si el punto está al final -> formato mexicano
-            montoStr = montoStr.replace(/,/g, ''); // elimina comas
+            montoStr = montoStr.replace(/,/g, '');
         }
     } else if (tieneComa && !tienePunto) {
-        // 👉 Solo comas
-        // Si hay más de una coma → son miles, quitarlas
+
         if ((montoStr.match(/,/g) || []).length > 1) {
             montoStr = montoStr.replace(/,/g, '');
         } else {
-            // Si solo hay una coma, decidir si decimal o miles
             const partes = montoStr.split(',');
             if (partes[1]?.length === 3) {
                 montoStr = montoStr.replace(/,/g, '');
@@ -693,12 +693,10 @@ function parseMonto(montoStr) {
             }
         }
     } else if (tienePunto && !tieneComa) {
-        // 👉 Solo puntos
-        // Si hay más de un punto → son separadores de miles
+   
         if ((montoStr.match(/\./g) || []).length > 1) {
             montoStr = montoStr.replace(/\./g, '');
         } else {
-            // Si solo hay uno, verificar si decimal o miles
             const partes = montoStr.split('.');
             if (partes[1]?.length === 3) {
                 montoStr = montoStr.replace(/\./g, '');
@@ -714,14 +712,11 @@ function diferenciaEnDias(fecha1, fecha2) {
     const f1 = new Date(fecha1);
     const f2 = new Date(fecha2);
 
-    // Normalizar las horas para que solo cuente la diferencia de fechas
     f1.setHours(0, 0, 0, 0);
     f2.setHours(0, 0, 0, 0);
 
-    // Diferencia en milisegundos (fecha2 - fecha1)
     const diffMs = f2 - f1;
 
-    // Convertir milisegundos → días (positivo o negativo)
     const diffDias = diffMs / (1000 * 60 * 60 * 24);
 
     return diffDias;
@@ -729,6 +724,11 @@ function diferenciaEnDias(fecha1, fecha2) {
 
 botonObtenerEstadisticas.addEventListener('click', async () =>{
     await obtenerEstadisticas(listaPromesas)
+    modalEstadisticas.showModal();
+})
+
+botonCerrarEstadistica.addEventListener('click', () =>{
+    modalEstadisticas.close();
 })
 
 async function obtenerEstadisticas(tabla){
@@ -737,8 +737,8 @@ async function obtenerEstadisticas(tabla){
             alert("La tabla actual no tiene ninguna promesa.");
             return;
         }
-        const obtenerEstadisticas = await api.getEstadisticas(token, tabla);
-        alert(JSON.stringify(obtenerEstadisticas));
+        const estadisticas = await api.getEstadisticas(token, tabla);
+        return estadisticas
     }
     catch(err){
         alert(err)
@@ -757,13 +757,13 @@ async function descargarExcel(tabla) {
         }
         const responseExcel = await api.getExcelTabla(token, tabla);
         const blob = await responseExcel.blob();
-        console.log(responseExcel);
-        let filename = "plantillaPromesas.xlsx";
-        // Creamos link oculto
+        let nombre = "plantillaPromesas.xlsx";
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = filename; // nombre real
+
+        a.download = nombre;
+
         document.body.appendChild(a);
         a.click();
         a.remove();
