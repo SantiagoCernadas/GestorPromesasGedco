@@ -3,14 +3,15 @@ import * as api from "./api.js";
 const botonContenedorAgregarPP = document.getElementById("boton-contenedor-agregar");
 const botonContenedorFiltros = document.getElementById("boton-contenedor-filtros");
 const botonAgregarPromesa = document.getElementById("boton-agregar");
-const botonAgregarPromesaExcel = document.getElementById("boton-agregar-excel");
+//const botonAgregarPromesaExcel = document.getElementById("boton-agregar-excel");
+const botonObtenerEstadisticas = document.getElementById("boton-estadisticas");
 const mensajePP = document.getElementById("pp-mensaje");
 const contenedorAgregarPP = document.querySelector('.contenedor-agregar-promesa');
 const contenedorFiltros = document.querySelector('.filtros-contenedor');
 
+
 const botonCerrarSesion = document.getElementById("boton-cerrar-sesion");
 const botonDescargarExcel = document.getElementById("boton-descargar-excel");
-
 const paginacionDiv = document.getElementById('paginacion');
 
 const botonFiltrar = document.getElementById('boton-filtrar');
@@ -724,6 +725,24 @@ function diferenciaEnDias(fecha1, fecha2) {
     const diffDias = diffMs / (1000 * 60 * 60 * 24);
 
     return diffDias;
+}
+
+botonObtenerEstadisticas.addEventListener('click', async () =>{
+    await obtenerEstadisticas(listaPromesas)
+})
+
+async function obtenerEstadisticas(tabla){
+    try{
+        if(tabla.length == 0){
+            alert("La tabla actual no tiene ninguna promesa.");
+            return;
+        }
+        const obtenerEstadisticas = await api.getEstadisticas(token, tabla);
+        alert(JSON.stringify(obtenerEstadisticas));
+    }
+    catch(err){
+        alert(err)
+    }
 }
 
 botonDescargarExcel.addEventListener('click', async () => {

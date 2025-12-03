@@ -72,7 +72,7 @@ public class PromesaController {
         return ResponseEntity.ok(promesaService.modificarPromesa(headers,id, promesaRequest));
     }
 
-    @GetMapping("/estadisticas")
+    @PostMapping("/estadisticas")
     public ResponseEntity<EstadisticaResponse> getEstadisticas(@RequestHeader Map<String,String> headers,
                                                                @Valid @RequestBody List<PromesaExcelRequest> promesas) throws NoAutorizadoException {
         return ResponseEntity.ok(promesaService.getEstadisticas(headers,promesas));
