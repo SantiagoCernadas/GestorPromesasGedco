@@ -474,3 +474,53 @@ dialog button:hover{
     background-color: rgb(124, 205, 255);
     color: black;
 }
+
+
+.contenedor-estadisticas-fila{
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.contenedor-estadisticas-items{
+    display: flex;
+    gap: 50px;
+}
+
+.contenedor-estadisticas-dialog{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+    place-items: center;
+}
+
+#estadisticas-cant-promesas-cumplidas,#estadisticas-cant-promesas-duplica-cumplidas{
+    color: #145A32;
+    font-weight: bold;
+}
+
+#estadisticas-cant-promesas-incumplidas, #estadisticas-cant-promesas-duplica-incumplidas{
+    color: #FB2C36;
+    font-weight: bold;
+}
+
+#estadisticas-cant-promesas-encurso, #estadisticas-cant-promesas-duplica-encurso{
+    color: #F0B13B;
+    font-weight: bold;
+}
+
+#estadisticas-MLA{
+    color: #7aafff;
+    font-weight: bold;
+}
+
+#estadisticas-MLM{
+    color: #460809;
+    font-weight: bold;
+}
+
+#estadisticas-MLC{
+    color: darksalmon;
+    font-weight: bold;
+}

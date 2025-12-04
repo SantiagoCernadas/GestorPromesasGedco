@@ -179,12 +179,6 @@ const formatFecha = new Intl.DateTimeFormat("es", {
     year: 'numeric'
 })
 
-//Formatea un número a pesos argentinos.
-const formateadorDeMoneda = new Intl.NumberFormat('es-AR', {
-    style: 'currency',
-    currency: 'ARS',
-    minimumFractionDigits: 2,
-});
 
 const tabla = document.querySelector('.tabla').querySelector('tbody');
 
@@ -723,9 +717,26 @@ function diferenciaEnDias(fecha1, fecha2) {
 }
 
 botonObtenerEstadisticas.addEventListener('click', async () =>{
-    await obtenerEstadisticas(listaPromesas)
+    const estadisticas = await obtenerEstadisticas(listaPromesas)
+
+    printEstadisticas(estadisticas)
+
     modalEstadisticas.showModal();
 })
+
+function printEstadisticas(estadisticas){
+    document.getElementById("estadisticas-cant-promesas").querySelector('span').textContent = estadisticas.cantPromesas;
+    document.getElementById("estadisticas-cant-promesas-cumplidas").querySelector('span').textContent = estadisticas.cantPromesasCumplidas + " (" + (estadisticas.cantPromesasCumplidas/estadisticas.cantPromesas*100).toFixed(2) + "%)";
+    document.getElementById("estadisticas-cant-promesas-incumplidas").querySelector('span').textContent = estadisticas.cantPromesasIncumplidas + " (" + (estadisticas.cantPromesasIncumplidas/estadisticas.cantPromesas*100).toFixed(2) + "%)";
+    document.getElementById("estadisticas-cant-promesas-encurso").querySelector('span').textContent = estadisticas.cantPromesasEnCurso + " (" + (estadisticas.cantPromesasEnCurso/estadisticas.cantPromesas*100).toFixed(2) + "%)";
+    document.getElementById("estadisticas-MLA").querySelector('span').textContent = estadisticas.cantPromesasMLA + " (" + (estadisticas.cantPromesasMLA/estadisticas.cantPromesas*100).toFixed(2) + "%)";
+    document.getElementById("estadisticas-MLM").querySelector('span').textContent = estadisticas.cantPromesasMLM + " (" + (estadisticas.cantPromesasMLM/estadisticas.cantPromesas*100).toFixed(2) + "%)";
+    document.getElementById("estadisticas-MLC").querySelector('span').textContent = estadisticas.cantPromesasMLC + " (" + (estadisticas.cantPromesasMLC/estadisticas.cantPromesas*100).toFixed(2) + "%)";
+    document.getElementById("estadisticas-cant-promesas-duplica").querySelector('span').textContent = estadisticas.cantPromesasDuplicadas ;
+    document.getElementById("estadisticas-cant-promesas-duplica-cumplidas").querySelector('span').textContent = estadisticas.cantPromesasDuplicadasCumplidas + " (" + (estadisticas.cantPromesasDuplicadas !== 0 ? (estadisticas.cantPromesasDuplicadasCumplidas/estadisticas.cantPromesasDuplicadas*100).toFixed(2) : (0.00)) + "%)";
+    document.getElementById("estadisticas-cant-promesas-duplica-incumplidas").querySelector('span').textContent = estadisticas.cantPromesasDuplicadasIncumplidas + " (" + (estadisticas.cantPromesasDuplicadas !== 0 ? (estadisticas.cantPromesasDuplicadasIncumplidas/estadisticas.cantPromesasDuplicadas*100).toFixed(2) : (0.00)) + "%)";
+    document.getElementById("estadisticas-cant-promesas-duplica-encurso").querySelector('span').textContent = estadisticas.cantPromesasDuplicadasEnCurso + " (" + (estadisticas.cantPromesasDuplicadas !== 0 ? (estadisticas.cantPromesasDuplicadasEnCurso/estadisticas.cantPromesasDuplicadas*100).toFixed(2) : (0.00)) + "%)";
+}
 
 botonCerrarEstadistica.addEventListener('click', () =>{
     modalEstadisticas.close();
