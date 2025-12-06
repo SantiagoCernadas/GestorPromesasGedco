@@ -83,15 +83,20 @@ nav button:hover {
     gap: 5px;
     margin-top: 50px;
     align-items: center;
+    text-align: center;
+    gap: 20px;
 }
 
 #paginacion button {
-    border: 1px solid black;
+    border: none;
     background-color: white;
     font-size: 16px;
     padding: 5px 10px;
     border-radius: 5px;
+    box-shadow: 0 0 5px 1px gray;
 }
+
+
 
 #paginacion button:hover {
     background-color: rgb(124, 205, 255);
@@ -425,12 +430,18 @@ dialog {
     font-family: sans-serif;
     place-items: center;
     text-align: center;
+    border: 2px solid rgb(56, 150, 180);
 }
 
 dialog::backdrop {
     background: rgba(0, 0, 0, 0.4);
 }
 
+.contenedor-dialog-editar{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
 
 #form-editar-pp{
     display: flex;
@@ -479,7 +490,14 @@ dialog button:hover{
 .contenedor-estadisticas-fila{
     display: flex;
     flex-direction: column;
+    border: 2px solid rgb(56, 150, 180);
+    padding: 20px;
+    border-radius: 5px;
     gap: 3px;
+}
+
+h3{
+    color: black;
 }
 
 .contenedor-estadisticas-items{
@@ -511,16 +529,16 @@ dialog button:hover{
 }
 
 #estadisticas-MLA{
-    color: #7aafff;
+    color: black;
     font-weight: bold;
 }
 
 #estadisticas-MLM{
-    color: #460809;
+    color: black;
     font-weight: bold;
 }
 
 #estadisticas-MLC{
-    color: darksalmon;
+    color:black;
     font-weight: bold;
 }

@@ -343,7 +343,7 @@ function renderPaginacion() {
     paginacionDiv.appendChild(crearBoton('Anterior', paginaActual - 1, paginaActual <= 1));
 
     const paginaActualParrafo = document.createElement('p');
-    paginaActualParrafo.textContent = paginaActual + " de " + totalPaginas;
+    paginaActualParrafo.innerHTML = "Pagina " + paginaActual + " de " + totalPaginas + "<br> (" +listaPromesas.length+" promesas)";
     paginacionDiv.appendChild(paginaActualParrafo)
 
     paginacionDiv.appendChild(crearBoton('Siguiente', paginaActual + 1, paginaActual >= totalPaginas));
@@ -352,7 +352,6 @@ function renderPaginacion() {
 function crearBoton(texto, pagina, deshabilitado = false) {
     const btn = document.createElement('button');
     btn.textContent = texto;
-
 
     if (!deshabilitado) {
         btn.addEventListener('click', () => {
