@@ -19,6 +19,10 @@ let paginaActual = 1;
 const cantFilasPagina = 8;
 
 let listaPromesas;
+let totalPaginas;
+const botonAnteriorPaginacion = document.getElementById('boton-paginacion-anterior');
+const botonSiguientePaginacion = document.getElementById('boton-paginacion-siguiente');
+
 
 const modalEditar = document.getElementById('modal-editar-pp');
 const modalEstadisticas = document.getElementById('modal-estadisticas');
@@ -327,9 +331,7 @@ function getNombreOperador(idOperador) {
 
 
 function renderPaginacion() {
-    paginacionDiv.innerHTML = '';
-
-    const totalPaginas = Math.ceil(listaPromesas.length / cantFilasPagina);
+    totalPaginas = Math.ceil(listaPromesas.length / cantFilasPagina);
 
     if (paginaActual > totalPaginas) {
         paginaActual = totalPaginas
@@ -339,28 +341,24 @@ function renderPaginacion() {
             paginaActual = 1;
         }
     }
-
-    paginacionDiv.appendChild(crearBoton('Anterior', paginaActual - 1, paginaActual <= 1));
-
-    const paginaActualParrafo = document.createElement('p');
+    const paginaActualParrafo = document.getElementById('paginacion').querySelector('p');
     paginaActualParrafo.innerHTML = "Pagina " + paginaActual + " de " + totalPaginas + "<br> (" +listaPromesas.length+" promesas)";
-    paginacionDiv.appendChild(paginaActualParrafo)
 
-    paginacionDiv.appendChild(crearBoton('Siguiente', paginaActual + 1, paginaActual >= totalPaginas));
 }
 
-function crearBoton(texto, pagina, deshabilitado = false) {
-    const btn = document.createElement('button');
-    btn.textContent = texto;
-
-    if (!deshabilitado) {
-        btn.addEventListener('click', () => {
-            paginaActual = pagina;
-            printTablaHTML();
-        });
+botonAnteriorPaginacion.addEventListener('click', () => {
+    if(paginaActual > 1){
+        paginaActual = paginaActual - 1;
+        printTablaHTML();
     }
-    return btn;
-};
+});
+
+botonSiguientePaginacion.addEventListener('click', () => {
+    if(paginaActual < totalPaginas){
+        paginaActual = paginaActual + 1;
+        printTablaHTML();
+    }
+});
 
 botonGuardarEditar.addEventListener('click', async () => {
 
