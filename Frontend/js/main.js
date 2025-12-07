@@ -12,7 +12,6 @@ const contenedorFiltros = document.querySelector('.filtros-contenedor');
 
 const botonCerrarSesion = document.getElementById("boton-cerrar-sesion");
 const botonDescargarExcel = document.getElementById("boton-descargar-excel");
-const paginacionDiv = document.getElementById('paginacion');
 
 const botonFiltrar = document.getElementById('boton-filtrar');
 let paginaActual = 1;
@@ -26,10 +25,14 @@ const botonSiguientePaginacion = document.getElementById('boton-paginacion-sigui
 
 const modalEditar = document.getElementById('modal-editar-pp');
 const modalEstadisticas = document.getElementById('modal-estadisticas');
+const modalEliminar = document.getElementById('modal-eliminar');
 const botonGuardarEditar = document.getElementById('boton-guardar-editar');
 const botonCerrarEstadistica = document.getElementById("boton-cerrar-estadisticas");
+const botonCerrarEliminar = document.getElementById("boton-cerrar-eliminar");
+const botonConfirmarEliminar = document.getElementById("boton-confirmar-eliminar");
 
 let idEdit;
+let idEliminar = 0;
 
 var filtros = getFiltros();
 
@@ -280,35 +283,56 @@ function printTablaHTML() {
         tabla.appendChild(fila);
 
         botonEliminar.addEventListener('click', () => {
-            eliminarPromesa(filaTabla);
+            modalEliminarPromesa(filaTabla);
         });
         botonEditar.addEventListener('click', () => {
-            idEdit = filaTabla.id;
-            document.getElementById("input-pp-caso-edit").value = filaTabla.numCaso;
-            document.getElementById("input-pp-id-edit").value = filaTabla.idUsuarioML;
-            document.getElementById("input-pp-canal-edit").value = filaTabla.canal;
-            document.getElementById("input-pp-site-edit").value = filaTabla.site;
-            document.getElementById("input-pp-monto-edit").value = filaTabla.monto;
-            document.getElementById("input-pp-site-edit").value = filaTabla.site;
-            document.getElementById("input-pp-fecha-carga-edit").value = filaTabla.fechaCarga;
-            document.getElementById("input-pp-fecha-pago-edit").value = filaTabla.fechaPago;
-            document.getElementById("input-pp-tipo-acuerdo-edit").value = filaTabla.tipoAcuerdo;
-            document.getElementById("input-pp-operador-edit").value = getIdOperador(filaTabla.operador);
-            document.getElementById("input-pp-cumplimiento-edit").value = filaTabla.cumplimiento;
-            modalEditar.showModal();
+            modalEditarPromesa(filaTabla)
         });
 
     });
-
-
-
 }
 
-async function eliminarPromesa(filaTabla) {
+function modalEditarPromesa(filaTabla) {
+    idEdit = filaTabla.id;
+    document.getElementById("input-pp-caso-edit").value = filaTabla.numCaso;
+    document.getElementById("input-pp-id-edit").value = filaTabla.idUsuarioML;
+    document.getElementById("input-pp-canal-edit").value = filaTabla.canal;
+    document.getElementById("input-pp-site-edit").value = filaTabla.site;
+    document.getElementById("input-pp-monto-edit").value = filaTabla.monto;
+    document.getElementById("input-pp-fecha-carga-edit").value = filaTabla.fechaCarga;
+    document.getElementById("input-pp-fecha-pago-edit").value = filaTabla.fechaPago;
+    document.getElementById("input-pp-tipo-acuerdo-edit").value = filaTabla.tipoAcuerdo;
+    document.getElementById("input-pp-operador-edit").value = getIdOperador(filaTabla.operador);
+    document.getElementById("input-pp-cumplimiento-edit").value = filaTabla.cumplimiento;
+    modalEditar.showModal();
+}
+
+function modalEliminarPromesa(filaTabla) {
+    idEliminar = filaTabla.id;
+    document.getElementById("eliminar-dato-caso").textContent = filaTabla.numCaso;
+    document.getElementById("eliminar-dato-id").textContent = filaTabla.idUsuarioML;
+    document.getElementById("eliminar-dato-canal").textContent = filaTabla.canal;
+    document.getElementById("eliminar-dato-site").textContent = filaTabla.site;
+    document.getElementById("eliminar-dato-monto").textContent = filaTabla.monto;
+
+    const dateFechaCarga = new Date(filaTabla.fechaCarga);
+    dateFechaCarga.setMinutes(dateFechaCarga.getMinutes() + dateFechaCarga.getTimezoneOffset());
+    document.getElementById("eliminar-dato-fechacarga").textContent = formatFecha.format(dateFechaCarga);
+
+    const dateFechaPago = new Date(filaTabla.fechaPago);
+    dateFechaPago.setMinutes(dateFechaPago.getMinutes() + dateFechaPago.getTimezoneOffset());
+    document.getElementById("eliminar-dato-fechapago").textContent = formatFecha.format(dateFechaPago);
+
+    document.getElementById("eliminar-dato-acuerdo").textContent = filaTabla.tipoAcuerdo;
+    document.getElementById("eliminar-dato-operador").textContent = filaTabla.operador;
+    modalEliminar.showModal()
+}
+
+async function eliminarPromesa(id) {
     try {
-        await api.eliminarPromesa(token, filaTabla.id);
-        listaPromesas = listaPromesas.filter(promesa => !(promesa.id === filaTabla.id && promesa.fechaCarga === filaTabla.fechaCarga));
-        alert("Promesa con id: " + filaTabla.id + 'eliminada correctamente.');
+        await api.eliminarPromesa(token, id);
+        listaPromesas = listaPromesas.filter(promesa => !(promesa.id === id));
+        alert("Promesa eliminada correctamente.");
         const totalPaginas = Math.ceil(listaPromesas.length / cantFilasPagina);
         if (paginaActual > totalPaginas) {
             paginaActual = totalPaginas
@@ -342,19 +366,19 @@ function renderPaginacion() {
         }
     }
     const paginaActualParrafo = document.getElementById('paginacion').querySelector('p');
-    paginaActualParrafo.innerHTML = "Pagina " + paginaActual + " de " + totalPaginas + "<br> (" +listaPromesas.length+" promesas)";
+    paginaActualParrafo.innerHTML = "Pagina " + paginaActual + " de " + totalPaginas + "<br> (" + listaPromesas.length + " promesas)";
 
 }
 
 botonAnteriorPaginacion.addEventListener('click', () => {
-    if(paginaActual > 1){
+    if (paginaActual > 1) {
         paginaActual = paginaActual - 1;
         printTablaHTML();
     }
 });
 
 botonSiguientePaginacion.addEventListener('click', () => {
-    if(paginaActual < totalPaginas){
+    if (paginaActual < totalPaginas) {
         paginaActual = paginaActual + 1;
         printTablaHTML();
     }
@@ -412,6 +436,10 @@ botonGuardarEditar.addEventListener('click', async () => {
     printTablaHTML();
 });
 
+botonConfirmarEliminar.addEventListener('click', () =>{
+    eliminarPromesa(idEliminar);
+    modalEliminar.close();
+});
 
 
 document.getElementById('boton-cancelar-editar').addEventListener('click', () => {
@@ -496,7 +524,7 @@ function formatearAMonedaArgentina(numero) {
     const formateador = new Intl.NumberFormat('es-AR', {
         style: 'currency',
         currency: 'ARS',
-        minimumFractionDigits: 2, // Muestra dos decimales, que es lo estándar para el ARS
+        minimumFractionDigits: 2,
     });
     return formateador.format(numero);
 }
@@ -515,7 +543,6 @@ function insertarDato(fila, columna, valorColumna, dato) {
 
 async function agregarPromesa() {
     mensajePP.innerHTML = '';
-    //1px solid black;
     document.getElementById("input-pp-caso").style.border = '1px solid black';
     document.getElementById("input-pp-id").style.border = '1px solid black';
     document.getElementById("input-pp-canal").style.border = '1px solid black';
@@ -542,10 +569,10 @@ async function agregarPromesa() {
 
 
     const promesaCorrecta = validarPromesa(nuevaPromesa);
-
+    let nuevaPromesaApi
     if (promesaCorrecta) {
         try {
-            await api.agregarPromesa(token, nuevaPromesa);
+            nuevaPromesaApi = await api.agregarPromesa(token, nuevaPromesa);
         }
         catch (err) {
             mensajePP.innerHTML += 'No fue posible generar la promesa. ' + err.message;
@@ -558,8 +585,9 @@ async function agregarPromesa() {
 
 
 
+        listaPromesas.unshift(nuevaPromesaApi);
+
         nuevaPromesa.operador = getNombreOperador(nuevaPromesa.operador);
-        listaPromesas.unshift(nuevaPromesa);
         document.getElementById("input-pp-caso").value = '';
         document.getElementById("input-pp-id").value = '';
         document.getElementById("input-pp-canal").value = document.getElementById("input-pp-canal").options[0].value;
@@ -570,7 +598,6 @@ async function agregarPromesa() {
         document.getElementById("input-pp-tipo-acuerdo").value = document.getElementById("input-pp-tipo-acuerdo").options[0].value;
         document.getElementById("input-pp-operador").value = filtroOperadorInput.options[0].value;
         document.getElementById("input-pp-cumplimiento").value = document.getElementById("input-pp-cumplimiento").options[0].value;
-
         printTablaHTML();
     }
 }
@@ -665,7 +692,7 @@ function parseMonto(montoStr) {
     const tieneComa = montoStr.includes(',');
 
     if (tienePunto && tieneComa) {
-        
+
         if (montoStr.lastIndexOf(',') > montoStr.lastIndexOf('.')) {
             montoStr = montoStr.replace(/\./g, '').replace(',', '.');
         } else {
@@ -684,7 +711,7 @@ function parseMonto(montoStr) {
             }
         }
     } else if (tienePunto && !tieneComa) {
-   
+
         if ((montoStr.match(/\./g) || []).length > 1) {
             montoStr = montoStr.replace(/\./g, '');
         } else {
@@ -713,7 +740,7 @@ function diferenciaEnDias(fecha1, fecha2) {
     return diffDias;
 }
 
-botonObtenerEstadisticas.addEventListener('click', async () =>{
+botonObtenerEstadisticas.addEventListener('click', async () => {
     const estadisticas = await obtenerEstadisticas(listaPromesas)
 
     printEstadisticas(estadisticas)
@@ -721,34 +748,38 @@ botonObtenerEstadisticas.addEventListener('click', async () =>{
     modalEstadisticas.showModal();
 })
 
-function printEstadisticas(estadisticas){
+function printEstadisticas(estadisticas) {
     document.getElementById("estadisticas-cant-promesas").querySelector('span').textContent = estadisticas.cantPromesas;
-    document.getElementById("estadisticas-cant-promesas-cumplidas").querySelector('span').textContent = estadisticas.cantPromesasCumplidas + " (" + (estadisticas.cantPromesasCumplidas/estadisticas.cantPromesas*100).toFixed(2) + "%)";
-    document.getElementById("estadisticas-cant-promesas-incumplidas").querySelector('span').textContent = estadisticas.cantPromesasIncumplidas + " (" + (estadisticas.cantPromesasIncumplidas/estadisticas.cantPromesas*100).toFixed(2) + "%)";
-    document.getElementById("estadisticas-cant-promesas-encurso").querySelector('span').textContent = estadisticas.cantPromesasEnCurso + " (" + (estadisticas.cantPromesasEnCurso/estadisticas.cantPromesas*100).toFixed(2) + "%)";
-    document.getElementById("estadisticas-MLA").querySelector('span').textContent = estadisticas.cantPromesasMLA + " (" + (estadisticas.cantPromesasMLA/estadisticas.cantPromesas*100).toFixed(2) + "%)";
-    document.getElementById("estadisticas-MLM").querySelector('span').textContent = estadisticas.cantPromesasMLM + " (" + (estadisticas.cantPromesasMLM/estadisticas.cantPromesas*100).toFixed(2) + "%)";
-    document.getElementById("estadisticas-MLC").querySelector('span').textContent = estadisticas.cantPromesasMLC + " (" + (estadisticas.cantPromesasMLC/estadisticas.cantPromesas*100).toFixed(2) + "%)";
-    document.getElementById("estadisticas-cant-promesas-duplica").querySelector('span').textContent = estadisticas.cantPromesasDuplicadas ;
-    document.getElementById("estadisticas-cant-promesas-duplica-cumplidas").querySelector('span').textContent = estadisticas.cantPromesasDuplicadasCumplidas + " (" + (estadisticas.cantPromesasDuplicadas !== 0 ? (estadisticas.cantPromesasDuplicadasCumplidas/estadisticas.cantPromesasDuplicadas*100).toFixed(2) : (0.00)) + "%)";
-    document.getElementById("estadisticas-cant-promesas-duplica-incumplidas").querySelector('span').textContent = estadisticas.cantPromesasDuplicadasIncumplidas + " (" + (estadisticas.cantPromesasDuplicadas !== 0 ? (estadisticas.cantPromesasDuplicadasIncumplidas/estadisticas.cantPromesasDuplicadas*100).toFixed(2) : (0.00)) + "%)";
-    document.getElementById("estadisticas-cant-promesas-duplica-encurso").querySelector('span').textContent = estadisticas.cantPromesasDuplicadasEnCurso + " (" + (estadisticas.cantPromesasDuplicadas !== 0 ? (estadisticas.cantPromesasDuplicadasEnCurso/estadisticas.cantPromesasDuplicadas*100).toFixed(2) : (0.00)) + "%)";
+    document.getElementById("estadisticas-cant-promesas-cumplidas").querySelector('span').textContent = estadisticas.cantPromesasCumplidas + " (" + (estadisticas.cantPromesasCumplidas / estadisticas.cantPromesas * 100).toFixed(2) + "%)";
+    document.getElementById("estadisticas-cant-promesas-incumplidas").querySelector('span').textContent = estadisticas.cantPromesasIncumplidas + " (" + (estadisticas.cantPromesasIncumplidas / estadisticas.cantPromesas * 100).toFixed(2) + "%)";
+    document.getElementById("estadisticas-cant-promesas-encurso").querySelector('span').textContent = estadisticas.cantPromesasEnCurso + " (" + (estadisticas.cantPromesasEnCurso / estadisticas.cantPromesas * 100).toFixed(2) + "%)";
+    document.getElementById("estadisticas-MLA").querySelector('span').textContent = estadisticas.cantPromesasMLA + " (" + (estadisticas.cantPromesasMLA / estadisticas.cantPromesas * 100).toFixed(2) + "%)";
+    document.getElementById("estadisticas-MLM").querySelector('span').textContent = estadisticas.cantPromesasMLM + " (" + (estadisticas.cantPromesasMLM / estadisticas.cantPromesas * 100).toFixed(2) + "%)";
+    document.getElementById("estadisticas-MLC").querySelector('span').textContent = estadisticas.cantPromesasMLC + " (" + (estadisticas.cantPromesasMLC / estadisticas.cantPromesas * 100).toFixed(2) + "%)";
+    document.getElementById("estadisticas-cant-promesas-duplica").querySelector('span').textContent = estadisticas.cantPromesasDuplicadas;
+    document.getElementById("estadisticas-cant-promesas-duplica-cumplidas").querySelector('span').textContent = estadisticas.cantPromesasDuplicadasCumplidas + " (" + (estadisticas.cantPromesasDuplicadas !== 0 ? (estadisticas.cantPromesasDuplicadasCumplidas / estadisticas.cantPromesasDuplicadas * 100).toFixed(2) : (0.00)) + "%)";
+    document.getElementById("estadisticas-cant-promesas-duplica-incumplidas").querySelector('span').textContent = estadisticas.cantPromesasDuplicadasIncumplidas + " (" + (estadisticas.cantPromesasDuplicadas !== 0 ? (estadisticas.cantPromesasDuplicadasIncumplidas / estadisticas.cantPromesasDuplicadas * 100).toFixed(2) : (0.00)) + "%)";
+    document.getElementById("estadisticas-cant-promesas-duplica-encurso").querySelector('span').textContent = estadisticas.cantPromesasDuplicadasEnCurso + " (" + (estadisticas.cantPromesasDuplicadas !== 0 ? (estadisticas.cantPromesasDuplicadasEnCurso / estadisticas.cantPromesasDuplicadas * 100).toFixed(2) : (0.00)) + "%)";
 }
 
-botonCerrarEstadistica.addEventListener('click', () =>{
+botonCerrarEstadistica.addEventListener('click', () => {
     modalEstadisticas.close();
 })
 
-async function obtenerEstadisticas(tabla){
-    try{
-        if(tabla.length == 0){
+botonCerrarEliminar.addEventListener('click', () => {
+    modalEliminar.close();
+})
+
+async function obtenerEstadisticas(tabla) {
+    try {
+        if (tabla.length == 0) {
             alert("La tabla actual no tiene ninguna promesa.");
             return;
         }
         const estadisticas = await api.getEstadisticas(token, tabla);
         return estadisticas
     }
-    catch(err){
+    catch (err) {
         alert(err)
     }
 }
@@ -759,7 +790,7 @@ botonDescargarExcel.addEventListener('click', async () => {
 
 async function descargarExcel(tabla) {
     try {
-        if(tabla.length == 0){
+        if (tabla.length == 0) {
             alert("La tabla actual no tiene ninguna promesa.");
             return;
         }

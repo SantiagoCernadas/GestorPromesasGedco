@@ -208,75 +208,75 @@
         <dialog id="modal-editar-pp">
             <div class="contenedor-dialog-editar">
                 <h2>Editar PP</h3>
-            <div class="contenedor-editar-pp">
-                <div class="input-edit-pp caso">
-                    <p>Caso</p>
-                    <input type="number" name="" id="input-pp-caso-edit">
-                </div>
-                <div class="input-pp id">
-                    <p>ID</p>
-                    <input type="number" name="" id="input-pp-id-edit">
-                </div>
-                <div class="input-pp canal">
-                    <p>Canal</p>
-                    <select name="Sites" id="input-pp-canal-edit">
-                        <option value="OFFLINE">OFFLINE</option>
-                        <option value="C2C">C2C</option>
-                        <option value="CHAT">CHAT</option>
-                    </select>
-                </div>
-                <div class="input-edit-pp Site-Pais">
-                    <p>Site/Pais</p>
-                    <select name="Sites" id="input-pp-site-edit">
-                        <option value="MLA">MLA</option>
-                        <option value="MLM">MLM</option>
-                        <option value="MLC">MLC</option>
-                    </select>
-                </div>
-                <div class="input-edit-pp monto">
-                    <p>Monto</p>
-                    <input type="text" name="" id="input-pp-monto-edit">
-                </div>
-                <div class="input-edit-pp fecha-carga">
-                    <p>Fecha de carga</p>
-                    <input type="date" name="" id="input-pp-fecha-carga-edit">
-                </div>
-                <div class="input-edit-pp fecha-pago">
-                    <p>Fecha de pago</p>
-                    <input type="date" name="" id="input-pp-fecha-pago-edit">
-                </div>
-                <div class="input-edit-pp tipo-acuerdo">
-                    <p>Tipo de acuerdo</p>
-                    <select name="tipo-acuerdos" id="input-pp-tipo-acuerdo-edit">
-                        <option value="Pago total">Pago total</option>
-                        <option value="Condonación">Condonación</option>
-                        <option value="Parcelamento">Parcelamento</option>
-                        <option value="Pago parcial">Pago Parcial</option>
-                    </select>
-                </div>
-                <div class="input-edit-pp operador">
-                    <p>Operador</p>
-                    <select name="" id="input-pp-operador-edit">
+                    <div class="contenedor-editar-pp">
+                        <div class="input-edit-pp caso">
+                            <p>Caso</p>
+                            <input type="number" name="" id="input-pp-caso-edit">
+                        </div>
+                        <div class="input-pp id">
+                            <p>ID</p>
+                            <input type="number" name="" id="input-pp-id-edit">
+                        </div>
+                        <div class="input-pp canal">
+                            <p>Canal</p>
+                            <select name="Sites" id="input-pp-canal-edit">
+                                <option value="OFFLINE">OFFLINE</option>
+                                <option value="C2C">C2C</option>
+                                <option value="CHAT">CHAT</option>
+                            </select>
+                        </div>
+                        <div class="input-edit-pp Site-Pais">
+                            <p>Site/Pais</p>
+                            <select name="Sites" id="input-pp-site-edit">
+                                <option value="MLA">MLA</option>
+                                <option value="MLM">MLM</option>
+                                <option value="MLC">MLC</option>
+                            </select>
+                        </div>
+                        <div class="input-edit-pp monto">
+                            <p>Monto</p>
+                            <input type="text" name="" id="input-pp-monto-edit">
+                        </div>
+                        <div class="input-edit-pp fecha-carga">
+                            <p>Fecha de carga</p>
+                            <input type="date" name="" id="input-pp-fecha-carga-edit">
+                        </div>
+                        <div class="input-edit-pp fecha-pago">
+                            <p>Fecha de pago</p>
+                            <input type="date" name="" id="input-pp-fecha-pago-edit">
+                        </div>
+                        <div class="input-edit-pp tipo-acuerdo">
+                            <p>Tipo de acuerdo</p>
+                            <select name="tipo-acuerdos" id="input-pp-tipo-acuerdo-edit">
+                                <option value="Pago total">Pago total</option>
+                                <option value="Condonación">Condonación</option>
+                                <option value="Parcelamento">Parcelamento</option>
+                                <option value="Pago parcial">Pago Parcial</option>
+                            </select>
+                        </div>
+                        <div class="input-edit-pp operador">
+                            <p>Operador</p>
+                            <select name="" id="input-pp-operador-edit">
 
-                    </select>
-                </div>
-                <div class="input-edit-pp cumplimiento">
-                    <p>Cumplimiento</p>
-                    <select name="cumplimientos" id="input-pp-cumplimiento-edit">
-                        <option value="En curso">En curso</option>
-                        <option value="Cumplida">Cumplida</option>
-                        <option value="Incumplida">Incumplida</option>
-                    </select>
-                </div>
+                            </select>
+                        </div>
+                        <div class="input-edit-pp cumplimiento">
+                            <p>Cumplimiento</p>
+                            <select name="cumplimientos" id="input-pp-cumplimiento-edit">
+                                <option value="En curso">En curso</option>
+                                <option value="Cumplida">Cumplida</option>
+                                <option value="Incumplida">Incumplida</option>
+                            </select>
+                        </div>
 
+                    </div>
+
+                    <div>
+                        <button id="boton-guardar-editar">Guardar</button>
+                        <button id="boton-cancelar-editar">Cancelar</button>
+                    </div>
             </div>
 
-            <div>
-                <button id="boton-guardar-editar">Guardar</button>
-                <button id="boton-cancelar-editar">Cancelar</button>
-            </div>
-            </div>
-            
         </dialog>
     </div>
 
@@ -318,6 +318,30 @@
                 </div>
             </div>
 
+        </dialog>
+    </div>
+
+    <div class="contenedor-dialogo">
+        <dialog id="modal-eliminar">
+            <div class="contenedor-eliminar-dialog">
+                <h2>Eliminar PP</h2>
+                <h3>¿Estas seguro de eliminar la siguiente promesa?</h3>
+                <div class="contenedor-eliminar-datos">
+                    <p>Caso: <span id="eliminar-dato-caso"></span></p>
+                    <p>Id: <span id="eliminar-dato-id"></span></p>
+                    <p>Canal: <span id="eliminar-dato-canal"></span></p>
+                    <p>Site: <span id="eliminar-dato-site"></span></p>
+                    <p>Monto: <span id="eliminar-dato-monto"></span></p>
+                    <p>Fecha de carga: <span id="eliminar-dato-fechacarga"></span></p>
+                    <p>Fecha de pago: <span id="eliminar-dato-fechapago"></span></p>
+                    <p>Tipo de acuerdo: <span id="eliminar-dato-acuerdo"></span></p>
+                    <p>Operador: <span id="eliminar-dato-operador"></span></p>
+                </div>
+                <div>
+                    <button id="boton-confirmar-eliminar">Eliminar</button>
+                    <button id="boton-cerrar-eliminar">Cancelar</button>
+                </div>
+            </div>
         </dialog>
     </div>
 

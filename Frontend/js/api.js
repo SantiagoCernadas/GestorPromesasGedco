@@ -193,7 +193,7 @@ export async function eliminarPromesa(token,id) {
         if (!response.ok) {
             throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
         }
-        return response.json();
+        return response;
     })
     .then(data => {
             responseBody = data;

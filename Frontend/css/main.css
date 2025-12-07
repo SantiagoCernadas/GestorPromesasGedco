@@ -320,34 +320,6 @@ footer {
     color: white;
 }
 
-/*
- RGB AZUL OSCURO: 47 97 129
- RGB AZUL CLARO: 56 150 180
-*/
-
-/*
-    Sites:
-    MLA:CELESTE
-    MLM:NARANJA
-    MLC:AMARILLO
-
-    CANALES:
-    CHAT:VERDE
-    OFFLINE:CELESTE
-    C2C:NARANJA
-
-    TIPO ACUERDO:
-    PAGO TOTAL: VERDE
-    CONDONACIÓN: MORADO
-    PARCELAMENTO: AZUL
-    PARCIAL: NARANJA
-
-    TIPO CUMPLIMIENTO:
-    EN CURSO: AMARILLO
-    CUMPLIDA: VERDE
-    INCUMPLIDA: ROJO
-*/
-
 .columna-borde {
     border-radius: 20px;
 }
@@ -541,4 +513,9 @@ h3{
 #estadisticas-MLC{
     color:black;
     font-weight: bold;
+}
+
+.contenedor-eliminar-datos{
+    display: flex;
+    gap: 10px;
 }
