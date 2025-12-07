@@ -517,5 +517,15 @@ h3{
 
 .contenedor-eliminar-datos{
     display: flex;
-    gap: 10px;
+}
+
+.eliminar-dato-columna{
+    border: 1px solid black;
+    width: 140px;
+}
+
+.contenedor-eliminar-dialog{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }

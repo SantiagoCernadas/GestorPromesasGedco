@@ -325,6 +325,7 @@ function modalEliminarPromesa(filaTabla) {
 
     document.getElementById("eliminar-dato-acuerdo").textContent = filaTabla.tipoAcuerdo;
     document.getElementById("eliminar-dato-operador").textContent = filaTabla.operador;
+    document.getElementById("eliminar-dato-cumplimiento").textContent = filaTabla.cumplimiento;
     modalEliminar.showModal()
 }
 
