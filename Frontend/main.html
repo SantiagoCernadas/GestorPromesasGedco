@@ -15,7 +15,9 @@
         <h2>Hola, <span id="nombre-operador-span"></span>!</h2>
         <nav>
             <button id="boton-descargar-excel">Descargar tabla actual</button>
-            <button id="boton-cumplimiento-pps">Modificar cumplimientos en excel</button>
+            <!--
+                        <button id="boton-cumplimiento-pps">Modificar cumplimientos en excel</button>
+            -->
             <button id="boton-cerrar-sesion">Cerrar sesión</button>
         </nav>
     </header>
@@ -89,9 +91,7 @@
                     <div class="filtro operador">
                         <p>Operador</p>
                         <select name="operadores" id="input-filtro-operador">
-                            <option value="-">Todos</option>
-                            <option value="Santiago">Santiago</option>
-                            <option value="Pepito92">Pepito92</option>
+
                         </select>
                     </div>
                     <div class="filtro duplica">
@@ -157,7 +157,9 @@
                 </div>
                 <div class="input-pp operador">
                     <p>Operador</p>
-                    <input type="text" name="" id="input-pp-operador">
+                    <select type="text" name="" id="input-pp-operador">
+
+                    </select>
                 </div>
                 <div class="input-pp cumplimiento">
                     <p>Cumplimiento</p>
@@ -171,13 +173,19 @@
             </div>
             <div>
                 <button id="boton-agregar">Agregar promesa</button>
+                <!--
                 <button id="boton-agregar-excel">Importar Excel</button>
+                -->
             </div>
 
             <p id="pp-mensaje"></p>
         </div>
 
-        <div id="paginacion"></div>
+        <div id="paginacion">
+            <button id="boton-paginacion-anterior">Anterior</button>
+            <p>a</p>
+            <button id="boton-paginacion-siguiente">Siguiente</button>
+        </div>
         <table class="tabla">
             <tr>
                 <th>Caso</th>
@@ -193,82 +201,178 @@
                 <th>Opciones</th>
             </tr>
         </table>
-
+        <button class="diseño-boton" id="boton-estadisticas">Obtener estadisticas</button>
     </main>
 
     <div class="contenedor-dialogo">
         <dialog id="modal-editar-pp">
-            <form id="form-editar-pp" method="dialog">
-                <h3>Editar PP</h3>
-                <div class="contenedor-editar-pp">
-                    <div class="input-edit-pp caso">
-                        <p>Caso</p>
-                        <input type="number" name="" id="input-pp-caso-edit">
-                    </div>
-                    <div class="input-pp id">
-                        <p>ID</p>
-                        <input type="number" name="" id="input-pp-id-edit">
-                    </div>
-                    <div class="input-pp canal">
-                        <p>Canal</p>
-                        <select name="Sites" id="input-pp-canal-edit">
-                            <option value="-">-</option>
-                            <option value="OFFLINE">OFFLINE</option>
-                            <option value="C2C">C2C</option>
-                            <option value="CHAT">CHAT</option>
-                        </select>
-                    </div>
-                    <div class="input-edit-pp Site-Pais">
-                        <p>Site/Pais</p>
-                        <select name="Sites" id="input-pp-site-edit">
-                            <option value="-">-</option>
-                            <option value="MLA">MLA</option>
-                            <option value="MLM">MLM</option>
-                            <option value="MLC">MLC</option>
-                        </select>
-                    </div>
-                    <div class="input-edit-pp monto">
-                        <p>Monto</p>
-                        <input type="text" name="" id="input-pp-monto-edit">
-                    </div>
-                    <div class="input-edit-pp fecha-carga">
-                        <p>Fecha de carga</p>
-                        <input type="date" name="" id="input-pp-fecha-carga-edit">
-                    </div>
-                    <div class="input-edit-pp fecha-pago">
-                        <p>Fecha de pago</p>
-                        <input type="date" name="" id="input-pp-fecha-pago-edit">
-                    </div>
-                    <div class="input-edit-pp tipo-acuerdo">
-                        <p>Tipo de acuerdo</p>
-                        <select name="tipo-acuerdos" id="input-pp-tipo-acuerdo-edit">
-                            <option value="-">-</option>
-                            <option value="Pago total">Pago total</option>
-                            <option value="Condonación">Condonación</option>
-                            <option value="Parcelamento">Parcelamento</option>
-                            <option value="Pago parcial">Pago Parcial</option>
-                        </select>
-                    </div>
-                    <div class="input-edit-pp operador">
-                        <p>Operador</p>
-                        <input type="text" name="" id="input-pp-operador-edit">
-                    </div>
-                    <div class="input-edit-pp cumplimiento">
-                        <p>Cumplimiento</p>
-                        <select name="cumplimientos" id="input-pp-cumplimiento-edit">
-                            <option value="En curso">En curso</option>
-                            <option value="Cumplida">Cumplida</option>
-                            <option value="Incumplida">Incumplida</option>
-                        </select>
+            <div class="contenedor-dialog-editar">
+                <h2>Editar PP</h3>
+                    <div class="contenedor-editar-pp">
+                        <div class="input-edit-pp caso">
+                            <p>Caso</p>
+                            <input type="number" name="" id="input-pp-caso-edit">
+                        </div>
+                        <div class="input-pp id">
+                            <p>ID</p>
+                            <input type="number" name="" id="input-pp-id-edit">
+                        </div>
+                        <div class="input-pp canal">
+                            <p>Canal</p>
+                            <select name="Sites" id="input-pp-canal-edit">
+                                <option value="OFFLINE">OFFLINE</option>
+                                <option value="C2C">C2C</option>
+                                <option value="CHAT">CHAT</option>
+                            </select>
+                        </div>
+                        <div class="input-edit-pp Site-Pais">
+                            <p>Site/Pais</p>
+                            <select name="Sites" id="input-pp-site-edit">
+                                <option value="MLA">MLA</option>
+                                <option value="MLM">MLM</option>
+                                <option value="MLC">MLC</option>
+                            </select>
+                        </div>
+                        <div class="input-edit-pp monto">
+                            <p>Monto</p>
+                            <input type="text" name="" id="input-pp-monto-edit">
+                        </div>
+                        <div class="input-edit-pp fecha-carga">
+                            <p>Fecha de carga</p>
+                            <input type="date" name="" id="input-pp-fecha-carga-edit">
+                        </div>
+                        <div class="input-edit-pp fecha-pago">
+                            <p>Fecha de pago</p>
+                            <input type="date" name="" id="input-pp-fecha-pago-edit">
+                        </div>
+                        <div class="input-edit-pp tipo-acuerdo">
+                            <p>Tipo de acuerdo</p>
+                            <select name="tipo-acuerdos" id="input-pp-tipo-acuerdo-edit">
+                                <option value="Pago total">Pago total</option>
+                                <option value="Condonación">Condonación</option>
+                                <option value="Parcelamento">Parcelamento</option>
+                                <option value="Pago parcial">Pago Parcial</option>
+                            </select>
+                        </div>
+                        <div class="input-edit-pp operador">
+                            <p>Operador</p>
+                            <select name="" id="input-pp-operador-edit">
+
+                            </select>
+                        </div>
+                        <div class="input-edit-pp cumplimiento">
+                            <p>Cumplimiento</p>
+                            <select name="cumplimientos" id="input-pp-cumplimiento-edit">
+                                <option value="En curso">En curso</option>
+                                <option value="Cumplida">Cumplida</option>
+                                <option value="Incumplida">Incumplida</option>
+                            </select>
+                        </div>
+
                     </div>
 
+                    <div>
+                        <button id="boton-guardar-editar">Guardar</button>
+                        <button id="boton-cancelar-editar">Cancelar</button>
+                    </div>
+            </div>
+
+        </dialog>
+    </div>
+
+    <div class="contenedor-dialogo">
+        <dialog id="modal-estadisticas">
+            <div class="contenedor-estadisticas-dialog">
+                <h2>Estadisticas</h2>
+
+                <div class="contenedor-estadisticas-fila">
+                    <h3 id="estadisticas-cant-promesas">Cantidad de promesas: <span></span> </h3>
+                    <div class="contenedor-estadisticas-items">
+                        <p id="estadisticas-cant-promesas-cumplidas">Cumplidas: <span></span> </p>
+                        <p id="estadisticas-cant-promesas-incumplidas">Incumplidas: <span></span></p>
+                        <p id="estadisticas-cant-promesas-encurso">En curso: <span></span> </p>
+                    </div>
+                </div>
+
+
+                <div class="contenedor-estadisticas-fila">
+                    <h3 id="estadisticas-cant-promesas-duplica">Promesas duplicadas:<span></span></h3>
+                    <div class="contenedor-estadisticas-items">
+                        <p id="estadisticas-cant-promesas-duplica-cumplidas">Cumplidas: <span></span></p>
+                        <p id="estadisticas-cant-promesas-duplica-incumplidas">Incumplidas: <span></span></p>
+                        <p id="estadisticas-cant-promesas-duplica-encurso">En curso: <span></span></p>
+                    </div>
+                </div>
+
+                <div class="contenedor-estadisticas-fila">
+                    <h3 id="estadisticas-cant-sites">Sites:</h3>
+                    <div class="contenedor-estadisticas-items">
+                        <p id="estadisticas-MLA">MLA: <span></span></p>
+                        <p id="estadisticas-MLM">MLM: <span></span></p>
+                        <p id="estadisticas-MLC">MLC: <span></span></p>
+                    </div>
                 </div>
 
                 <div>
-                    <button id="boton-guardar-editar">Guardar</button>
-                    <button id="boton-cancelar-editar">Cancelar</button>
+                    <button id="boton-cerrar-estadisticas">Cerrar</button>
                 </div>
-            </form>
+            </div>
+
+        </dialog>
+    </div>
+
+    <div class="contenedor-dialogo">
+        <dialog id="modal-eliminar">
+            <div class="contenedor-eliminar-dialog">
+                <h2>Eliminar PP</h2>
+                <h3>¿Eliminar la siguiente promesa?</h3>
+                <div class="contenedor-eliminar-datos">
+                    <div class="eliminar-dato-columna">
+                        <p>Caso</p>
+                        <p id="eliminar-dato-caso"></p>
+                    </div>
+                    <div class="eliminar-dato-columna">
+                        <p>Id</p>
+                        <p id="eliminar-dato-id"></p>
+                    </div>
+                    <div class="eliminar-dato-columna">
+                        <p>Canal</p>
+                        <p id="eliminar-dato-canal"></p>
+                    </div>
+                    <div class="eliminar-dato-columna">
+                        <p>Site</p>
+                        <p id="eliminar-dato-site"></p>
+                    </div>
+                    <div class="eliminar-dato-columna">
+                        <p>Monto</p>
+                        <p id="eliminar-dato-monto"></p>
+                    </div>
+                    <div class="eliminar-dato-columna">
+                        <p>Fecha de carga</p>
+                        <p id="eliminar-dato-fechacarga"></p>
+                    </div>
+                    <div class="eliminar-dato-columna">
+                        <p>Fecha de pago</p>
+                        <p id="eliminar-dato-fechapago"></p>
+                    </div>
+                    <div class="eliminar-dato-columna">
+                        <p>Tipo de acuerdo</p>
+                        <p id="eliminar-dato-acuerdo"></p>
+                    </div>
+                    <div class="eliminar-dato-columna">
+                        <p>Operador</p>
+                        <p id="eliminar-dato-operador"></p>
+                    </div>
+                    <div class="eliminar-dato-columna">
+                        <p>Cumplimiento</p>
+                        <p id="eliminar-dato-cumplimiento"></p>
+                    </div>
+                </div>
+                <div>
+                    <button id="boton-confirmar-eliminar">Eliminar</button>
+                    <button id="boton-cerrar-eliminar">Cancelar</button>
+                </div>
+            </div>
         </dialog>
     </div>
 

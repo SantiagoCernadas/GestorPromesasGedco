@@ -3,38 +3,90 @@ import * as api from "./api.js";
 const botonContenedorAgregarPP = document.getElementById("boton-contenedor-agregar");
 const botonContenedorFiltros = document.getElementById("boton-contenedor-filtros");
 const botonAgregarPromesa = document.getElementById("boton-agregar");
-const botonAgregarPromesaExcel = document.getElementById("boton-agregar-excel");
+//const botonAgregarPromesaExcel = document.getElementById("boton-agregar-excel");
+const botonObtenerEstadisticas = document.getElementById("boton-estadisticas");
 const mensajePP = document.getElementById("pp-mensaje");
 const contenedorAgregarPP = document.querySelector('.contenedor-agregar-promesa');
 const contenedorFiltros = document.querySelector('.filtros-contenedor');
 
-const botonCerrarSesion = document.getElementById("boton-cerrar-sesion");
 
-const paginacionDiv = document.getElementById('paginacion');
+const botonCerrarSesion = document.getElementById("boton-cerrar-sesion");
+const botonDescargarExcel = document.getElementById("boton-descargar-excel");
 
 const botonFiltrar = document.getElementById('boton-filtrar');
 let paginaActual = 1;
 const cantFilasPagina = 8;
 
-var idOriginal = 0;
-var fechaOriginal = '';
+let listaPromesas;
+let totalPaginas;
+const botonAnteriorPaginacion = document.getElementById('boton-paginacion-anterior');
+const botonSiguientePaginacion = document.getElementById('boton-paginacion-siguiente');
 
-const modal = document.getElementById('modal-editar-pp');
+
+const modalEditar = document.getElementById('modal-editar-pp');
+const modalEstadisticas = document.getElementById('modal-estadisticas');
+const modalEliminar = document.getElementById('modal-eliminar');
 const botonGuardarEditar = document.getElementById('boton-guardar-editar');
+const botonCerrarEstadistica = document.getElementById("boton-cerrar-estadisticas");
+const botonCerrarEliminar = document.getElementById("boton-cerrar-eliminar");
+const botonConfirmarEliminar = document.getElementById("boton-confirmar-eliminar");
 
-var listaPromesas = tablaPrueba();
-var listaPromesasFiltrada = listaPromesas;
+let idEdit;
+let idEliminar = 0;
 
 var filtros = getFiltros();
+
 
 const token = document.cookie
     .split("; ")
     .find(row => row.startsWith("session_token="))
     ?.split("=")[1];
 
+
+
 const datosUsuario = await api.getDatosUsuario(token);
 
+const usuarios = await api.getOperadores(token);
+
+const filtroOperadorInput = document.getElementById("input-filtro-operador");
+const agregarPPOperadorInput = document.getElementById("input-pp-operador");
+const editarPPOperadorInput = document.getElementById("input-pp-operador-edit");
+
+
+
+if (datosUsuario.rol === "SUPERVISOR") {
+    const opcionPP = document.createElement('option');
+    const opcionFiltro = document.createElement('option');
+    const opcionEditar = document.createElement('option');
+    opcionPP.value = "-";
+    opcionPP.textContent = "Todos";
+    opcionFiltro.value = "-";
+    opcionFiltro.textContent = "-";
+    opcionEditar.textContent = "-";
+    opcionEditar.value = "-";
+    filtroOperadorInput.add(opcionPP)
+    agregarPPOperadorInput.add(opcionFiltro);
+    editarPPOperadorInput.add(opcionEditar);
+}
+usuarios.forEach((usuario, i) => {
+    const opcionPP = document.createElement('option');
+    const opcionFiltro = document.createElement('option');
+    const opcionEditar = document.createElement('option');
+    opcionPP.value = usuario.id;
+    opcionPP.textContent = usuario.nombre;
+    opcionFiltro.value = usuario.id;
+    opcionFiltro.textContent = usuario.nombre;
+    opcionEditar.value = usuario.id;
+    opcionEditar.textContent = usuario.nombre;
+    agregarPPOperadorInput.add(opcionPP);
+    filtroOperadorInput.add(opcionFiltro);
+    editarPPOperadorInput.add(opcionEditar);
+})
+
 document.getElementById("nombre-operador-span").textContent = datosUsuario.nombre;
+
+filtrarPromesas();
+
 
 function getFiltros() {
     return {
@@ -51,28 +103,28 @@ function getFiltros() {
     };
 }
 
-botonFiltrar.addEventListener('click', () => {
+botonFiltrar.addEventListener('click', filtrarPromesas)
+
+async function filtrarPromesas() {
     filtros = getFiltros();
-    console.log(filtros);
-    listaPromesasFiltrada = listaPromesas;
-    console.log(listaPromesasFiltrada);
+    var query = "?1=1";
     if (!isNaN(filtros.caso)) {
-        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.caso === filtros.caso);
+        query += "&caso=" + filtros.caso;
     }
     if (!isNaN(filtros.id)) {
-        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.id === filtros.id);
+        query += "&usuarioML=" + filtros.id;
     }
     if (filtros.canal != '-') {
-        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.canal === filtros.canal);
+        query += "&canal=" + filtros.canal;
     }
     if (filtros.site != '-') {
-        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.site === filtros.site);
+        query += "&site=" + filtros.site;
     }
     if (filtros.tipoAcuerdo != '-') {
-        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.tipoAcuerdo === filtros.tipoAcuerdo);
+        query += "&tipoAcuerdo=" + filtros.tipoAcuerdo;
     }
     if (filtros.tipoCumplimiento != '-') {
-        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.tipoCumplimiento === filtros.tipoCumplimiento);
+        query += "&tipoCumplimiento=" + filtros.tipoCumplimiento;
     }
 
     if (filtros.fechaCargaDesde != '' && filtros.fechaCargaHasta == '') {
@@ -82,9 +134,9 @@ botonFiltrar.addEventListener('click', () => {
     else if (filtros.fechaCargaDesde == '' && filtros.fechaCargaHasta != '') {
         filtros.fechaCargaDesde = filtros.fechaCargaHasta;
         document.getElementById('input-filtro-fecha-carga-desde').value = filtros.fechaCargaDesde;
-    }
 
-    if (filtros.fechaCargaDesde != '' && filtros.fechaCargaHasta != '') {
+    }
+    else if (filtros.fechaCargaDesde != '' && filtros.fechaCargaHasta != '') {
         var fechaDesde = new Date(filtros.fechaCargaDesde);
         var fechaHasta = new Date(filtros.fechaCargaHasta);
         if (fechaHasta < fechaDesde) {
@@ -92,36 +144,40 @@ botonFiltrar.addEventListener('click', () => {
             filtros.fechaCargaHasta = filtros.fechaCargaDesde;
             document.getElementById('input-filtro-fecha-carga-hasta').value = filtros.fechaCargaDesde;
         }
-        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => {
-            const fechaCarga = new Date(promesa.fechaCarga);
-            return fechaCarga >= fechaDesde && fechaCarga <= fechaHasta;
-        })
+    }
+    else {
+        const hoy = new Date();
+
+        const mesAntes = new Date();
+        mesAntes.setMonth(hoy.getMonth() - 3);
+
+        const format = (fecha) => {
+            const year = fecha.getFullYear();
+            const month = String(fecha.getMonth() + 1).padStart(2, "0");
+            const day = String(fecha.getDate()).padStart(2, "0");
+            return `${year}-${month}-${day}`;
+        };
+
+        filtros.fechaCargaDesde = format(mesAntes);
+        filtros.fechaCargaHasta = format(hoy);
+        document.getElementById('input-filtro-fecha-carga-hasta').value = filtros.fechaCargaHasta;
+        document.getElementById('input-filtro-fecha-carga-desde').value = filtros.fechaCargaDesde;
+    }
+
+    query += "&fechaCargaDesde=" + filtros.fechaCargaDesde;
+    query += "&fechaCargaHasta=" + filtros.fechaCargaHasta;
+
+    if (!isNaN(filtros.operador)) {
+        query += "&operador=" + filtros.operador;
     }
 
     if (filtros.duplica) {
-        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => PromesaDuplica(promesa));
+        query += "&duplica=" + filtros.duplica;
     }
 
-    if (filtros.operador != '-') {
-        listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => promesa.nombreOperador === filtros.operador);
-    }
-    console.log(listaPromesasFiltrada);
+    const PromesasFiltros = await api.getPromesas(token, query);
+    listaPromesas = PromesasFiltros;
     printTablaHTML();
-})
-
-
-function PromesaDuplica(promesa) {
-    /*Requisitos para que una promesa sea "duplicada" (mas valor):
-    
-    MLA= Monto mayor a 250.000
-    MLM= Monto mayor a 250.000
-    MLC= Monto mayor a 250.000
-    */
-    if (promesa.site == 'MLA' && promesa.monto >= 250000) return true;
-    if (promesa.site == 'MLM' && promesa.monto >= 5000) return true;
-    if (promesa.site == 'MLC' && promesa.monto >= 200000) return true;
-
-    return false;
 }
 
 const formatFecha = new Intl.DateTimeFormat("es", {
@@ -130,15 +186,9 @@ const formatFecha = new Intl.DateTimeFormat("es", {
     year: 'numeric'
 })
 
-//Formatea un número a pesos argentinos.
-const formateadorDeMoneda = new Intl.NumberFormat('es-AR', {
-    style: 'currency',
-    currency: 'ARS',
-    minimumFractionDigits: 2,
-});
 
 const tabla = document.querySelector('.tabla').querySelector('tbody');
-printTablaHTML();
+
 
 botonContenedorAgregarPP.addEventListener('click', () => {
     if (contenedorAgregarPP.style.display == 'flex') {
@@ -173,9 +223,13 @@ botonAgregarPromesa.addEventListener('click', () => {
     agregarPromesa();
 })
 
+
+
+/*
 botonAgregarPromesaExcel.addEventListener('click', () => {
     alert("Proximamente");
 })
+*/
 
 botonCerrarSesion.addEventListener('click', () => {
     document.cookie = "session_token=; path=/; max-age=0;"
@@ -197,23 +251,23 @@ function printTablaHTML() {
     const inicio = (paginaActual - 1) * cantFilasPagina;
     const fin = inicio + cantFilasPagina;
 
-    const ppsPaginaActual = listaPromesasFiltrada.slice(inicio, fin);
+    const ppsPaginaActual = listaPromesas.slice(inicio, fin);
 
 
 
     ppsPaginaActual.forEach((filaTabla, i) => {
         const fila = document.createElement('tr');
         fila.id = 'tabla-fila-' + i;
-        insertarDato(fila, document.createElement('td'), document.createElement('p'), filaTabla.caso, 'columna');
-        insertarDato(fila, document.createElement('td'), document.createElement('p'), filaTabla.id);
+        insertarDato(fila, document.createElement('td'), document.createElement('p'), filaTabla.numCaso, 'columna');
+        insertarDato(fila, document.createElement('td'), document.createElement('p'), filaTabla.idUsuarioML);
         insertarCanal(fila, document.createElement('td'), document.createElement('p'), filaTabla.canal);
         insertarSite(fila, document.createElement('td'), document.createElement('p'), filaTabla.site);
         insertarMonto(fila, document.createElement('td'), document.createElement('p'), filaTabla.monto);
         insertarFecha(fila, document.createElement('td'), document.createElement('p'), filaTabla.fechaCarga);
         insertarFecha(fila, document.createElement('td'), document.createElement('p'), filaTabla.fechaPago);
         insertarTipoAcuerdo(fila, document.createElement('td'), document.createElement('p'), filaTabla.tipoAcuerdo);
-        insertarDato(fila, document.createElement('td'), document.createElement('p'), filaTabla.nombreOperador);
-        insertarTipoCumplimiento(fila, document.createElement('td'), document.createElement('p'), filaTabla.tipoCumplimiento);
+        insertarDato(fila, document.createElement('td'), document.createElement('p'), filaTabla.operador);
+        insertarTipoCumplimiento(fila, document.createElement('td'), document.createElement('p'), filaTabla.cumplimiento);
         const columnaBotones = document.createElement('td');
         const botonEditar = document.createElement('button');
         botonEditar.innerHTML = "Editar";
@@ -229,140 +283,168 @@ function printTablaHTML() {
         tabla.appendChild(fila);
 
         botonEliminar.addEventListener('click', () => {
-            const fila = document.getElementById('tabla-fila-' + i);
-            fila.remove();
-            listaPromesasFiltrada = listaPromesasFiltrada.filter(promesa => !(promesa.id === filaTabla.id && promesa.fechaCarga === filaTabla.fechaCarga));
-            listaPromesas = listaPromesas.filter(promesa => !(promesa.id === filaTabla.id && promesa.fechaCarga === filaTabla.fechaCarga));
-            console.log(listaPromesas.length);
-            console.log(listaPromesasFiltrada.length);
-            alert("Promesa con id: " + filaTabla.id + " y fecha de carga: " + filaTabla.fechaCarga + ' eliminada correctamente.');
-            const totalPaginas = Math.ceil(listaPromesas.length / cantFilasPagina);
-            if (paginaActual > totalPaginas) {
-                paginaActual = totalPaginas
-            };
-            printTablaHTML();
+            modalEliminarPromesa(filaTabla);
         });
         botonEditar.addEventListener('click', () => {
-            //const fila = document.getElementById('tabla-fila-'+i);
-            document.getElementById("input-pp-caso-edit").value = filaTabla.caso;
-            document.getElementById("input-pp-id-edit").value = filaTabla.id;
-            document.getElementById("input-pp-canal-edit").value = filaTabla.canal;
-            document.getElementById("input-pp-site-edit").value = filaTabla.site;
-            document.getElementById("input-pp-monto-edit").value = filaTabla.monto;
-            document.getElementById("input-pp-site-edit").value = filaTabla.site;
-            document.getElementById("input-pp-fecha-carga-edit").value = filaTabla.fechaCarga;
-            document.getElementById("input-pp-fecha-pago-edit").value = filaTabla.fechaPago;
-            document.getElementById("input-pp-tipo-acuerdo-edit").value = filaTabla.tipoAcuerdo;
-            document.getElementById("input-pp-operador-edit").value = filaTabla.nombreOperador;
-            document.getElementById("input-pp-cumplimiento-edit").value = filaTabla.tipoCumplimiento;
-
-            fechaOriginal = filaTabla.fechaCarga;
-            idOriginal = filaTabla.id;
-
-            modal.showModal();
+            modalEditarPromesa(filaTabla)
         });
 
     });
-
-
-
 }
-function renderPaginacion() {
-    paginacionDiv.innerHTML = '';
 
-    const totalPaginas = Math.ceil(listaPromesasFiltrada.length / cantFilasPagina);
+function modalEditarPromesa(filaTabla) {
+    idEdit = filaTabla.id;
+    document.getElementById("input-pp-caso-edit").value = filaTabla.numCaso;
+    document.getElementById("input-pp-id-edit").value = filaTabla.idUsuarioML;
+    document.getElementById("input-pp-canal-edit").value = filaTabla.canal;
+    document.getElementById("input-pp-site-edit").value = filaTabla.site;
+    document.getElementById("input-pp-monto-edit").value = filaTabla.monto;
+    document.getElementById("input-pp-fecha-carga-edit").value = filaTabla.fechaCarga;
+    document.getElementById("input-pp-fecha-pago-edit").value = filaTabla.fechaPago;
+    document.getElementById("input-pp-tipo-acuerdo-edit").value = filaTabla.tipoAcuerdo;
+    document.getElementById("input-pp-operador-edit").value = getIdOperador(filaTabla.operador);
+    document.getElementById("input-pp-cumplimiento-edit").value = filaTabla.cumplimiento;
+    modalEditar.showModal();
+}
+
+function modalEliminarPromesa(filaTabla) {
+    idEliminar = filaTabla.id;
+    document.getElementById("eliminar-dato-caso").textContent = filaTabla.numCaso;
+    document.getElementById("eliminar-dato-id").textContent = filaTabla.idUsuarioML;
+    document.getElementById("eliminar-dato-canal").textContent = filaTabla.canal;
+    document.getElementById("eliminar-dato-site").textContent = filaTabla.site;
+    document.getElementById("eliminar-dato-monto").textContent = filaTabla.monto;
+
+    const dateFechaCarga = new Date(filaTabla.fechaCarga);
+    dateFechaCarga.setMinutes(dateFechaCarga.getMinutes() + dateFechaCarga.getTimezoneOffset());
+    document.getElementById("eliminar-dato-fechacarga").textContent = formatFecha.format(dateFechaCarga);
+
+    const dateFechaPago = new Date(filaTabla.fechaPago);
+    dateFechaPago.setMinutes(dateFechaPago.getMinutes() + dateFechaPago.getTimezoneOffset());
+    document.getElementById("eliminar-dato-fechapago").textContent = formatFecha.format(dateFechaPago);
+
+    document.getElementById("eliminar-dato-acuerdo").textContent = filaTabla.tipoAcuerdo;
+    document.getElementById("eliminar-dato-operador").textContent = filaTabla.operador;
+    document.getElementById("eliminar-dato-cumplimiento").textContent = filaTabla.cumplimiento;
+    modalEliminar.showModal()
+}
+
+async function eliminarPromesa(id) {
+    try {
+        await api.eliminarPromesa(token, id);
+        listaPromesas = listaPromesas.filter(promesa => !(promesa.id === id));
+        alert("Promesa eliminada correctamente.");
+        const totalPaginas = Math.ceil(listaPromesas.length / cantFilasPagina);
+        if (paginaActual > totalPaginas) {
+            paginaActual = totalPaginas
+        };
+        printTablaHTML();
+    }
+    catch (err) {
+        alert("No fue posible eliminar la promesa: " + err.message);
+        return;
+    }
+}
+
+function getIdOperador(nombreOperador) {
+    return usuarios.filter(u => u.nombre == nombreOperador)[0].id;
+}
+
+function getNombreOperador(idOperador) {
+    return usuarios.filter(u => u.id == idOperador)[0].nombre;
+}
+
+
+function renderPaginacion() {
+    totalPaginas = Math.ceil(listaPromesas.length / cantFilasPagina);
 
     if (paginaActual > totalPaginas) {
         paginaActual = totalPaginas
     }
     else if (paginaActual <= 0) {
-        if (listaPromesasFiltrada.length >= 1) {
+        if (listaPromesas.length >= 1) {
             paginaActual = 1;
         }
     }
+    const paginaActualParrafo = document.getElementById('paginacion').querySelector('p');
+    paginaActualParrafo.innerHTML = "Pagina " + paginaActual + " de " + totalPaginas + "<br> (" + listaPromesas.length + " promesas)";
 
-    paginacionDiv.appendChild(crearBoton('Anterior', paginaActual - 1, paginaActual <= 1));
-
-    const paginaActualParrafo = document.createElement('p');
-    paginaActualParrafo.textContent = paginaActual + " de " + totalPaginas;
-    paginacionDiv.appendChild(paginaActualParrafo)
-
-    paginacionDiv.appendChild(crearBoton('Siguiente', paginaActual + 1, paginaActual >= totalPaginas));
 }
 
-function crearBoton(texto, pagina, deshabilitado = false) {
-    const btn = document.createElement('button');
-    btn.textContent = texto;
-
-
-    if (!deshabilitado) {
-        btn.addEventListener('click', () => {
-            paginaActual = pagina;
-            printTablaHTML();
-        });
+botonAnteriorPaginacion.addEventListener('click', () => {
+    if (paginaActual > 1) {
+        paginaActual = paginaActual - 1;
+        printTablaHTML();
     }
-    return btn;
-};
+});
 
-botonGuardarEditar.addEventListener('click', () => {
+botonSiguientePaginacion.addEventListener('click', () => {
+    if (paginaActual < totalPaginas) {
+        paginaActual = paginaActual + 1;
+        printTablaHTML();
+    }
+});
+
+botonGuardarEditar.addEventListener('click', async () => {
 
 
 
     const promesaEdit = {
-        caso: parseInt(document.getElementById("input-pp-caso-edit").value),
-        id: parseInt(document.getElementById("input-pp-id-edit").value),
+        numCaso: parseInt(document.getElementById("input-pp-caso-edit").value),
+        idUsuarioML: parseInt(document.getElementById("input-pp-id-edit").value),
         canal: document.getElementById("input-pp-canal-edit").value,
         site: document.getElementById("input-pp-site-edit").value,
         monto: parseMonto(document.getElementById("input-pp-monto-edit").value),
         fechaCarga: document.getElementById("input-pp-fecha-carga-edit").value,
         fechaPago: document.getElementById("input-pp-fecha-pago-edit").value,
         tipoAcuerdo: document.getElementById("input-pp-tipo-acuerdo-edit").value,
-        nombreOperador: document.getElementById("input-pp-operador-edit").value,
-        tipoCumplimiento: document.getElementById("input-pp-cumplimiento-edit").value
+        operador: parseInt(document.getElementById("input-pp-operador-edit").value),
+        cumplimiento: document.getElementById("input-pp-cumplimiento-edit").value
     }
 
-    const nuevoId = promesaEdit.id;
-    const nuevaFecha = promesaEdit.fechaCarga;
 
-
-    promesaCorrecta = validarPromesa(promesaEdit);
+    let promesaCorrecta = validarPromesa(promesaEdit);
 
     if (!promesaCorrecta) {
         alert('ERROR AL GENERAR LA NUEVA PROMESA.');
         return;
     }
 
-    const duplicado = listaPromesas.some(p =>
-        p.id === nuevoId && p.fechaCarga === nuevaFecha &&
-        !(p.id === idOriginal && p.fechaCarga === fechaOriginal)
-    );
-
-    if (duplicado) {
-        alert('⚠️ Ya existe una persona con ese ID y fecha de carga.');
+    try {
+        await api.modificarPromesa(token, idEdit, promesaEdit);
+    }
+    catch (err) {
+        alert('No fue posible generar la promesa. ' + err.message);
         return;
     }
 
-    var promesa = listaPromesas.find(p => p.id === idOriginal && p.fechaCarga === fechaOriginal);
+    var promesa = listaPromesas.find(p => p.id === idEdit);
     if (promesa) {
-        promesa.caso = promesaEdit.caso;
-        promesa.id = promesaEdit.id;
+        promesa.numCaso = promesaEdit.numCaso;
+        promesa.idUsuarioML = promesaEdit.idUsuarioML;
         promesa.canal = promesaEdit.canal;
         promesa.site = promesaEdit.site;
         promesa.monto = promesaEdit.monto;
         promesa.fechaCarga = promesaEdit.fechaCarga;
         promesa.fechaPago = promesaEdit.fechaPago;
         promesa.tipoAcuerdo = promesaEdit.tipoAcuerdo;
-        promesa.nombreOperador = promesaEdit.nombreOperador;
-        promesa.tipoCumplimiento = promesaEdit.tipoCumplimiento;
+        promesa.operador = getNombreOperador(promesaEdit.operador);
+        promesa.cumplimiento = promesaEdit.cumplimiento;
     }
 
     alert('PP Modificada.');
-    modal.close();
+    modalEditar.close();
     printTablaHTML();
 });
 
+botonConfirmarEliminar.addEventListener('click', () =>{
+    eliminarPromesa(idEliminar);
+    modalEliminar.close();
+});
+
+
 document.getElementById('boton-cancelar-editar').addEventListener('click', () => {
-    modal.close();
+    modalEditar.close();
 });
 
 function insertarCanal(fila, columna, valorColumna, canal) {
@@ -443,7 +525,7 @@ function formatearAMonedaArgentina(numero) {
     const formateador = new Intl.NumberFormat('es-AR', {
         style: 'currency',
         currency: 'ARS',
-        minimumFractionDigits: 2, // Muestra dos decimales, que es lo estándar para el ARS
+        minimumFractionDigits: 2,
     });
     return formateador.format(numero);
 }
@@ -460,9 +542,8 @@ function insertarDato(fila, columna, valorColumna, dato) {
 }
 
 
-function agregarPromesa() {
+async function agregarPromesa() {
     mensajePP.innerHTML = '';
-    //1px solid black;
     document.getElementById("input-pp-caso").style.border = '1px solid black';
     document.getElementById("input-pp-id").style.border = '1px solid black';
     document.getElementById("input-pp-canal").style.border = '1px solid black';
@@ -475,44 +556,63 @@ function agregarPromesa() {
     document.getElementById("input-pp-cumplimiento").style.border = '1px solid black';
 
     const nuevaPromesa = {
-        caso: parseInt(document.getElementById("input-pp-caso").value),
-        id: parseInt(document.getElementById("input-pp-id").value),
+        numCaso: parseInt(document.getElementById("input-pp-caso").value),
+        idUsuarioML: parseInt(document.getElementById("input-pp-id").value),
         canal: document.getElementById("input-pp-canal").value,
         site: document.getElementById("input-pp-site").value,
         monto: parseMonto(document.getElementById("input-pp-monto").value),
         fechaCarga: document.getElementById("input-pp-fecha-carga").value,
         fechaPago: document.getElementById("input-pp-fecha-pago").value,
         tipoAcuerdo: document.getElementById("input-pp-tipo-acuerdo").value,
-        nombreOperador: document.getElementById("input-pp-operador").value,
-        tipoCumplimiento: document.getElementById("input-pp-cumplimiento").value
+        operador: parseInt(document.getElementById("input-pp-operador").value),
+        cumplimiento: document.getElementById("input-pp-cumplimiento").value
     }
 
-    promesaCorrecta = validarPromesa(nuevaPromesa);
 
+    const promesaCorrecta = validarPromesa(nuevaPromesa);
+    let nuevaPromesaApi
     if (promesaCorrecta) {
-        if (listaPromesas.some(promesa => promesa.id === nuevaPromesa.id && promesa.fechaCarga === nuevaPromesa.fechaCarga)) {
-            mensajePP.innerHTML += 'Ya existe una promesa con el id y la fecha de carga ingresada.'
-            mensajePP.style.color = 'red';
+        try {
+            nuevaPromesaApi = await api.agregarPromesa(token, nuevaPromesa);
         }
-        else {
-            mensajePP.innerHTML += '¡Promesa agregada con exito!'
-            mensajePP.style.color = 'green';
-            listaPromesas.unshift(nuevaPromesa);
-            listaPromesasFiltrada.unshift(nuevaPromesa);
-            printTablaHTML();
+        catch (err) {
+            mensajePP.innerHTML += 'No fue posible generar la promesa. ' + err.message;
+            return;
         }
+
+
+        mensajePP.innerHTML += '¡Promesa agregada con exito!'
+        mensajePP.style.color = 'green';
+
+
+
+        listaPromesas.unshift(nuevaPromesaApi);
+
+        nuevaPromesa.operador = getNombreOperador(nuevaPromesa.operador);
+        document.getElementById("input-pp-caso").value = '';
+        document.getElementById("input-pp-id").value = '';
+        document.getElementById("input-pp-canal").value = document.getElementById("input-pp-canal").options[0].value;
+        document.getElementById("input-pp-site").value = document.getElementById("input-pp-site").options[0].value;
+        document.getElementById("input-pp-monto").value = '';
+        document.getElementById("input-pp-fecha-carga").value = '';
+        document.getElementById("input-pp-fecha-pago").value = '';
+        document.getElementById("input-pp-tipo-acuerdo").value = document.getElementById("input-pp-tipo-acuerdo").options[0].value;
+        document.getElementById("input-pp-operador").value = filtroOperadorInput.options[0].value;
+        document.getElementById("input-pp-cumplimiento").value = document.getElementById("input-pp-cumplimiento").options[0].value;
+        printTablaHTML();
     }
 }
 
+
 function validarPromesa(nuevaPromesa) {
     var sinError = true;
-    if (Number.isNaN(nuevaPromesa.caso)) {
+    if (Number.isNaN(nuevaPromesa.numCaso)) {
         document.getElementById("input-pp-caso").style.border = '2px solid red';
         mensajePP.innerHTML += 'Ingresar Numero de caso. <br>'
         mensajePP.style.color = 'red';
         sinError = false;
     }
-    if (Number.isNaN(nuevaPromesa.id)) {
+    if (Number.isNaN(nuevaPromesa.idUsuarioML)) {
         document.getElementById("input-pp-id").style.border = '2px solid red';
         mensajePP.innerHTML += 'Ingresar ID.<br>'
         mensajePP.style.color = 'red';
@@ -568,7 +668,7 @@ function validarPromesa(nuevaPromesa) {
         mensajePP.style.color = 'red';
         sinError = false;
     }
-    if (nuevaPromesa.nombreOperador == '') {
+    if (Number.isNaN(nuevaPromesa.operador)) {
         document.getElementById("input-pp-operador").style.border = '2px solid red';
         mensajePP.innerHTML += 'Ingresar nombre de operador.<br>'
         mensajePP.style.color = 'red';
@@ -579,10 +679,11 @@ function validarPromesa(nuevaPromesa) {
 
 
 
+//Parsear montos mexicanos o argentinos a tipo de dato FLOAT
 function parseMonto(montoStr) {
     montoStr = montoStr.trim().replace(/\$/g, '');
 
-    //Verifica que no tenga caracteres que no sean parseables
+
     if (!montoStr || /[^0-9.,]/.test(montoStr)) return NaN;
 
     if (montoStr == '') return NaN;
@@ -592,21 +693,17 @@ function parseMonto(montoStr) {
     const tieneComa = montoStr.includes(',');
 
     if (tienePunto && tieneComa) {
-        // Ambos separadores presentes
-        // Si la coma está al final -> formato argentino
+
         if (montoStr.lastIndexOf(',') > montoStr.lastIndexOf('.')) {
             montoStr = montoStr.replace(/\./g, '').replace(',', '.');
         } else {
-            // Si el punto está al final -> formato mexicano
-            montoStr = montoStr.replace(/,/g, ''); // elimina comas
+            montoStr = montoStr.replace(/,/g, '');
         }
     } else if (tieneComa && !tienePunto) {
-        // 👉 Solo comas
-        // Si hay más de una coma → son miles, quitarlas
+
         if ((montoStr.match(/,/g) || []).length > 1) {
             montoStr = montoStr.replace(/,/g, '');
         } else {
-            // Si solo hay una coma, decidir si decimal o miles
             const partes = montoStr.split(',');
             if (partes[1]?.length === 3) {
                 montoStr = montoStr.replace(/,/g, '');
@@ -615,12 +712,10 @@ function parseMonto(montoStr) {
             }
         }
     } else if (tienePunto && !tieneComa) {
-        // 👉 Solo puntos
-        // Si hay más de un punto → son separadores de miles
+
         if ((montoStr.match(/\./g) || []).length > 1) {
             montoStr = montoStr.replace(/\./g, '');
         } else {
-            // Si solo hay uno, verificar si decimal o miles
             const partes = montoStr.split('.');
             if (partes[1]?.length === 3) {
                 montoStr = montoStr.replace(/\./g, '');
@@ -636,131 +731,85 @@ function diferenciaEnDias(fecha1, fecha2) {
     const f1 = new Date(fecha1);
     const f2 = new Date(fecha2);
 
-    // Normalizar las horas para que solo cuente la diferencia de fechas
     f1.setHours(0, 0, 0, 0);
     f2.setHours(0, 0, 0, 0);
 
-    // Diferencia en milisegundos (fecha2 - fecha1)
     const diffMs = f2 - f1;
 
-    // Convertir milisegundos → días (positivo o negativo)
     const diffDias = diffMs / (1000 * 60 * 60 * 24);
 
     return diffDias;
 }
 
+botonObtenerEstadisticas.addEventListener('click', async () => {
+    const estadisticas = await obtenerEstadisticas(listaPromesas)
 
-function tablaPrueba() {
-    //Formato Fecha: YYYY-MM-DD
-    //Formato monto: Pesos Argentinos.
-    return [
-        {
-            caso: 123141243,
-            id: 10000,
-            canal: "CHAT",
-            site: "MLA",
-            monto: 852.42,
-            fechaCarga: "2025-10-13",
-            fechaPago: "2025-10-14",
-            tipoAcuerdo: "Condonación",
-            nombreOperador: "Pepito92",
-            tipoCumplimiento: "En curso"
-        },
-        {
-            caso: 123141243,
-            id: 20000,
-            canal: "OFFLINE",
-            site: "MLM",
-            monto: 5000,
-            fechaCarga: "2025-10-14",
-            fechaPago: "2025-10-14",
-            tipoAcuerdo: "Pago parcial",
-            nombreOperador: "Santiago",
-            tipoCumplimiento: "Cumplida"
-        },
-        {
-            caso: 543636364,
-            id: 30000,
-            canal: "C2C",
-            site: "MLC",
-            monto: 1000000,
-            fechaCarga: "2025-10-15",
-            fechaPago: "2025-10-16",
-            tipoAcuerdo: "Parcelamento",
-            nombreOperador: "Santiago",
-            tipoCumplimiento: "Incumplida"
-        },
-        {
-            caso: 123141243,
-            id: 40000,
-            canal: "CHAT",
-            site: "MLA",
-            monto: 852.42,
-            fechaCarga: "2025-10-16",
-            fechaPago: "2025-10-20",
-            tipoAcuerdo: "Condonación",
-            nombreOperador: "Pepito92",
-            tipoCumplimiento: "En curso"
-        },
-        {
-            caso: 123141243,
-            id: 50000,
-            canal: "OFFLINE",
-            site: "MLM",
-            monto: 3000,
-            fechaCarga: "2025-10-17",
-            fechaPago: "2025-10-17",
-            tipoAcuerdo: "Pago parcial",
-            nombreOperador: "Santiago",
-            tipoCumplimiento: "Cumplida"
-        },
-        {
-            caso: 543636364,
-            id: 60000,
-            canal: "C2C",
-            site: "MLC",
-            monto: 1000000,
-            fechaCarga: "2025-10-17",
-            fechaPago: "2025-10-17",
-            tipoAcuerdo: "Parcelamento",
-            nombreOperador: "Santiago",
-            tipoCumplimiento: "Incumplida"
-        },
-        {
-            caso: 123141243,
-            id: 70000,
-            canal: "CHAT",
-            site: "MLA",
-            monto: 500000,
-            fechaCarga: "2025-10-13",
-            fechaPago: "2025-10-14",
-            tipoAcuerdo: "Condonación",
-            nombreOperador: "Pepito92",
-            tipoCumplimiento: "En curso"
-        },
-        {
-            caso: 123141243,
-            id: 80000,
-            canal: "OFFLINE",
-            site: "MLM",
-            monto: 5000,
-            fechaCarga: "2025-10-13",
-            fechaPago: "2025-10-14",
-            tipoAcuerdo: "Pago parcial",
-            nombreOperador: "Santiago",
-            tipoCumplimiento: "Cumplida"
-        },
-        {
-            caso: 543636364,
-            id: 90000,
-            canal: "C2C",
-            site: "MLC",
-            monto: 1000000,
-            fechaCarga: "2025-10-13",
-            fechaPago: "2025-10-14",
-            tipoAcuerdo: "Parcelamento",
-            nombreOperador: "Santiago",
-            tipoCumplimiento: "Incumplida"
+    printEstadisticas(estadisticas)
+
+    modalEstadisticas.showModal();
+})
+
+function printEstadisticas(estadisticas) {
+    document.getElementById("estadisticas-cant-promesas").querySelector('span').textContent = estadisticas.cantPromesas;
+    document.getElementById("estadisticas-cant-promesas-cumplidas").querySelector('span').textContent = estadisticas.cantPromesasCumplidas + " (" + (estadisticas.cantPromesasCumplidas / estadisticas.cantPromesas * 100).toFixed(2) + "%)";
+    document.getElementById("estadisticas-cant-promesas-incumplidas").querySelector('span').textContent = estadisticas.cantPromesasIncumplidas + " (" + (estadisticas.cantPromesasIncumplidas / estadisticas.cantPromesas * 100).toFixed(2) + "%)";
+    document.getElementById("estadisticas-cant-promesas-encurso").querySelector('span').textContent = estadisticas.cantPromesasEnCurso + " (" + (estadisticas.cantPromesasEnCurso / estadisticas.cantPromesas * 100).toFixed(2) + "%)";
+    document.getElementById("estadisticas-MLA").querySelector('span').textContent = estadisticas.cantPromesasMLA + " (" + (estadisticas.cantPromesasMLA / estadisticas.cantPromesas * 100).toFixed(2) + "%)";
+    document.getElementById("estadisticas-MLM").querySelector('span').textContent = estadisticas.cantPromesasMLM + " (" + (estadisticas.cantPromesasMLM / estadisticas.cantPromesas * 100).toFixed(2) + "%)";
+    document.getElementById("estadisticas-MLC").querySelector('span').textContent = estadisticas.cantPromesasMLC + " (" + (estadisticas.cantPromesasMLC / estadisticas.cantPromesas * 100).toFixed(2) + "%)";
+    document.getElementById("estadisticas-cant-promesas-duplica").querySelector('span').textContent = estadisticas.cantPromesasDuplicadas;
+    document.getElementById("estadisticas-cant-promesas-duplica-cumplidas").querySelector('span').textContent = estadisticas.cantPromesasDuplicadasCumplidas + " (" + (estadisticas.cantPromesasDuplicadas !== 0 ? (estadisticas.cantPromesasDuplicadasCumplidas / estadisticas.cantPromesasDuplicadas * 100).toFixed(2) : (0.00)) + "%)";
+    document.getElementById("estadisticas-cant-promesas-duplica-incumplidas").querySelector('span').textContent = estadisticas.cantPromesasDuplicadasIncumplidas + " (" + (estadisticas.cantPromesasDuplicadas !== 0 ? (estadisticas.cantPromesasDuplicadasIncumplidas / estadisticas.cantPromesasDuplicadas * 100).toFixed(2) : (0.00)) + "%)";
+    document.getElementById("estadisticas-cant-promesas-duplica-encurso").querySelector('span').textContent = estadisticas.cantPromesasDuplicadasEnCurso + " (" + (estadisticas.cantPromesasDuplicadas !== 0 ? (estadisticas.cantPromesasDuplicadasEnCurso / estadisticas.cantPromesasDuplicadas * 100).toFixed(2) : (0.00)) + "%)";
+}
+
+botonCerrarEstadistica.addEventListener('click', () => {
+    modalEstadisticas.close();
+})
+
+botonCerrarEliminar.addEventListener('click', () => {
+    modalEliminar.close();
+})
+
+async function obtenerEstadisticas(tabla) {
+    try {
+        if (tabla.length == 0) {
+            alert("La tabla actual no tiene ninguna promesa.");
+            return;
         }
-    ];
+        const estadisticas = await api.getEstadisticas(token, tabla);
+        return estadisticas
+    }
+    catch (err) {
+        alert(err)
+    }
+}
+
+botonDescargarExcel.addEventListener('click', async () => {
+    await descargarExcel(listaPromesas);
+});
+
+async function descargarExcel(tabla) {
+    try {
+        if (tabla.length == 0) {
+            alert("La tabla actual no tiene ninguna promesa.");
+            return;
+        }
+        const responseExcel = await api.getExcelTabla(token, tabla);
+        const blob = await responseExcel.blob();
+        let nombre = "plantillaPromesas.xlsx";
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+
+        a.download = nombre;
+
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+
+    } catch (err) {
+        alert(err)
+    }
 }

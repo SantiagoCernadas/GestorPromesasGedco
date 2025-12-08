@@ -1,13 +1,12 @@
 package com.crmpps.Backend.controller;
 
-import com.crmpps.Backend.dto.PromesaDTO;
+import com.crmpps.Backend.dto.EstadisticaResponse;
+import com.crmpps.Backend.dto.PromesaExcelRequest;
+import com.crmpps.Backend.dto.PromesaRequest;
 import com.crmpps.Backend.dto.PromesaResponse;
-import com.crmpps.Backend.entity.PromesaEntity;
-import com.crmpps.Backend.entity.UsuarioEntity;
 import com.crmpps.Backend.exception.NoAutorizadoException;
 import com.crmpps.Backend.service.PromesaService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +14,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/promesa")
@@ -31,8 +29,8 @@ public class PromesaController {
 
     @Operation(summary = "Agregar una nueva promesa.")
     @PostMapping()
-    public ResponseEntity<PromesaEntity> agregarPromesa(@RequestHeader Map<String,String> headers,@Valid @RequestBody PromesaDTO promesaDTO) throws NoAutorizadoException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(promesaService.agregarPromesa(headers,promesaDTO));
+    public ResponseEntity<PromesaResponse> agregarPromesa(@RequestHeader Map<String,String> headers,@Valid @RequestBody PromesaRequest promesaRequest) throws NoAutorizadoException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(promesaService.agregarPromesa(headers, promesaRequest));
     }
 
     @Operation(summary = "Obtener promesa por ID.")
@@ -67,11 +65,27 @@ public class PromesaController {
     }
 
     @Operation(summary = "Modificar una promesa por ID")
-    @PatchMapping("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity <PromesaResponse> modificarPromesa(@RequestHeader Map<String,String> headers,
                                                              @PathVariable Long id,
-                                                             @RequestBody PromesaDTO promesaDTO) throws NoAutorizadoException {
-        return ResponseEntity.ok(promesaService.modificarPromesa(headers,id,promesaDTO));
+                                                             @Valid @RequestBody PromesaRequest promesaRequest) throws NoAutorizadoException {
+        return ResponseEntity.ok(promesaService.modificarPromesa(headers,id, promesaRequest));
+    }
+
+    @PostMapping("/estadisticas")
+    public ResponseEntity<EstadisticaResponse> getEstadisticas(@RequestHeader Map<String,String> headers,
+                                                               @Valid @RequestBody List<PromesaExcelRequest> promesas) throws NoAutorizadoException {
+        return ResponseEntity.ok(promesaService.getEstadisticas(headers,promesas));
+    }
+
+    @PostMapping("/excel")
+    public ResponseEntity<byte[]> getExcelTabla(@RequestHeader Map<String,String> headers,
+                                                @Valid @RequestBody List<PromesaExcelRequest> promesas) throws IOException, NoAutorizadoException {
+
+        return ResponseEntity.ok()
+                .header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                .header("Content-Disposition", "attachment; filename=promesas.xlsx")
+                .body(promesaService.getExcelTabla(headers,promesas));
     }
 
 }

@@ -74,6 +74,8 @@ public class PromesaCustomRepository {
                     .append("OR (LOWER(a.site) = 'mlc' AND a.monto > 200000)) ");
         }
 
+        sb.append("order by a.fechaCarga desc");
+
         var query = em.createQuery(sb.toString(), PromesaEntity.class);
         params.forEach(query::setParameter);
 

@@ -80,3 +80,177 @@ export async function getDatosUsuario(token) {
 
     return responseBody;
 }
+
+export async function getOperadores(token) {
+    var responseBody;
+    await fetch(apiUrl + 'usuario/operadores', {
+        method: 'Get',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        }
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+            responseBody = data;
+        })
+    .catch(error => {
+            console.error('Hubo un problema con la operación fetch:', error);
+        });
+
+    return responseBody;
+}
+
+
+export async function getPromesas(token,query) {
+    var responseBody;
+    await fetch(apiUrl + 'promesa'+query,{
+        method: 'Get',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        }
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+            responseBody = data;
+        })
+    .catch(error => {
+            console.error('Hubo un problema con la operación fetch:', error);
+        });
+
+    return responseBody;
+}
+
+export async function agregarPromesa(token,promesa) {
+    var responseBody;
+    await fetch(apiUrl + 'promesa',{
+        method: 'POST',
+        body: JSON.stringify(promesa),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        }
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+            responseBody = data;
+        })
+    .catch(error => {
+            console.error('Hubo un problema con la operación fetch:', error);
+        });
+
+    return responseBody;
+}
+
+export async function modificarPromesa(token,id,promesa) {
+    var responseBody;
+    await fetch(apiUrl + 'promesa/'+id,{
+        method: 'PUT',
+        body: JSON.stringify(promesa),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        }
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+            responseBody = data;
+        })
+    .catch(error => {
+            console.error('Hubo un problema con la operación fetch:', error);
+        });
+
+    return responseBody;
+}
+
+
+export async function eliminarPromesa(token,id) {
+    var responseBody;
+    await fetch(apiUrl + 'promesa/'+id,{
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        }
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+        }
+        return response;
+    })
+    .then(data => {
+            responseBody = data;
+        })
+    .catch(error => {
+            console.error('Hubo un problema con la operación fetch:', error);
+        });
+
+    return responseBody;
+}
+
+export async function getExcelTabla(token,tabla) {
+    var responseBody;
+    await fetch(apiUrl + 'promesa/excel',{
+        method: 'POST',
+        body: JSON.stringify(tabla),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        }
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+        }
+        return response;
+    })
+    .then(data => {
+            responseBody = data;
+        })
+    .catch(error => {
+            console.error('Hubo un problema con la operación fetch:', error);
+        });
+
+    return responseBody;
+}
+
+export async function getEstadisticas(token,tabla) {
+    var responseBody;
+    await fetch(apiUrl + 'promesa/estadisticas',{
+        method: 'POST',
+        body: JSON.stringify(tabla),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        }
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+            responseBody = data;
+        })
+    .catch(error => {
+            console.error('Hubo un problema con la operación fetch:', error);
+        });
+
+    return responseBody;
+}
