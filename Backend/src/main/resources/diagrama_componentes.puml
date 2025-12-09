@@ -1,0 +1,35 @@
+@startuml
+
+package "Frontend (HTML,CSS,JS)"{
+    rectangle SitioWeb
+    rectangle Api
+}
+
+SitioWeb --> Api: Solicita datos
+
+package "Backend (Spring Boot)"{
+    rectangle Controller
+    rectangle Service
+    rectangle Repository
+    rectangle "DTO"
+    rectangle Model
+    rectangle OpenApiConfig
+    rectangle SecurityConfig
+    rectangle JwtAuthorizationFilter
+}
+
+note right of OpenApiConfig: Componente para funcionalidad de swagger
+
+Controller <-right-> SecurityConfig: validar sesión
+Api <--> Controller: HTTP Request/Response
+Controller <--> Service: Logica de negocio
+Service <--> Repository: acceso a datos
+Service <--> "DTO": validar Body
+Repository <--> Model: Validar Objeto
+Repository <-left-> "Base de datos MySQL": CRUD (JPA)
+SecurityConfig <--> JwtAuthorizationFilter: validar token JWT
+
+database "Base de datos MySQL"{
+}
+
+@enduml
