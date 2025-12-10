@@ -12,7 +12,7 @@ package "Backend (Spring Boot)"{
     rectangle Service
     rectangle Repository
     rectangle "DTO"
-    rectangle Model
+    rectangle Entity
     rectangle OpenApiConfig
     rectangle SecurityConfig
     rectangle JwtAuthorizationFilter
@@ -25,7 +25,7 @@ Api <--> Controller: HTTP Request/Response
 Controller <--> Service: Logica de negocio
 Service <--> Repository: acceso a datos
 Service <--> "DTO": validar Body
-Repository <--> Model: Validar Objeto
+Repository <--> Entity: Validar Objeto
 Repository <-left-> "Base de datos MySQL": CRUD (JPA)
 SecurityConfig <--> JwtAuthorizationFilter: validar token JWT
 

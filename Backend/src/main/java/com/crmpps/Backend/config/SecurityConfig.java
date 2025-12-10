@@ -46,19 +46,15 @@ public class SecurityConfig {
                 .sessionManagement(session -> {
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
-                //Filtro para autenticar mediante JWT
                 .addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
-    //Encriptar contraseña. Nos lo pide la funcion de autenticacion.
     @Bean
     public  PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
-    //Se encarga de administrar la autenticación en nuestra app.
-    //1 hora con 4mins video tuto.
     @Bean
     public AuthenticationManager authenticationManager() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
