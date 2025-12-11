@@ -69,9 +69,9 @@ public class PromesaCustomRepository {
 
         // 👇 Lógica especial de "duplica"
         if (Boolean.TRUE.equals(duplica)) {
-            sb.append("AND ((LOWER(a.site) = 'mla' AND a.monto > 250000) ")
-                    .append("OR (LOWER(a.site) = 'mlm' AND a.monto > 5000) ")
-                    .append("OR (LOWER(a.site) = 'mlc' AND a.monto > 200000)) ");
+            sb.append("AND ((LOWER(a.site) = 'mla' AND a.monto >= 250000) ")
+                    .append("OR (LOWER(a.site) = 'mlm' AND a.monto >= 5000) ")
+                    .append("OR (LOWER(a.site) = 'mlc' AND a.monto >= 200000)) ");
         }
 
         sb.append("order by a.fechaCarga desc");
