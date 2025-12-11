@@ -1,12 +1,12 @@
 const apiUrl = 'http://localhost:8080/';
 
-export async function iniciarSesion(){
+export async function iniciarSesion(nombreUsuario,contrasenia){
     const bodyLogin = {
-        "nombreUsuario": document.getElementById('input-usuario').value,
-        "contrasenia": document.getElementById('input-contrasenia').value
+        "nombreUsuario": nombreUsuario,
+        "contrasenia": contrasenia
     }
 
-    const response = await fetch(apiUrl + 'auth/login', {
+    await fetch(apiUrl + 'auth/login', {
         method: 'POST',
         body: JSON.stringify(bodyLogin),
         headers: {
@@ -18,7 +18,12 @@ export async function iniciarSesion(){
             return response.json();
         }
         else {
-             throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+            if (response.status === 401) {
+                throw new Error("Credenciales incorrectas");
+            }
+            else{
+               throw new Error("ERROR HTTP: " + response.status);
+            }
         }
         })
         .then(data => {
@@ -26,12 +31,7 @@ export async function iniciarSesion(){
             window.location.href = "/main.html";
         })
         .catch(error => {
-            if (error.message.includes('401')) {
-                document.getElementById("error-mensaje").textContent = "Credenciales incorrectas";
-            }
-            else{
-                document.getElementById("error-mensaje").textContent = "Error inesperado.";
-            }
+            throw error
         });
 }
 
@@ -45,7 +45,7 @@ export async function getPrueba(token) {
         }
     }).then(response => {
         if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+            throw new Error("ERROR HTTP: " + response.status);
         }
         return response.text();
     })
@@ -53,7 +53,7 @@ export async function getPrueba(token) {
             console.log(data); // Procesa los datos
         })
         .catch(error => {
-            console.error('Hubo un problema con la operación fetch:', error);
+            throw error;
         });
 }
 
@@ -67,7 +67,7 @@ export async function getDatosUsuario(token) {
         }
     }).then(response => {
         if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+            throw new Error("ERROR HTTP: " + response.status);
         }
         return response.json();
     })
@@ -75,7 +75,7 @@ export async function getDatosUsuario(token) {
             responseBody = data;
         })
     .catch(error => {
-            console.error('Hubo un problema con la operación fetch:', error);
+            throw error;
         });
 
     return responseBody;
@@ -91,7 +91,7 @@ export async function getOperadores(token) {
         }
     }).then(response => {
         if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+            throw new Error("ERROR HTTP: " + response.status);
         }
         return response.json();
     })
@@ -99,7 +99,7 @@ export async function getOperadores(token) {
             responseBody = data;
         })
     .catch(error => {
-            console.error('Hubo un problema con la operación fetch:', error);
+            throw error;
         });
 
     return responseBody;
@@ -116,7 +116,7 @@ export async function getPromesas(token,query) {
         }
     }).then(response => {
         if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+            throw new Error("ERROR HTTP: " + response.status);
         }
         return response.json();
     })
@@ -124,7 +124,7 @@ export async function getPromesas(token,query) {
             responseBody = data;
         })
     .catch(error => {
-            console.error('Hubo un problema con la operación fetch:', error);
+            throw error;
         });
 
     return responseBody;
@@ -141,7 +141,7 @@ export async function agregarPromesa(token,promesa) {
         }
     }).then(response => {
         if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+            throw new Error("ERROR HTTP: " + response.status);
         }
         return response.json();
     })
@@ -149,7 +149,7 @@ export async function agregarPromesa(token,promesa) {
             responseBody = data;
         })
     .catch(error => {
-            console.error('Hubo un problema con la operación fetch:', error);
+            throw error;
         });
 
     return responseBody;
@@ -166,7 +166,7 @@ export async function modificarPromesa(token,id,promesa) {
         }
     }).then(response => {
         if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+            throw new Error("ERROR HTTP: " + response.status);
         }
         return response.json();
     })
@@ -174,7 +174,7 @@ export async function modificarPromesa(token,id,promesa) {
             responseBody = data;
         })
     .catch(error => {
-            console.error('Hubo un problema con la operación fetch:', error);
+            throw error;
         });
 
     return responseBody;
@@ -191,7 +191,7 @@ export async function eliminarPromesa(token,id) {
         }
     }).then(response => {
         if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+            throw new Error("ERROR HTTP: " + response.status);
         }
         return response;
     })
@@ -199,7 +199,7 @@ export async function eliminarPromesa(token,id) {
             responseBody = data;
         })
     .catch(error => {
-            console.error('Hubo un problema con la operación fetch:', error);
+            throw error;
         });
 
     return responseBody;
@@ -216,7 +216,7 @@ export async function getExcelTabla(token,tabla) {
         }
     }).then(response => {
         if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+            throw new Error("ERROR HTTP: " + response.status);
         }
         return response;
     })
@@ -224,7 +224,7 @@ export async function getExcelTabla(token,tabla) {
             responseBody = data;
         })
     .catch(error => {
-            console.error('Hubo un problema con la operación fetch:', error);
+            throw error;
         });
 
     return responseBody;
@@ -241,7 +241,7 @@ export async function getEstadisticas(token,tabla) {
         }
     }).then(response => {
         if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+            throw new Error("ERROR HTTP: " + response.status);
         }
         return response.json();
     })
@@ -249,7 +249,7 @@ export async function getEstadisticas(token,tabla) {
             responseBody = data;
         })
     .catch(error => {
-            console.error('Hubo un problema con la operación fetch:', error);
+            throw error;
         });
 
     return responseBody;

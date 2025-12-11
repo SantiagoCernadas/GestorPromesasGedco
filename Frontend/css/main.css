@@ -529,3 +529,15 @@ h3{
     flex-direction: column;
     gap: 20px;
 }
+
+.contenedor-alert-dialog{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#mensaje-alert-dialog{
+    color: rgb(47 97 129);
+    font-size: 20px;
+    font-weight: bold;
+}

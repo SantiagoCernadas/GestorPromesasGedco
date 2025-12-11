@@ -5,18 +5,26 @@ const botonLogin = document.getElementById('boton-login');
 const inputUsuarioDoc = document.getElementById('input-usuario');
 const inputContraDoc = document.getElementById('input-contrasenia');
 
-botonLogin.addEventListener('click', iniciarSesion);
-inputUsuarioDoc.addEventListener('keydown', function (event) {
+botonLogin.addEventListener('click', async () => {
+    await inicioSesion()
+});
+inputUsuarioDoc.addEventListener('keydown', async function (event) {
     if (event.key === 'Enter') {
-        iniciarSesion();
+        await inicioSesion()
     }
 })
-inputContraDoc.addEventListener('keydown', function (event) {
+inputContraDoc.addEventListener('keydown', async function (event) {
     if (event.key === 'Enter') {
-        iniciarSesion();
+        await inicioSesion()
     }
 })
 
-async function iniciarSesion() {
-    api.iniciarSesion();
+
+async function inicioSesion(){
+    try{
+        await api.iniciarSesion(document.getElementById('input-usuario').value,document.getElementById('input-contrasenia').value);
+    }
+    catch(err){
+        document.getElementById("error-mensaje").textContent = err.message;
+    }
 }

@@ -26,10 +26,13 @@ const botonSiguientePaginacion = document.getElementById('boton-paginacion-sigui
 const modalEditar = document.getElementById('modal-editar-pp');
 const modalEstadisticas = document.getElementById('modal-estadisticas');
 const modalEliminar = document.getElementById('modal-eliminar');
+const modalAlert = document.getElementById('modal-alert');
 const botonGuardarEditar = document.getElementById('boton-guardar-editar');
 const botonCerrarEstadistica = document.getElementById("boton-cerrar-estadisticas");
 const botonCerrarEliminar = document.getElementById("boton-cerrar-eliminar");
 const botonConfirmarEliminar = document.getElementById("boton-confirmar-eliminar");
+const botonAceptarAlert = document.getElementById('boton-cerrar-alert');
+const mensajeAlert = document.getElementById("mensaje-alert-dialog");
 
 let idEdit;
 let idEliminar = 0;
@@ -333,7 +336,8 @@ async function eliminarPromesa(id) {
     try {
         await api.eliminarPromesa(token, id);
         listaPromesas = listaPromesas.filter(promesa => !(promesa.id === id));
-        alert("Promesa eliminada correctamente.");
+        modalEliminar.close();
+        generarAlert("Promesa eliminada correctamente.","green")
         const totalPaginas = Math.ceil(listaPromesas.length / cantFilasPagina);
         if (paginaActual > totalPaginas) {
             paginaActual = totalPaginas
@@ -341,7 +345,7 @@ async function eliminarPromesa(id) {
         printTablaHTML();
     }
     catch (err) {
-        alert("No fue posible eliminar la promesa: " + err.message);
+        generarAlert("No fue posible eliminar la promesa: " + err.message,"red");
         return;
     }
 }
@@ -405,8 +409,8 @@ botonGuardarEditar.addEventListener('click', async () => {
 
     let promesaCorrecta = validarPromesa(promesaEdit);
 
-    if (!promesaCorrecta) {
-        alert('ERROR AL GENERAR LA NUEVA PROMESA.');
+    if (!promesaCorrecta.sinError) {
+        generarAlert(promesaCorrecta.mensaje.innerHTML,"red");
         return;
     }
 
@@ -414,7 +418,7 @@ botonGuardarEditar.addEventListener('click', async () => {
         await api.modificarPromesa(token, idEdit, promesaEdit);
     }
     catch (err) {
-        alert('No fue posible generar la promesa. ' + err.message);
+        generarAlert("No fue posible modificar la promesa: " + err.message,"red");
         return;
     }
 
@@ -432,15 +436,15 @@ botonGuardarEditar.addEventListener('click', async () => {
         promesa.cumplimiento = promesaEdit.cumplimiento;
     }
 
-    alert('PP Modificada.');
     modalEditar.close();
+    generarAlert("Promesa modificada correctamente.","green")
     printTablaHTML();
 });
 
 botonConfirmarEliminar.addEventListener('click', () =>{
     eliminarPromesa(idEliminar);
-    modalEliminar.close();
 });
+
 
 
 document.getElementById('boton-cancelar-editar').addEventListener('click', () => {
@@ -569,9 +573,9 @@ async function agregarPromesa() {
     }
 
 
-    const promesaCorrecta = validarPromesa(nuevaPromesa);
+    let validarPP = validarPromesa(nuevaPromesa);
     let nuevaPromesaApi
-    if (promesaCorrecta) {
+    if (validarPP.sinError) {
         try {
             nuevaPromesaApi = await api.agregarPromesa(token, nuevaPromesa);
         }
@@ -579,14 +583,12 @@ async function agregarPromesa() {
             mensajePP.innerHTML += 'No fue posible generar la promesa. ' + err.message;
             return;
         }
+        
 
+        listaPromesas.unshift(nuevaPromesaApi);
 
         mensajePP.innerHTML += '¡Promesa agregada con exito!'
         mensajePP.style.color = 'green';
-
-
-
-        listaPromesas.unshift(nuevaPromesaApi);
 
         nuevaPromesa.operador = getNombreOperador(nuevaPromesa.operador);
         document.getElementById("input-pp-caso").value = '';
@@ -601,80 +603,67 @@ async function agregarPromesa() {
         document.getElementById("input-pp-cumplimiento").value = document.getElementById("input-pp-cumplimiento").options[0].value;
         printTablaHTML();
     }
+    else{
+        mensajePP.style.color = "red";
+        mensajePP.innerHTML = validarPP.mensaje.innerHTML
+    }
 }
 
 
 function validarPromesa(nuevaPromesa) {
-    var sinError = true;
+    var validacion = {
+        sinError: true,
+        mensaje: document.createElement("p")
+    }
+
     if (Number.isNaN(nuevaPromesa.numCaso)) {
-        document.getElementById("input-pp-caso").style.border = '2px solid red';
-        mensajePP.innerHTML += 'Ingresar Numero de caso. <br>'
-        mensajePP.style.color = 'red';
-        sinError = false;
+        validacion.mensaje.innerHTML += 'Ingresar Numero de caso. <br>'
+        validacion.sinError = false;
     }
     if (Number.isNaN(nuevaPromesa.idUsuarioML)) {
-        document.getElementById("input-pp-id").style.border = '2px solid red';
-        mensajePP.innerHTML += 'Ingresar ID.<br>'
-        mensajePP.style.color = 'red';
-        sinError = false;
+        validacion.mensaje.innerHTML += 'Ingresar ID.<br>'
+        validacion.sinError = false;
     }
     if (nuevaPromesa.canal == '-') {
-        document.getElementById("input-pp-canal").style.border = '2px solid red';
-        mensajePP.innerHTML += 'Ingresar Canal.<br>'
-        mensajePP.style.color = 'red';
-        sinError = false;
+        validacion.mensaje.innerHTML += 'Ingresar Canal.<br>'
+        validacion.sinError = false;
     }
     if (nuevaPromesa.site == '-') {
-        document.getElementById("input-pp-site").style.border = '2px solid red';
-        mensajePP.innerHTML += 'Ingresar Site.<br>'
-        sinError = false;
+        validacion.mensaje.innerHTML += 'Ingresar Site.<br>'
+        validacion.sinError = false;
     }
     if (Number.isNaN(nuevaPromesa.monto)) {
-        document.getElementById("input-pp-monto").style.border = '2px solid red';
-        mensajePP.innerHTML += 'Monto invalido.<br>';
-        mensajePP.style.color = 'red';
-        sinError = false;
+        validacion.mensaje.innerHTML += 'Monto invalido.<br>';
+        validacion.sinError = false;
     }
     if (nuevaPromesa.fechaCarga == '') {
-        document.getElementById("input-pp-fecha-carga").style.border = '2px solid red';
-        mensajePP.innerHTML += 'Ingresar fecha de carga valida.<br>';
-        mensajePP.style.color = 'red';
-        sinError = false;
+        validacion.mensaje.innerHTML += 'Ingresar fecha de carga valida.<br>';
+        validacion.sinError = false;
     }
     if (nuevaPromesa.fechaPago == '') {
-        document.getElementById("input-pp-fecha-pago").style.border = '2px solid red';
-        mensajePP.innerHTML += 'Ingresar fecha de pago valida.<br>'
-        mensajePP.style.color = 'red';
-        sinError = false;
+        validacion.mensaje.innerHTML += 'Ingresar fecha de pago valida.<br>'
+        validacion.sinError = false;
     }
     if (nuevaPromesa.fechaCarga != '' && nuevaPromesa.fechaPago != '') {
         const difdias = diferenciaEnDias(nuevaPromesa.fechaCarga, nuevaPromesa.fechaPago);
         if (difdias > 7) {
-            document.getElementById("input-pp-fecha-pago").style.border = '2px solid red';
-            mensajePP.innerHTML += 'La diferencia entre la fecha de carga y fecha de pago no puede ser mayor a 7 días.<br>'
-            mensajePP.style.color = 'red';
-            sinError = false;
+            validacion.mensaje.innerHTML += 'La diferencia entre la fecha de carga y fecha de pago no puede ser mayor a 7 días.<br>'
+            validacion.sinError = false;
         }
         else if (difdias < 0) {
-            document.getElementById("input-pp-fecha-pago").style.border = '2px solid red';
-            mensajePP.innerHTML += 'La fecha de pago debe ser igual o posterior a la fecha de carga.<br>'
-            mensajePP.style.color = 'red';
-            sinError = false;
+            validacion.mensaje.innerHTML += 'La fecha de pago debe ser igual o posterior a la fecha de carga.<br>'
+            validacion.sinError = false;
         }
     }
     if (nuevaPromesa.tipoAcuerdo == '-') {
-        document.getElementById("input-pp-tipo-acuerdo").style.border = '2px solid red';
-        mensajePP.innerHTML += 'Ingresar tipo de acuerdo.<br>'
-        mensajePP.style.color = 'red';
-        sinError = false;
+        validacion.mensaje.innerHTML += 'Ingresar tipo de acuerdo.<br>'
+        validacion.sinError = false;
     }
     if (Number.isNaN(nuevaPromesa.operador)) {
-        document.getElementById("input-pp-operador").style.border = '2px solid red';
-        mensajePP.innerHTML += 'Ingresar nombre de operador.<br>'
-        mensajePP.style.color = 'red';
-        sinError = false;
+        validacion.mensaje.innerHTML += 'Ingresar nombre de operador.<br>'
+        validacion.sinError = false;
     }
-    return sinError;
+    return validacion;
 }
 
 
@@ -742,11 +731,17 @@ function diferenciaEnDias(fecha1, fecha2) {
 }
 
 botonObtenerEstadisticas.addEventListener('click', async () => {
-    const estadisticas = await obtenerEstadisticas(listaPromesas)
+    try{
+        const estadisticas = await obtenerEstadisticas(listaPromesas)
+        printEstadisticas(estadisticas)
+        modalEstadisticas.showModal();
+    }
+    catch(err){
+        generarAlert(err.message,"red");
+    }
+    
 
-    printEstadisticas(estadisticas)
 
-    modalEstadisticas.showModal();
 })
 
 function printEstadisticas(estadisticas) {
@@ -771,29 +766,43 @@ botonCerrarEliminar.addEventListener('click', () => {
     modalEliminar.close();
 })
 
+function generarAlert(mensaje,color){
+    mensajeAlert.style.color = color
+    mensajeAlert.innerHTML = mensaje;
+    modalAlert.showModal();
+}
+
+botonAceptarAlert.addEventListener('click',() => {
+    modalAlert.close();
+});
+
 async function obtenerEstadisticas(tabla) {
     try {
         if (tabla.length == 0) {
-            alert("La tabla actual no tiene ninguna promesa.");
-            return;
+            throw new Error("La tabla actual no tiene ninguna promesa.");
         }
         const estadisticas = await api.getEstadisticas(token, tabla);
         return estadisticas
     }
     catch (err) {
-        alert(err)
+        throw err
     }
 }
 
 botonDescargarExcel.addEventListener('click', async () => {
-    await descargarExcel(listaPromesas);
+    try{
+        await descargarExcel(listaPromesas);
+    }
+    catch(err){
+        generarAlert(err.message,"red");
+    }
+    
 });
 
 async function descargarExcel(tabla) {
     try {
         if (tabla.length == 0) {
-            alert("La tabla actual no tiene ninguna promesa.");
-            return;
+            throw new Error("La tabla actual no tiene ninguna promesa");
         }
         const responseExcel = await api.getExcelTabla(token, tabla);
         const blob = await responseExcel.blob();
@@ -810,6 +819,6 @@ async function descargarExcel(tabla) {
         window.URL.revokeObjectURL(url);
 
     } catch (err) {
-        alert(err)
+        throw err;
     }
 }
