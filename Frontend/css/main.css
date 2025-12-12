@@ -563,8 +563,8 @@ h3{
 .spinner {
   width: 20px;
   height: 20px;
-  border: 6px solid #ddd;
-  border-top: 6px solid #3498db;
+  border: 6px solid white;
+  border-top: 6px solid rgb(56, 150, 180);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
