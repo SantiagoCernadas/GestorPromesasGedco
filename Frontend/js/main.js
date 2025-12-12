@@ -213,7 +213,7 @@ async function filtrarPromesas() {
             sesiónCerrada = true;
         }
         else{
-            generarAlert("No fue posible generar la tabla: " + err.message);
+            generarAlert("No fue posible generar la tabla: " + err.message,"red");
         }
     }
     finally{
@@ -814,7 +814,7 @@ botonObtenerEstadisticas.addEventListener('click', async () => {
             sesiónCerrada = true;
         }
         else{
-            generarAlert(err.message, "red");
+            generarAlert("No fue posible obtener las estadisticas:" + err.message, "red");
         }
     }
 })
@@ -882,7 +882,7 @@ botonDescargarExcel.addEventListener('click', async () => {
             sesiónCerrada = true;
         }
         else{
-            generarAlert(err.message, "red");
+            generarAlert("No fue posible exportar el excel: " + err.message, "red");
         }
     }
     finally{
