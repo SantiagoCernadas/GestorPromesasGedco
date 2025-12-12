@@ -22,9 +22,21 @@ inputContraDoc.addEventListener('keydown', async function (event) {
 
 async function inicioSesion(){
     try{
+        mostrarLoader();
         await api.iniciarSesion(document.getElementById('input-usuario').value,document.getElementById('input-contrasenia').value);
     }
     catch(err){
         document.getElementById("error-mensaje").textContent = err.message;
     }
+    finally{
+        ocultarLoader();
+    }
+}
+
+function mostrarLoader() {
+  document.getElementById("loader").classList.remove("hidden");
+}
+
+function ocultarLoader() {
+  document.getElementById("loader").classList.add("hidden");
 }

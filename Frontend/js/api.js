@@ -14,7 +14,6 @@ export async function iniciarSesion(nombreUsuario,contrasenia){
         }
     }).then(response => {
         if (response.ok) {
-            document.getElementById("error-mensaje").textContent = ""
             return response.json();
         }
         else {
@@ -35,28 +34,6 @@ export async function iniciarSesion(nombreUsuario,contrasenia){
         });
 }
 
-export async function getPrueba(token) {
-
-    await fetch(apiUrl + 'helloSeguro', {
-        method: 'Get',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        }
-    }).then(response => {
-        if (!response.ok) {
-            throw new Error("ERROR: " + response.status);
-        }
-        return response.text();
-    })
-        .then(data => {
-            console.log(data); // Procesa los datos
-        })
-        .catch(error => {
-            throw error;
-        });
-}
-
 export async function getDatosUsuario(token) {
     var responseBody;
     await fetch(apiUrl + 'usuario', {
@@ -67,6 +44,9 @@ export async function getDatosUsuario(token) {
         }
     }).then(response => {
         if (!response.ok) {
+            if (response.status === 403) {
+                throw new Error(response.status);
+            }
             throw new Error("ERROR: " + response.status);
         }
         return response.json();
@@ -91,6 +71,9 @@ export async function getOperadores(token) {
         }
     }).then(response => {
         if (!response.ok) {
+            if (response.status === 403) {
+                throw new Error(response.status);
+            }
             throw new Error("ERROR: " + response.status);
         }
         return response.json();
@@ -116,6 +99,9 @@ export async function getPromesas(token,query) {
         }
     }).then(response => {
         if (!response.ok) {
+            if (response.status === 403) {
+                throw new Error(response.status);
+            }
             throw new Error("ERROR: " + response.status);
         }
         return response.json();
@@ -125,7 +111,7 @@ export async function getPromesas(token,query) {
         })
     .catch(error => {
             throw error;
-        });
+    });
 
     return responseBody;
 }
@@ -141,6 +127,9 @@ export async function agregarPromesa(token,promesa) {
         }
     }).then(response => {
         if (!response.ok) {
+            if (response.status === 403) {
+                throw new Error(response.status);
+            }
             throw new Error("ERROR: " + response.status);
         }
         return response.json();
@@ -166,6 +155,9 @@ export async function modificarPromesa(token,id,promesa) {
         }
     }).then(response => {
         if (!response.ok) {
+            if (response.status === 403) {
+                throw new Error(response.status);
+            }
             throw new Error("ERROR: " + response.status);
         }
         return response.json();
@@ -191,6 +183,9 @@ export async function eliminarPromesa(token,id) {
         }
     }).then(response => {
         if (!response.ok) {
+            if (response.status === 403) {
+                throw new Error(response.status);
+            }
             throw new Error("ERROR " + response.status);
         }
         return response;
@@ -216,6 +211,9 @@ export async function getExcelTabla(token,tabla) {
         }
     }).then(response => {
         if (!response.ok) {
+            if (response.status === 403) {
+                throw new Error(response.status);
+            }
             throw new Error("ERROR: " + response.status);
         }
         return response;
@@ -241,6 +239,9 @@ export async function getEstadisticas(token,tabla) {
         }
     }).then(response => {
         if (!response.ok) {
+            if (response.status === 403) {
+                throw new Error(response.status);
+            }
             throw new Error("ERROR: " + response.status);
         }
         return response.json();

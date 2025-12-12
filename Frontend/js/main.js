@@ -12,6 +12,7 @@ const contenedorFiltros = document.querySelector('.filtros-contenedor');
 
 const botonCerrarSesion = document.getElementById("boton-cerrar-sesion");
 const botonDescargarExcel = document.getElementById("boton-descargar-excel");
+let sesiónCerrada = false;
 
 const botonFiltrar = document.getElementById('boton-filtrar');
 let paginaActual = 1;
@@ -39,6 +40,10 @@ let idEliminar = 0;
 
 var filtros = getFiltros();
 
+function cerrarSesion() {
+    document.cookie = "session_token=; path=/; max-age=0;"
+    window.location.href = "/index.html";
+}
 
 const token = document.cookie
     .split("; ")
@@ -46,10 +51,27 @@ const token = document.cookie
     ?.split("=")[1];
 
 
+let datosUsuario;
+let usuarios;
 
-const datosUsuario = await api.getDatosUsuario(token);
+try {
+    mostrarLoader();
+    datosUsuario = await api.getDatosUsuario(token);
+    usuarios = await api.getOperadores(token);
+}
+catch (err) {
+    if (err.message == 403) {
+        cerrarSesion();
+    }
+    else {
+        alert("ERROR INESPERADO");
+        cerrarSesion();
+    }
+}
+finally{
+    ocultarLoader();
+}
 
-const usuarios = await api.getOperadores(token);
 
 const filtroOperadorInput = document.getElementById("input-filtro-operador");
 const agregarPPOperadorInput = document.getElementById("input-pp-operador");
@@ -178,9 +200,26 @@ async function filtrarPromesas() {
         query += "&duplica=" + filtros.duplica;
     }
 
-    const PromesasFiltros = await api.getPromesas(token, query);
-    listaPromesas = PromesasFiltros;
-    printTablaHTML();
+    try {
+        mostrarLoader()
+        const PromesasFiltros = await api.getPromesas(token, query);
+        listaPromesas = PromesasFiltros;
+        printTablaHTML();
+    }
+    catch (err) {
+        console.log(err.message);
+        if (err.message == 403) {
+            generarAlert("Sesión vencida. Vuelva a iniciar sesión","blue");
+            sesiónCerrada = true;
+        }
+        else{
+            generarAlert("No fue posible generar la tabla: " + err.message);
+        }
+    }
+    finally{
+        ocultarLoader();
+    }
+
 }
 
 const formatFecha = new Intl.DateTimeFormat("es", {
@@ -235,9 +274,10 @@ botonAgregarPromesaExcel.addEventListener('click', () => {
 */
 
 botonCerrarSesion.addEventListener('click', () => {
-    document.cookie = "session_token=; path=/; max-age=0;"
-    window.location.href = "/index.html";
+    cerrarSesion();
 })
+
+
 
 function printTablaHTML() {
     const filas = document.querySelectorAll('.tabla tr');
@@ -334,10 +374,11 @@ function modalEliminarPromesa(filaTabla) {
 
 async function eliminarPromesa(id) {
     try {
+        mostrarLoader();
         await api.eliminarPromesa(token, id);
         listaPromesas = listaPromesas.filter(promesa => !(promesa.id === id));
         modalEliminar.close();
-        generarAlert("Promesa eliminada correctamente.","green")
+        generarAlert("Promesa eliminada correctamente.", "green")
         const totalPaginas = Math.ceil(listaPromesas.length / cantFilasPagina);
         if (paginaActual > totalPaginas) {
             paginaActual = totalPaginas
@@ -345,8 +386,15 @@ async function eliminarPromesa(id) {
         printTablaHTML();
     }
     catch (err) {
-        generarAlert("No fue posible eliminar la promesa: " + err.message,"red");
-        return;
+        if (err.message == 403) {
+            generarAlert("Sesión vencida. Vuelva a iniciar sesión", "blue");
+            sesiónCerrada = true;
+        }else{
+            generarAlert("No fue posible eliminar la promesa: " + err.message, "red");
+        }
+    }
+    finally{
+        ocultarLoader();
     }
 }
 
@@ -410,17 +458,28 @@ botonGuardarEditar.addEventListener('click', async () => {
     let promesaCorrecta = validarPromesa(promesaEdit);
 
     if (!promesaCorrecta.sinError) {
-        generarAlert(promesaCorrecta.mensaje.innerHTML,"red");
+        generarAlert(promesaCorrecta.mensaje.innerHTML, "red");
         return;
     }
 
     try {
+        mostrarLoader();
         await api.modificarPromesa(token, idEdit, promesaEdit);
     }
     catch (err) {
-        generarAlert("No fue posible modificar la promesa: " + err.message,"red");
+        if (err.message == 403) {
+            generarAlert("Sesión vencida. Vuelva a iniciar sesión","blue");
+            sesiónCerrada = true;
+        }
+        else{
+            generarAlert("No fue posible modificar la promesa: " + err.message, "red");
+        }
         return;
     }
+    finally{
+        ocultarLoader();
+    }
+    
 
     var promesa = listaPromesas.find(p => p.id === idEdit);
     if (promesa) {
@@ -437,11 +496,11 @@ botonGuardarEditar.addEventListener('click', async () => {
     }
 
     modalEditar.close();
-    generarAlert("Promesa modificada correctamente.","green")
+    generarAlert("Promesa modificada correctamente.", "green")
     printTablaHTML();
 });
 
-botonConfirmarEliminar.addEventListener('click', () =>{
+botonConfirmarEliminar.addEventListener('click', () => {
     eliminarPromesa(idEliminar);
 });
 
@@ -567,14 +626,24 @@ async function agregarPromesa() {
     let nuevaPromesaApi
     if (validarPP.sinError) {
         try {
+            mostrarLoader()
             nuevaPromesaApi = await api.agregarPromesa(token, nuevaPromesa);
         }
         catch (err) {
-            mensajePP.innerHTML += 'No fue posible generar la promesa. ' + err.message;
-            mensajePP.style.color = "red";
+            if (err.message == 403) {
+                generarAlert("Sesión vencida. Vuelva a iniciar sesión","blue");
+                sesiónCerrada = true;
+            }
+            else{
+                mensajePP.innerHTML += 'No fue posible generar la promesa. ' + err.message;
+                mensajePP.style.color = "red";
+            }
             return;
         }
-        
+        finally{
+            ocultarLoader();
+        }
+
 
         listaPromesas.unshift(nuevaPromesaApi);
 
@@ -594,7 +663,7 @@ async function agregarPromesa() {
         document.getElementById("input-pp-cumplimiento").value = document.getElementById("input-pp-cumplimiento").options[0].value;
         printTablaHTML();
     }
-    else{
+    else {
         mensajePP.style.color = "red";
         mensajePP.innerHTML = validarPP.mensaje.innerHTML
     }
@@ -611,7 +680,7 @@ function validarPromesa(nuevaPromesa) {
         validacion.mensaje.innerHTML += 'Ingresar Numero de caso. <br>'
         validacion.sinError = false;
     }
-    else if(nuevaPromesa.numCaso <= 0){
+    else if (nuevaPromesa.numCaso <= 0) {
         validacion.mensaje.innerHTML += 'El número de caso debe ser mayor a 0. <br>'
         validacion.sinError = false;
     }
@@ -619,7 +688,7 @@ function validarPromesa(nuevaPromesa) {
         validacion.mensaje.innerHTML += 'Ingresar ID.<br>'
         validacion.sinError = false;
     }
-    else if(nuevaPromesa.idUsuarioML <= 0){
+    else if (nuevaPromesa.idUsuarioML <= 0) {
         validacion.mensaje.innerHTML += 'El id debe ser mayor a 0. <br>'
         validacion.sinError = false;
     }
@@ -635,7 +704,7 @@ function validarPromesa(nuevaPromesa) {
         validacion.mensaje.innerHTML += 'Monto invalido.<br>';
         validacion.sinError = false;
     }
-    else if(nuevaPromesa.monto <= 0){
+    else if (nuevaPromesa.monto <= 0) {
         validacion.mensaje.innerHTML += 'El monto debe ser mayor a 0. <br>'
         validacion.sinError = false;
     }
@@ -734,17 +803,20 @@ function diferenciaEnDias(fecha1, fecha2) {
 }
 
 botonObtenerEstadisticas.addEventListener('click', async () => {
-    try{
+    try {
         const estadisticas = await obtenerEstadisticas(listaPromesas)
         printEstadisticas(estadisticas)
         modalEstadisticas.showModal();
     }
-    catch(err){
-        generarAlert(err.message,"red");
+    catch (err) {
+        if (err.message == 403) {
+            generarAlert("Sesión vencida. Vuelva a iniciar sesión","blue");
+            sesiónCerrada = true;
+        }
+        else{
+            generarAlert(err.message, "red");
+        }
     }
-    
-
-
 })
 
 function printEstadisticas(estadisticas) {
@@ -769,18 +841,22 @@ botonCerrarEliminar.addEventListener('click', () => {
     modalEliminar.close();
 })
 
-function generarAlert(mensaje,color){
+function generarAlert(mensaje, color) {
     mensajeAlert.style.color = color
     mensajeAlert.innerHTML = mensaje;
     modalAlert.showModal();
 }
 
-botonAceptarAlert.addEventListener('click',() => {
+botonAceptarAlert.addEventListener('click', () => {
+    if (sesiónCerrada === true) {
+        cerrarSesion();
+    }
     modalAlert.close();
 });
 
 async function obtenerEstadisticas(tabla) {
     try {
+        mostrarLoader()
         if (tabla.length == 0) {
             throw new Error("La tabla actual no tiene ninguna promesa.");
         }
@@ -790,20 +866,34 @@ async function obtenerEstadisticas(tabla) {
     catch (err) {
         throw err
     }
+    finally{
+        ocultarLoader();
+    }
 }
 
 botonDescargarExcel.addEventListener('click', async () => {
-    try{
+    try {
+        mostrarLoader();
         await descargarExcel(listaPromesas);
     }
-    catch(err){
-        generarAlert(err.message,"red");
+    catch (err) {
+        if (err.message == 403) {
+            generarAlert("Sesión vencida. Vuelva a iniciar sesión","blue");
+            sesiónCerrada = true;
+        }
+        else{
+            generarAlert(err.message, "red");
+        }
     }
-    
+    finally{
+        ocultarLoader();
+    }
+
 });
 
 async function descargarExcel(tabla) {
     try {
+        mostrarLoader();
         if (tabla.length == 0) {
             throw new Error("La tabla actual no tiene ninguna promesa");
         }
@@ -824,4 +914,15 @@ async function descargarExcel(tabla) {
     } catch (err) {
         throw err;
     }
+    finally{
+        ocultarLoader();
+    }
+}
+
+function mostrarLoader() {
+  document.getElementById("loader").classList.remove("hidden");
+}
+
+function ocultarLoader() {
+  document.getElementById("loader").classList.add("hidden");
 }
