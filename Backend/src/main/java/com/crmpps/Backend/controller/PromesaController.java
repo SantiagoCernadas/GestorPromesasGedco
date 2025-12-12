@@ -4,6 +4,7 @@ import com.crmpps.Backend.dto.EstadisticaResponse;
 import com.crmpps.Backend.dto.PromesaExcelRequest;
 import com.crmpps.Backend.dto.PromesaRequest;
 import com.crmpps.Backend.dto.PromesaResponse;
+import com.crmpps.Backend.exception.LogicaInvalidaException;
 import com.crmpps.Backend.exception.NoAutorizadoException;
 import com.crmpps.Backend.service.PromesaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,7 +30,7 @@ public class PromesaController {
 
     @Operation(summary = "Agregar una nueva promesa.")
     @PostMapping()
-    public ResponseEntity<PromesaResponse> agregarPromesa(@RequestHeader Map<String,String> headers,@Valid @RequestBody PromesaRequest promesaRequest) throws NoAutorizadoException {
+    public ResponseEntity<PromesaResponse> agregarPromesa(@RequestHeader Map<String,String> headers,@Valid @RequestBody PromesaRequest promesaRequest) throws NoAutorizadoException, LogicaInvalidaException {
         return ResponseEntity.status(HttpStatus.CREATED).body(promesaService.agregarPromesa(headers, promesaRequest));
     }
 
@@ -68,7 +69,7 @@ public class PromesaController {
     @PutMapping("/{id}")
     public ResponseEntity <PromesaResponse> modificarPromesa(@RequestHeader Map<String,String> headers,
                                                              @PathVariable Long id,
-                                                             @Valid @RequestBody PromesaRequest promesaRequest) throws NoAutorizadoException {
+                                                             @Valid @RequestBody PromesaRequest promesaRequest) throws NoAutorizadoException, LogicaInvalidaException {
         return ResponseEntity.ok(promesaService.modificarPromesa(headers,id, promesaRequest));
     }
 

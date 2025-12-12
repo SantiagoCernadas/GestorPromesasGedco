@@ -45,7 +45,7 @@ export async function getPrueba(token) {
         }
     }).then(response => {
         if (!response.ok) {
-            throw new Error("ERROR HTTP: " + response.status);
+            throw new Error("ERROR: " + response.status);
         }
         return response.text();
     })
@@ -67,7 +67,7 @@ export async function getDatosUsuario(token) {
         }
     }).then(response => {
         if (!response.ok) {
-            throw new Error("ERROR HTTP: " + response.status);
+            throw new Error("ERROR: " + response.status);
         }
         return response.json();
     })
@@ -91,7 +91,7 @@ export async function getOperadores(token) {
         }
     }).then(response => {
         if (!response.ok) {
-            throw new Error("ERROR HTTP: " + response.status);
+            throw new Error("ERROR: " + response.status);
         }
         return response.json();
     })
@@ -116,7 +116,7 @@ export async function getPromesas(token,query) {
         }
     }).then(response => {
         if (!response.ok) {
-            throw new Error("ERROR HTTP: " + response.status);
+            throw new Error("ERROR: " + response.status);
         }
         return response.json();
     })
@@ -141,7 +141,7 @@ export async function agregarPromesa(token,promesa) {
         }
     }).then(response => {
         if (!response.ok) {
-            throw new Error("ERROR HTTP: " + response.status);
+            throw new Error("ERROR: " + response.status);
         }
         return response.json();
     })
@@ -166,7 +166,7 @@ export async function modificarPromesa(token,id,promesa) {
         }
     }).then(response => {
         if (!response.ok) {
-            throw new Error("ERROR HTTP: " + response.status);
+            throw new Error("ERROR: " + response.status);
         }
         return response.json();
     })
@@ -191,7 +191,7 @@ export async function eliminarPromesa(token,id) {
         }
     }).then(response => {
         if (!response.ok) {
-            throw new Error("ERROR HTTP: " + response.status);
+            throw new Error("ERROR " + response.status);
         }
         return response;
     })
@@ -216,7 +216,7 @@ export async function getExcelTabla(token,tabla) {
         }
     }).then(response => {
         if (!response.ok) {
-            throw new Error("ERROR HTTP: " + response.status);
+            throw new Error("ERROR: " + response.status);
         }
         return response;
     })
@@ -241,7 +241,7 @@ export async function getEstadisticas(token,tabla) {
         }
     }).then(response => {
         if (!response.ok) {
-            throw new Error("ERROR HTTP: " + response.status);
+            throw new Error("ERROR: " + response.status);
         }
         return response.json();
     })

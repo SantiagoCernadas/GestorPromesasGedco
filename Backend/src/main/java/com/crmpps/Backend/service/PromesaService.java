@@ -4,10 +4,13 @@ import com.crmpps.Backend.dto.EstadisticaResponse;
 import com.crmpps.Backend.dto.PromesaExcelRequest;
 import com.crmpps.Backend.dto.PromesaRequest;
 import com.crmpps.Backend.dto.PromesaResponse;
+import com.crmpps.Backend.dto.enums.Canales;
 import com.crmpps.Backend.dto.enums.EstadosCumplimiento;
 import com.crmpps.Backend.dto.enums.Sites;
+import com.crmpps.Backend.dto.enums.TiposAcuerdo;
 import com.crmpps.Backend.entity.PromesaEntity;
 import com.crmpps.Backend.entity.UsuarioEntity;
+import com.crmpps.Backend.exception.LogicaInvalidaException;
 import com.crmpps.Backend.exception.NoAutorizadoException;
 import com.crmpps.Backend.repository.PromesaCustomRepository;
 import com.crmpps.Backend.repository.PromesaRepository;
@@ -24,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static com.crmpps.Backend.dto.enums.Sites.*;
@@ -43,7 +47,7 @@ public class PromesaService {
     @Autowired
     private JwtUtils jwtUtils;
 
-    public PromesaResponse agregarPromesa(Map<String, String> headers, @Valid PromesaRequest promesaRequest) throws NoAutorizadoException {
+    public PromesaResponse agregarPromesa(Map<String, String> headers, @Valid PromesaRequest promesaRequest) throws NoAutorizadoException, LogicaInvalidaException {
         String tokenHeader = headers.get("authorization");
         UsuarioEntity usuarioEntity = usuarioRepository.findById(promesaRequest.getOperador())
                 .orElseThrow(() -> new NoSuchElementException("No se encontro al usuario con id: " + promesaRequest.getOperador()));
@@ -52,6 +56,8 @@ public class PromesaService {
                 !usuarioEntity.getNombreUsuario().equals(getNombreUsuarioToken(tokenHeader))){
             throw new NoAutorizadoException("Credenciales invalidas.");
         }
+
+        validarPromesa(promesaRequest);
 
         PromesaEntity promesaEntity = PromesaEntity.builder()
                 .idUsuarioML(promesaRequest.getIdUsuarioML())
@@ -192,7 +198,7 @@ public class PromesaService {
         return jwtUtils.getNombreUsuarioFromToken(token.substring(7));
     }
 
-    public PromesaResponse modificarPromesa(Map<String, String> headers, Long id, PromesaRequest promesaRequest) throws NoAutorizadoException {
+    public PromesaResponse modificarPromesa(Map<String, String> headers, Long id, PromesaRequest promesaRequest) throws NoAutorizadoException, LogicaInvalidaException {
 
         String tokenHeader = headers.get("authorization");
 
@@ -207,6 +213,8 @@ public class PromesaService {
             throw new NoAutorizadoException("Credenciales invalidas.");
         }
 
+
+        validarPromesa(promesaRequest);
 
         PromesaEntity promesaModificada = PromesaEntity.builder().
                 id(promesa.getId())
@@ -377,5 +385,38 @@ public class PromesaService {
         libro.close();
 
         return outputStream.toByteArray();
+    }
+
+    public void validarPromesa(PromesaRequest promesaRequest) throws LogicaInvalidaException {
+        if(promesaRequest.getNumCaso() <= 0){
+            throw new LogicaInvalidaException("El número de caso debe ser mayor a 0");
+        }
+        if(promesaRequest.getIdUsuarioML() <= 0){
+            throw new LogicaInvalidaException("El id del usuario debe ser mayor a 0");
+        }
+        if (promesaRequest.getMonto() <= 0){
+            throw new LogicaInvalidaException("El monto debe ser mayor a 0");
+        }
+        if (!Sites.siteValido(promesaRequest.getSite())){
+            throw new LogicaInvalidaException("Site invalido");
+        }
+        if(!Canales.canalValido(promesaRequest.getCanal())){
+            throw new LogicaInvalidaException("Canal invalido");
+        }
+        if (!TiposAcuerdo.acuerdoValido(promesaRequest.getTipoAcuerdo())){
+            throw new LogicaInvalidaException("Tipo de acuerdo invalido");
+        }
+        if (!EstadosCumplimiento.cumplimientoValido(promesaRequest.getCumplimiento())){
+            throw new LogicaInvalidaException("tipo de cumplimiento invalido");
+        }
+
+        long diasDiferencia = ChronoUnit.DAYS.between(promesaRequest.getFechaCarga(), promesaRequest.getFechaPago());
+
+        if(diasDiferencia < 0){
+            throw new LogicaInvalidaException("La fecha de pago no puede ser menor a la fecha de carga");
+        }
+        else if (diasDiferencia > 7){
+            throw new LogicaInvalidaException("La diferencia de días entre la fecha de carga y la fecha de pago no puede ser mayor a 7 días");
+        }
     }
 }

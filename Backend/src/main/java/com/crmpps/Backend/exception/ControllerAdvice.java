@@ -3,9 +3,11 @@ package com.crmpps.Backend.exception;
 
 import com.crmpps.Backend.dto.ErrorDTO;
 import io.swagger.v3.oas.annotations.Hidden;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -21,6 +23,22 @@ public class ControllerAdvice {
         ErrorDTO error = ErrorDTO.builder().codigo("400").mensaje("Falta el siguiente parametro: " + ex.getParameterName()).build();
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @Hidden
+    public ResponseEntity<ErrorDTO> handleMissingParams(MethodArgumentNotValidException ex) {
+        ErrorDTO error = ErrorDTO.builder().codigo("400").mensaje("Argumentos no validos.").build();
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(LogicaInvalidaException.class)
+    @Hidden
+    public ResponseEntity<ErrorDTO> handleMissingParams(LogicaInvalidaException ex) {
+        ErrorDTO error = ErrorDTO.builder().codigo("400").mensaje(ex.getMessage()).build();
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+
 
     @ExceptionHandler(Exception.class)
     @Hidden

@@ -548,16 +548,6 @@ function insertarDato(fila, columna, valorColumna, dato) {
 
 async function agregarPromesa() {
     mensajePP.innerHTML = '';
-    document.getElementById("input-pp-caso").style.border = '1px solid black';
-    document.getElementById("input-pp-id").style.border = '1px solid black';
-    document.getElementById("input-pp-canal").style.border = '1px solid black';
-    document.getElementById("input-pp-site").style.border = '1px solid black';
-    document.getElementById("input-pp-monto").style.border = '1px solid black';
-    document.getElementById("input-pp-fecha-carga").style.border = '1px solid black';
-    document.getElementById("input-pp-fecha-pago").style.border = '1px solid black';
-    document.getElementById("input-pp-tipo-acuerdo").style.border = '1px solid black';
-    document.getElementById("input-pp-operador").style.border = '1px solid black';
-    document.getElementById("input-pp-cumplimiento").style.border = '1px solid black';
 
     const nuevaPromesa = {
         numCaso: parseInt(document.getElementById("input-pp-caso").value),
@@ -581,6 +571,7 @@ async function agregarPromesa() {
         }
         catch (err) {
             mensajePP.innerHTML += 'No fue posible generar la promesa. ' + err.message;
+            mensajePP.style.color = "red";
             return;
         }
         
@@ -620,8 +611,16 @@ function validarPromesa(nuevaPromesa) {
         validacion.mensaje.innerHTML += 'Ingresar Numero de caso. <br>'
         validacion.sinError = false;
     }
+    else if(nuevaPromesa.numCaso <= 0){
+        validacion.mensaje.innerHTML += 'El número de caso debe ser mayor a 0. <br>'
+        validacion.sinError = false;
+    }
     if (Number.isNaN(nuevaPromesa.idUsuarioML)) {
         validacion.mensaje.innerHTML += 'Ingresar ID.<br>'
+        validacion.sinError = false;
+    }
+    else if(nuevaPromesa.idUsuarioML <= 0){
+        validacion.mensaje.innerHTML += 'El id debe ser mayor a 0. <br>'
         validacion.sinError = false;
     }
     if (nuevaPromesa.canal == '-') {
@@ -634,6 +633,10 @@ function validarPromesa(nuevaPromesa) {
     }
     if (Number.isNaN(nuevaPromesa.monto)) {
         validacion.mensaje.innerHTML += 'Monto invalido.<br>';
+        validacion.sinError = false;
+    }
+    else if(nuevaPromesa.monto <= 0){
+        validacion.mensaje.innerHTML += 'El monto debe ser mayor a 0. <br>'
         validacion.sinError = false;
     }
     if (nuevaPromesa.fechaCarga == '') {
