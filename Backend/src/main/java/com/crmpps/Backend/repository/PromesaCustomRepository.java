@@ -66,8 +66,6 @@ public class PromesaCustomRepository {
             sb.append("AND a.fechaCarga <= :fechaCargaHasta ");
             params.put("fechaCargaHasta", fechaCargaHasta);
         }
-
-        // 👇 Lógica especial de "duplica"
         if (Boolean.TRUE.equals(duplica)) {
             sb.append("AND ((LOWER(a.site) = 'mla' AND a.monto >= 250000) ")
                     .append("OR (LOWER(a.site) = 'mlm' AND a.monto >= 5000) ")
