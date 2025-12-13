@@ -249,9 +249,16 @@ public class PromesaService {
         return response;
     }
 
-    public EstadisticaResponse getEstadisticas(Map<String, String> headers, @Valid List<PromesaExcelRequest> promesas) throws NoAutorizadoException {
+    public EstadisticaResponse getEstadisticas(Map<String, String> headers, @Valid List<PromesaExcelRequest> promesas) throws NoAutorizadoException, LogicaInvalidaException {
+
+        if(promesas.isEmpty()){
+            throw new LogicaInvalidaException("La tabla esta vacía.");
+        }
+
         EstadisticaResponse response = new EstadisticaResponse();
         response.setCantPromesas(promesas.size());
+
+
 
         for (PromesaExcelRequest promesaRequest : promesas){
 
@@ -304,8 +311,12 @@ public class PromesaService {
         return false;
     }
 
-    public byte[] getExcelTabla(Map<String, String> headers, @Valid List<PromesaExcelRequest> promesas) throws NoAutorizadoException, IOException {
+    public byte[] getExcelTabla(Map<String, String> headers, @Valid List<PromesaExcelRequest> promesas) throws IOException, LogicaInvalidaException {
         String tokenHeader = headers.get("authorization");
+
+        if(promesas.isEmpty()){
+            throw new LogicaInvalidaException("La tabla esta vacía.");
+        }
 
         ClassPathResource plantilla = new ClassPathResource("PlantillaPromesas.xlsx");
         InputStream inputStream = plantilla.getInputStream();

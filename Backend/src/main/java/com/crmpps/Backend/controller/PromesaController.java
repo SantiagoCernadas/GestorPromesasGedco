@@ -75,13 +75,13 @@ public class PromesaController {
 
     @PostMapping("/estadisticas")
     public ResponseEntity<EstadisticaResponse> getEstadisticas(@RequestHeader Map<String,String> headers,
-                                                               @Valid @RequestBody List<PromesaExcelRequest> promesas) throws NoAutorizadoException {
+                                                               @Valid @RequestBody List<PromesaExcelRequest> promesas) throws NoAutorizadoException, LogicaInvalidaException {
         return ResponseEntity.ok(promesaService.getEstadisticas(headers,promesas));
     }
 
     @PostMapping("/excel")
     public ResponseEntity<byte[]> getExcelTabla(@RequestHeader Map<String,String> headers,
-                                                @Valid @RequestBody List<PromesaExcelRequest> promesas) throws IOException, NoAutorizadoException {
+                                                @Valid @RequestBody List<PromesaExcelRequest> promesas) throws IOException, LogicaInvalidaException {
 
         return ResponseEntity.ok()
                 .header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
