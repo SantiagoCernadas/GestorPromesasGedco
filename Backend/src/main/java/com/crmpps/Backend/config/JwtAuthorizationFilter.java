@@ -1,6 +1,5 @@
 package com.crmpps.Backend.config;
 
-import com.crmpps.Backend.service.UserDetailsServiceImpl;
 import com.crmpps.Backend.util.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

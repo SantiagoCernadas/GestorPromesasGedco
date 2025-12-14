@@ -1,6 +1,5 @@
-package com.crmpps.Backend.service;
+package com.crmpps.Backend.config;
 
-import com.crmpps.Backend.entity.Rol;
 import com.crmpps.Backend.entity.UsuarioEntity;
 import com.crmpps.Backend.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;

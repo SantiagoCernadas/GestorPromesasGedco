@@ -1,8 +1,5 @@
 package com.crmpps.Backend.config;
 
-import com.crmpps.Backend.repository.UsuarioRepository;
-import com.crmpps.Backend.service.UserDetailsServiceImpl;
-import com.crmpps.Backend.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
