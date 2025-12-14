@@ -41,16 +41,15 @@ class AuthServiceTest {
     void setUp(){
         MockitoAnnotations.openMocks(this);
         headers = new HashMap<>();
+    }
+
+    @Test
+    void getToken_Ok() {
         loginRequest = LoginRequest
                 .builder()
                 .nombreUsuario("test")
                 .contrasenia("test")
                 .build();
-
-    }
-
-    @Test
-    void getToken() {
 
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(authentication);
@@ -65,6 +64,12 @@ class AuthServiceTest {
 
     @Test
     void getToken_CredencialesIncorrectas() {
+
+        loginRequest = LoginRequest
+                .builder()
+                .nombreUsuario("NombreUsuarioIncorrecto")
+                .contrasenia("ContraseniaIncorrecta")
+                .build();
 
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenThrow(BadCredentialsException.class);

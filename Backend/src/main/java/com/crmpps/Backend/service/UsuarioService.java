@@ -27,7 +27,8 @@ public class UsuarioService {
         String token = headers.get("authorization").substring(7);
         String nombreUsuario = jwtUtils.getNombreUsuarioFromToken(token);
 
-        UsuarioEntity usuarioEntity = usuarioRepository.findByNombreUsuario(nombreUsuario).orElseThrow();
+        UsuarioEntity usuarioEntity = usuarioRepository.findByNombreUsuario(nombreUsuario)
+                .orElseThrow(() -> new NoSuchElementException("No se encontro un usuario con en nick: " + nombreUsuario));
 
         return UsuarioResponse.builder()
                 .id(usuarioEntity.getId())
@@ -40,10 +41,10 @@ public class UsuarioService {
     public List<UsuarioResponse> getOperadores(Map<String,String> headers) {
 
         List<UsuarioResponse> response = new ArrayList<>();
-        String tokenHeader = headers.get("authorization");
+        String tokenHeader = headers.get("authorization").substring(7);
 
-        if (getRolToken(tokenHeader).equals(("ROLE_OPERADOR"))){
-            UsuarioEntity usuarioEntity = usuarioRepository.getNombreUsuario(getNombreUsuarioToken(tokenHeader))
+        if (jwtUtils.getRolFromToken(tokenHeader).equals(("ROLE_OPERADOR"))){
+            UsuarioEntity usuarioEntity = usuarioRepository.getNombreUsuario(jwtUtils.getNombreUsuarioFromToken(tokenHeader))
                     .orElseThrow(() -> new NoSuchElementException("Usuario inexistente."));
 
             UsuarioResponse usuario = UsuarioResponse.builder()
@@ -67,13 +68,5 @@ public class UsuarioService {
             }
         }
         return  response;
-    }
-
-    public String getRolToken(String token) {
-        return jwtUtils.getRolFromToken(token.substring(7));
-    }
-
-    public String getNombreUsuarioToken(String token){
-        return jwtUtils.getNombreUsuarioFromToken(token.substring(7));
     }
 }
