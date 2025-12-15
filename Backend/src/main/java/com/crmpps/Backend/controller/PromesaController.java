@@ -74,12 +74,14 @@ public class PromesaController {
     }
 
     @PostMapping("/estadisticas")
+    @Operation(summary = "Información relevante de la tabla de promesa ingresada.")
     public ResponseEntity<EstadisticaResponse> getEstadisticas(@RequestHeader Map<String,String> headers,
                                                                @Valid @RequestBody List<PromesaExcelRequest> promesas) throws NoAutorizadoException, LogicaInvalidaException {
         return ResponseEntity.ok(promesaService.getEstadisticas(headers,promesas));
     }
 
     @PostMapping("/excel")
+    @Operation(summary = "Exportar la tabla ingresada a un archivo en formato Excel (.xlsx).")
     public ResponseEntity<byte[]> getExcelTabla(@RequestHeader Map<String,String> headers,
                                                 @Valid @RequestBody List<PromesaExcelRequest> promesas) throws IOException, LogicaInvalidaException {
 
