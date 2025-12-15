@@ -16,7 +16,7 @@ let sesiónCerrada = false;
 
 const botonFiltrar = document.getElementById('boton-filtrar');
 let paginaActual = 1;
-const cantFilasPagina = 8;
+const cantFilasPagina = 15;
 
 let listaPromesas;
 let totalPaginas;
