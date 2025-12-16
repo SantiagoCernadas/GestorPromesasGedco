@@ -237,7 +237,7 @@ class PromesaServiceTest {
     }
 
     @Test
-    void getPromesasOperadorFiltros_RolOperadorFiltrarTodosOperadores_credencialesInvalidas() {
+    void getPromesasOperadorFiltros_RolOperadorFiltrarOtroOperador_credencialesInvalidas() {
         when(usuarioRepository.findById(any(Long.class)))
                 .thenReturn(Optional.of(usuarioEntity));
 
@@ -247,18 +247,23 @@ class PromesaServiceTest {
         when(jwtUtils.getNombreUsuarioFromToken(any(String.class)))
                 .thenReturn(usuarioEntity.getNombreUsuario());
 
+        usuarioEntity.setNombreUsuario(usuarioEntity.getNombreUsuario()+"diferencia");
+
+        when(usuarioRepository.findByNombreUsuario(any(String.class)))
+                .thenReturn(Optional.of(usuarioEntity));
+
         assertThrows(NoAutorizadoException.class,() -> {
             promesaService.getPromesasOperadorFiltros(
                     headers,
                     1,
-                    1,
+                    0,
                     "MLA",
                     "Pago total",
                     "Parcelamento",
                     "Cumplida",
                     LocalDate.now(),
                     LocalDate.now(),
-                    null,
+                    2L,
                     false
             );
         });

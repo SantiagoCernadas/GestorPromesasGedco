@@ -106,13 +106,14 @@ public class PromesaService {
         String tokenHeader = headers.get("authorization").substring(7);
         if (operador == null){
             if (jwtUtils.getRolFromToken(tokenHeader).equals(("ROLE_OPERADOR"))){
-                //operador = usuarioRepository.findByNombreUsuario(getNombreUsuarioToken(tokenHeader)).orElseThrow().getId();
-                throw new NoAutorizadoException("Credenciales invalidas.");
+                operador = usuarioRepository
+                        .findByNombreUsuario(jwtUtils.getNombreUsuarioFromToken(tokenHeader))
+                        .orElseThrow(() -> new NoSuchElementException("Usuario inexistente.")).getId();
             }
         }
         else {
             UsuarioEntity usuarioEntity = usuarioRepository.findById(operador)
-                    .orElseThrow(() -> new NoSuchElementException("No se encontro al usuario con id: " + operador));
+                    .orElseThrow(() -> new NoSuchElementException("Usuario inexistente."));
 
 
             if (jwtUtils.getRolFromToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
