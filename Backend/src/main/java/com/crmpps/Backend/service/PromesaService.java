@@ -16,6 +16,7 @@ import com.crmpps.Backend.repository.PromesaCustomRepository;
 import com.crmpps.Backend.repository.PromesaRepository;
 import com.crmpps.Backend.repository.UsuarioRepository;
 import com.crmpps.Backend.util.JwtUtils;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -48,12 +49,12 @@ public class PromesaService {
     private JwtUtils jwtUtils;
 
     public PromesaResponse agregarPromesa(Map<String, String> headers, @Valid PromesaRequest promesaRequest) throws NoAutorizadoException, LogicaInvalidaException {
-        String tokenHeader = headers.get("authorization");
+        String tokenHeader = headers.get("authorization").substring(7);
         UsuarioEntity usuarioEntity = usuarioRepository.findById(promesaRequest.getOperador())
                 .orElseThrow(() -> new NoSuchElementException("No se encontro al usuario con id: " + promesaRequest.getOperador()));
 
-        if (getRolToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
-                !usuarioEntity.getNombreUsuario().equals(getNombreUsuarioToken(tokenHeader))){
+        if (jwtUtils.getRolFromToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
+                !usuarioEntity.getNombreUsuario().equals(jwtUtils.getNombreUsuarioFromToken(tokenHeader))){
             throw new NoAutorizadoException("Credenciales invalidas.");
         }
 
@@ -74,7 +75,7 @@ public class PromesaService {
 
         promesaRepository.save(promesaEntity);
 
-        PromesaResponse response = PromesaResponse.builder()
+        return PromesaResponse.builder()
                 .id(promesaEntity.getId())
                 .idUsuarioML(promesaEntity.getIdUsuarioML())
                 .numCaso(promesaEntity.getNumCaso())
@@ -87,8 +88,6 @@ public class PromesaService {
                 .fechaPago(promesaEntity.getFechaPago())
                 .operador(promesaEntity.getOperador().getNombre())
                 .build();
-
-        return response;
     }
 
     public List<PromesaResponse> getPromesasOperadorFiltros(Map<String, String> headers,
@@ -104,9 +103,10 @@ public class PromesaService {
                                                             Boolean duplica) throws NoAutorizadoException {
 
 
-        String tokenHeader = headers.get("authorization");
+        String tokenHeader = headers.get("authorization").substring(7);
         if (operador == null){
-            if (getRolToken(tokenHeader).equals(("ROLE_OPERADOR"))){
+            if (jwtUtils.getRolFromToken(tokenHeader).equals(("ROLE_OPERADOR"))){
+                //operador = usuarioRepository.findByNombreUsuario(getNombreUsuarioToken(tokenHeader)).orElseThrow().getId();
                 throw new NoAutorizadoException("Credenciales invalidas.");
             }
         }
@@ -114,8 +114,9 @@ public class PromesaService {
             UsuarioEntity usuarioEntity = usuarioRepository.findById(operador)
                     .orElseThrow(() -> new NoSuchElementException("No se encontro al usuario con id: " + operador));
 
-            if(getRolToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
-                    !usuarioEntity.getNombreUsuario().equals(getNombreUsuarioToken(tokenHeader))){
+
+            if (jwtUtils.getRolFromToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
+                    !usuarioEntity.getNombreUsuario().equals(jwtUtils.getNombreUsuarioFromToken(tokenHeader))){
                 throw new NoAutorizadoException("Credenciales invalidas.");
             }
         }
@@ -152,12 +153,13 @@ public class PromesaService {
                 .orElseThrow(() -> new NoSuchElementException("No se encontro la promesa con id:" + id));
 
 
-        String tokenHeader = headers.get("authorization");
+        String tokenHeader = headers.get("authorization").substring(7);
 
-        if (getRolToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
-                !promesa.getOperador().getNombreUsuario().equals(getNombreUsuarioToken(tokenHeader))){
+        if (jwtUtils.getRolFromToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
+                !promesa.getOperador().getNombreUsuario().equals(jwtUtils.getNombreUsuarioFromToken(tokenHeader))){
             throw new NoAutorizadoException("Credenciales invalidas.");
         }
+
 
         PromesaResponse response = PromesaResponse.builder()
                 .id(promesa.getId())
@@ -180,27 +182,20 @@ public class PromesaService {
         PromesaEntity promesa = promesaRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("No se encontro la promesa con id:" + id));
 
-        String tokenHeader = headers.get("authorization");
+        String tokenHeader = headers.get("authorization").substring(7);
 
-        if (getRolToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
-                !promesa.getOperador().getNombreUsuario().equals(getNombreUsuarioToken(tokenHeader))){
+        if (jwtUtils.getRolFromToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
+                !promesa.getOperador().getNombreUsuario().equals(jwtUtils.getNombreUsuarioFromToken(tokenHeader))){
             throw new NoAutorizadoException("Credenciales invalidas.");
         }
 
         promesaRepository.deleteById(id);
     }
 
-    public String getRolToken(String token) {
-        return jwtUtils.getRolFromToken(token.substring(7));
-    }
-
-    public String getNombreUsuarioToken(String token){
-        return jwtUtils.getNombreUsuarioFromToken(token.substring(7));
-    }
 
     public PromesaResponse modificarPromesa(Map<String, String> headers, Long id, PromesaRequest promesaRequest) throws NoAutorizadoException, LogicaInvalidaException {
 
-        String tokenHeader = headers.get("authorization");
+        String tokenHeader = headers.get("authorization").substring(7);
 
         PromesaEntity promesa = promesaRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("No se encontro la promesa con id:" + id));
@@ -208,10 +203,11 @@ public class PromesaService {
         UsuarioEntity usuario = usuarioRepository.findById(promesaRequest.getOperador())
                 .orElseThrow(() -> new NoSuchElementException("No se encontro al usuario con id:" + promesaRequest.getOperador()));
 
-        if (getRolToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
-                !promesa.getOperador().getNombreUsuario().equals(getNombreUsuarioToken(tokenHeader))){
+        if (jwtUtils.getRolFromToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
+                !promesa.getOperador().getNombreUsuario().equals(jwtUtils.getNombreUsuarioFromToken(tokenHeader))){
             throw new NoAutorizadoException("Credenciales invalidas.");
         }
+
 
 
         validarPromesa(promesaRequest);
@@ -249,7 +245,7 @@ public class PromesaService {
         return response;
     }
 
-    public EstadisticaResponse getEstadisticas(Map<String, String> headers, @Valid List<PromesaExcelRequest> promesas) throws NoAutorizadoException, LogicaInvalidaException {
+    public EstadisticaResponse getEstadisticas(Map<String, String> headers, @Valid List<PromesaExcelRequest> promesas) throws LogicaInvalidaException {
 
         if(promesas.isEmpty()){
             throw new LogicaInvalidaException("La tabla esta vacía.");
@@ -312,7 +308,6 @@ public class PromesaService {
     }
 
     public byte[] getExcelTabla(Map<String, String> headers, @Valid List<PromesaExcelRequest> promesas) throws IOException, LogicaInvalidaException {
-        String tokenHeader = headers.get("authorization");
 
         if(promesas.isEmpty()){
             throw new LogicaInvalidaException("La tabla esta vacía.");
