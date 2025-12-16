@@ -10,9 +10,9 @@
 	</parent>
 	<groupId>com.crmpps</groupId>
 	<artifactId>Backend</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>Backend</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Backend para el proyecto CRM</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -88,7 +88,8 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<optional>true</optional>
+			<version>1.18.32</version>
+			<scope>provided</scope>
 		</dependency>
 
 
@@ -116,6 +117,13 @@
 			<version>5.21.0</version>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
