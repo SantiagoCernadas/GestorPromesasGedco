@@ -23,7 +23,7 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public UsuarioResponse getUsuario(Map<String,String> headers){
+    public UsuarioResponse getDatosUsuario(Map<String,String> headers){
         String token = headers.get("authorization").substring(7);
         String nombreUsuario = jwtUtils.getNombreUsuarioFromToken(token);
 
@@ -68,5 +68,31 @@ public class UsuarioService {
             }
         }
         return  response;
+    }
+
+    public List<UsuarioResponse> getUsuarios(Map<String, String> headers, String nombre) throws NoAutorizadoException {
+        String tokenHeader = headers.get("authorization").substring(7);
+        if (!jwtUtils.getRolFromToken(tokenHeader).equals(("ROLE_ADMIN"))){
+            throw new NoAutorizadoException("Credenciales invalidas.");
+        }
+
+        List<UsuarioResponse> response = new ArrayList<>();
+
+        if (nombre == null){
+            nombre = "";
+        }
+        List<UsuarioEntity> listaUsuarios = usuarioRepository.getUsuarios(nombre);
+
+        for(UsuarioEntity usuarioEntity : listaUsuarios){
+            UsuarioResponse usuario = UsuarioResponse.builder()
+                    .id(usuarioEntity.getId())
+                    .nombreUsuario(usuarioEntity.getNombreUsuario())
+                    .rol(usuarioEntity.getRol())
+                    .nombre(usuarioEntity.getNombre())
+                    .build();
+            response.add(usuario);
+        }
+
+        return response;
     }
 }

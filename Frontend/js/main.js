@@ -68,7 +68,7 @@ catch (err) {
         cerrarSesion();
     }
 }
-finally{
+finally {
     ocultarLoader();
 }
 
@@ -79,7 +79,46 @@ const editarPPOperadorInput = document.getElementById("input-pp-operador-edit");
 
 
 
-if (datosUsuario.rol === "SUPERVISOR") {
+if (datosUsuario.rol !== "OPERADOR") {
+    insertarOpcionTodos();
+}
+
+printOperadoresTablas();
+
+if (datosUsuario.rol === "ADMIN") {
+    const nav = document.querySelector('nav');
+    const botonUsuarios = document.createElement("button");
+    botonUsuarios.textContent = "Gestionar Usuarios";
+    botonUsuarios.addEventListener('click', () => {
+        generarAlert("Gestion de usuarios", "green");
+    })
+    nav.insertBefore(botonUsuarios, nav.firstChild);
+}
+
+document.getElementById("nombre-operador-span").textContent = datosUsuario.nombre;
+
+filtrarPromesas();
+
+function printOperadoresTablas() {
+
+    usuarios.forEach((usuario, i) => {
+        const opcionPP = document.createElement('option');
+        const opcionFiltro = document.createElement('option');
+        const opcionEditar = document.createElement('option');
+        opcionPP.value = usuario.id;
+        opcionPP.textContent = usuario.nombre;
+        opcionFiltro.value = usuario.id;
+        opcionFiltro.textContent = usuario.nombre;
+        opcionEditar.value = usuario.id;
+        opcionEditar.textContent = usuario.nombre;
+        agregarPPOperadorInput.add(opcionPP);
+        filtroOperadorInput.add(opcionFiltro);
+        editarPPOperadorInput.add(opcionEditar);
+    })
+
+}
+
+function insertarOpcionTodos(){
     const opcionPP = document.createElement('option');
     const opcionFiltro = document.createElement('option');
     const opcionEditar = document.createElement('option');
@@ -93,25 +132,6 @@ if (datosUsuario.rol === "SUPERVISOR") {
     agregarPPOperadorInput.add(opcionFiltro);
     editarPPOperadorInput.add(opcionEditar);
 }
-usuarios.forEach((usuario, i) => {
-    const opcionPP = document.createElement('option');
-    const opcionFiltro = document.createElement('option');
-    const opcionEditar = document.createElement('option');
-    opcionPP.value = usuario.id;
-    opcionPP.textContent = usuario.nombre;
-    opcionFiltro.value = usuario.id;
-    opcionFiltro.textContent = usuario.nombre;
-    opcionEditar.value = usuario.id;
-    opcionEditar.textContent = usuario.nombre;
-    agregarPPOperadorInput.add(opcionPP);
-    filtroOperadorInput.add(opcionFiltro);
-    editarPPOperadorInput.add(opcionEditar);
-})
-
-document.getElementById("nombre-operador-span").textContent = datosUsuario.nombre;
-
-filtrarPromesas();
-
 
 function getFiltros() {
     return {
@@ -209,14 +229,14 @@ async function filtrarPromesas() {
     catch (err) {
         console.log(err.message);
         if (err.message == 403) {
-            generarAlert("Sesión vencida. Vuelva a iniciar sesión","blue");
+            generarAlert("Sesión vencida. Vuelva a iniciar sesión", "blue");
             sesiónCerrada = true;
         }
-        else{
-            generarAlert("No fue posible generar la tabla: " + err.message,"red");
+        else {
+            generarAlert("No fue posible generar la tabla: " + err.message, "red");
         }
     }
-    finally{
+    finally {
         ocultarLoader();
     }
 
@@ -389,11 +409,11 @@ async function eliminarPromesa(id) {
         if (err.message == 403) {
             generarAlert("Sesión vencida. Vuelva a iniciar sesión", "blue");
             sesiónCerrada = true;
-        }else{
+        } else {
             generarAlert("No fue posible eliminar la promesa: " + err.message, "red");
         }
     }
-    finally{
+    finally {
         ocultarLoader();
     }
 }
@@ -468,18 +488,18 @@ botonGuardarEditar.addEventListener('click', async () => {
     }
     catch (err) {
         if (err.message == 403) {
-            generarAlert("Sesión vencida. Vuelva a iniciar sesión","blue");
+            generarAlert("Sesión vencida. Vuelva a iniciar sesión", "blue");
             sesiónCerrada = true;
         }
-        else{
+        else {
             generarAlert("No fue posible modificar la promesa: " + err.message, "red");
         }
         return;
     }
-    finally{
+    finally {
         ocultarLoader();
     }
-    
+
 
     var promesa = listaPromesas.find(p => p.id === idEdit);
     if (promesa) {
@@ -631,16 +651,16 @@ async function agregarPromesa() {
         }
         catch (err) {
             if (err.message == 403) {
-                generarAlert("Sesión vencida. Vuelva a iniciar sesión","blue");
+                generarAlert("Sesión vencida. Vuelva a iniciar sesión", "blue");
                 sesiónCerrada = true;
             }
-            else{
+            else {
                 mensajePP.innerHTML += 'No fue posible generar la promesa. ' + err.message;
                 mensajePP.style.color = "red";
             }
             return;
         }
-        finally{
+        finally {
             ocultarLoader();
         }
 
@@ -810,10 +830,10 @@ botonObtenerEstadisticas.addEventListener('click', async () => {
     }
     catch (err) {
         if (err.message == 403) {
-            generarAlert("Sesión vencida. Vuelva a iniciar sesión","blue");
+            generarAlert("Sesión vencida. Vuelva a iniciar sesión", "blue");
             sesiónCerrada = true;
         }
-        else{
+        else {
             generarAlert("No fue posible obtener las estadisticas:" + err.message, "red");
         }
     }
@@ -866,7 +886,7 @@ async function obtenerEstadisticas(tabla) {
     catch (err) {
         throw err
     }
-    finally{
+    finally {
         ocultarLoader();
     }
 }
@@ -878,14 +898,14 @@ botonDescargarExcel.addEventListener('click', async () => {
     }
     catch (err) {
         if (err.message == 403) {
-            generarAlert("Sesión vencida. Vuelva a iniciar sesión","blue");
+            generarAlert("Sesión vencida. Vuelva a iniciar sesión", "blue");
             sesiónCerrada = true;
         }
-        else{
+        else {
             generarAlert("No fue posible exportar el excel: " + err.message, "red");
         }
     }
-    finally{
+    finally {
         ocultarLoader();
     }
 
@@ -914,15 +934,15 @@ async function descargarExcel(tabla) {
     } catch (err) {
         throw err;
     }
-    finally{
+    finally {
         ocultarLoader();
     }
 }
 
 function mostrarLoader() {
-  document.getElementById("loader").classList.remove("hidden");
+    document.getElementById("loader").classList.remove("hidden");
 }
 
 function ocultarLoader() {
-  document.getElementById("loader").classList.add("hidden");
+    document.getElementById("loader").classList.add("hidden");
 }

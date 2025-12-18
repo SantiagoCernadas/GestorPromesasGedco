@@ -36,7 +36,7 @@ export async function iniciarSesion(nombreUsuario,contrasenia){
 
 export async function getDatosUsuario(token) {
     var responseBody;
-    await fetch(apiUrl + 'usuario', {
+    await fetch(apiUrl + 'usuario/datos', {
         method: 'Get',
         headers: {
             'Content-Type': 'application/json',
