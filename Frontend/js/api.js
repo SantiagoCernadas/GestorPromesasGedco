@@ -26,7 +26,7 @@ export async function iniciarSesion(nombreUsuario,contrasenia){
         }
         })
         .then(data => {
-            document.cookie = `session_token=${data.token}; path=/; max-age=86400`;
+            document.cookie = `session_token=${data.token}; path=/; max-age=14300`;
             window.location.href = "/main.html";
         })
         .catch(error => {

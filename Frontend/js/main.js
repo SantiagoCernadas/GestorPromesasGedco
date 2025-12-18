@@ -27,6 +27,7 @@ const botonSiguientePaginacion = document.getElementById('boton-paginacion-sigui
 const modalEditar = document.getElementById('modal-editar-pp');
 const modalEstadisticas = document.getElementById('modal-estadisticas');
 const modalEliminar = document.getElementById('modal-eliminar');
+const modalUsuarios = document.getElementById("modal-usuarios");
 const modalAlert = document.getElementById('modal-alert');
 const botonGuardarEditar = document.getElementById('boton-guardar-editar');
 const botonCerrarEstadistica = document.getElementById("boton-cerrar-estadisticas");
@@ -39,11 +40,6 @@ let idEdit;
 let idEliminar = 0;
 
 var filtros = getFiltros();
-
-function cerrarSesion() {
-    document.cookie = "session_token=; path=/; max-age=0;"
-    window.location.href = "/index.html";
-}
 
 const token = document.cookie
     .split("; ")
@@ -78,29 +74,35 @@ const agregarPPOperadorInput = document.getElementById("input-pp-operador");
 const editarPPOperadorInput = document.getElementById("input-pp-operador-edit");
 
 
+printTablaOperadores();
+filtrarPromesas();
 
-if (datosUsuario.rol !== "OPERADOR") {
-    insertarOpcionTodos();
-}
-
-printOperadoresTablas();
 
 if (datosUsuario.rol === "ADMIN") {
     const nav = document.querySelector('nav');
     const botonUsuarios = document.createElement("button");
     botonUsuarios.textContent = "Gestionar Usuarios";
     botonUsuarios.addEventListener('click', () => {
-        generarAlert("Gestion de usuarios", "green");
+        modalUsuarios.showModal();
     })
     nav.insertBefore(botonUsuarios, nav.firstChild);
 }
 
 document.getElementById("nombre-operador-span").textContent = datosUsuario.nombre;
 
-filtrarPromesas();
+
+function printTablaOperadores(){
+    insertarOpcionTodos();
+    printOperadoresTablas();
+}
+
+function limpiarTablasOpcionesOperador() {
+    agregarPPOperadorInput.innerHTML = '';
+    filtroOperadorInput.innerHTML = '';
+    editarPPOperadorInput.innerHTML = '';
+}
 
 function printOperadoresTablas() {
-
     usuarios.forEach((usuario, i) => {
         const opcionPP = document.createElement('option');
         const opcionFiltro = document.createElement('option');
@@ -118,19 +120,21 @@ function printOperadoresTablas() {
 
 }
 
-function insertarOpcionTodos(){
-    const opcionPP = document.createElement('option');
-    const opcionFiltro = document.createElement('option');
-    const opcionEditar = document.createElement('option');
-    opcionPP.value = "-";
-    opcionPP.textContent = "Todos";
-    opcionFiltro.value = "-";
-    opcionFiltro.textContent = "-";
-    opcionEditar.textContent = "-";
-    opcionEditar.value = "-";
-    filtroOperadorInput.add(opcionPP)
-    agregarPPOperadorInput.add(opcionFiltro);
-    editarPPOperadorInput.add(opcionEditar);
+function insertarOpcionTodos() {
+    if (datosUsuario.rol !== "OPERADOR") {
+        const opcionPP = document.createElement('option');
+        const opcionFiltro = document.createElement('option');
+        const opcionEditar = document.createElement('option');
+        opcionPP.value = "-";
+        opcionPP.textContent = "-";
+        opcionFiltro.value = "-";
+        opcionFiltro.textContent = "Todos";
+        opcionEditar.textContent = "-";
+        opcionEditar.value = "-";
+        agregarPPOperadorInput.insertBefore(opcionPP, agregarPPOperadorInput.firstChild);
+        filtroOperadorInput.insertBefore(opcionFiltro, filtroOperadorInput.firstChild);
+        editarPPOperadorInput.insertBefore(opcionEditar, editarPPOperadorInput.firstChild);
+    }
 }
 
 function getFiltros() {
@@ -945,4 +949,9 @@ function mostrarLoader() {
 
 function ocultarLoader() {
     document.getElementById("loader").classList.add("hidden");
+}
+
+function cerrarSesion() {
+    document.cookie = "session_token=; path=/; max-age=0;"
+    window.location.href = "/index.html";
 }
