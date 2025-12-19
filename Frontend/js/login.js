@@ -5,6 +5,8 @@ const botonLogin = document.getElementById('boton-login');
 const inputUsuarioDoc = document.getElementById('input-usuario');
 const inputContraDoc = document.getElementById('input-contrasenia');
 
+const loader = document.getElementById("loader");
+
 botonLogin.addEventListener('click', async () => {
     await inicioSesion()
 });
@@ -34,9 +36,9 @@ async function inicioSesion(){
 }
 
 function mostrarLoader() {
-  document.getElementById("loader").classList.remove("hidden");
+    loader.showModal();
 }
 
 function ocultarLoader() {
-  document.getElementById("loader").classList.add("hidden");
+    loader.close();
 }

@@ -23,6 +23,7 @@ let totalPaginas;
 const botonAnteriorPaginacion = document.getElementById('boton-paginacion-anterior');
 const botonSiguientePaginacion = document.getElementById('boton-paginacion-siguiente');
 
+const loader = document.getElementById("loader");
 
 const modalEditar = document.getElementById('modal-editar-pp');
 const modalEstadisticas = document.getElementById('modal-estadisticas');
@@ -34,7 +35,16 @@ const botonCerrarEstadistica = document.getElementById("boton-cerrar-estadistica
 const botonCerrarEliminar = document.getElementById("boton-cerrar-eliminar");
 const botonConfirmarEliminar = document.getElementById("boton-confirmar-eliminar");
 const botonAceptarAlert = document.getElementById('boton-cerrar-alert');
+const botonCerrarUsuarios = document.getElementById('boton-cerrar-usuarios');
+const botonBuscarUsuarios = document.getElementById('boton-buscar-usuarios');
+const botonAgregarUsuario = document.getElementById('agregar-usuarios');
 const mensajeAlert = document.getElementById("mensaje-alert-dialog");
+const filtroOperadorInput = document.getElementById("input-filtro-operador");
+const agregarPPOperadorInput = document.getElementById("input-pp-operador");
+const editarPPOperadorInput = document.getElementById("input-pp-operador-edit");
+let listaUsuarios;
+const inputBuscarUsuario = document.getElementById('input-buscar-usuarios');
+
 
 let idEdit;
 let idEliminar = 0;
@@ -69,29 +79,20 @@ finally {
 }
 
 
-const filtroOperadorInput = document.getElementById("input-filtro-operador");
-const agregarPPOperadorInput = document.getElementById("input-pp-operador");
-const editarPPOperadorInput = document.getElementById("input-pp-operador-edit");
+
 
 
 printTablaOperadores();
 filtrarPromesas();
+await printGestionUsuarios();
 
 
-if (datosUsuario.rol === "ADMIN") {
-    const nav = document.querySelector('nav');
-    const botonUsuarios = document.createElement("button");
-    botonUsuarios.textContent = "Gestionar Usuarios";
-    botonUsuarios.addEventListener('click', () => {
-        modalUsuarios.showModal();
-    })
-    nav.insertBefore(botonUsuarios, nav.firstChild);
-}
 
 document.getElementById("nombre-operador-span").textContent = datosUsuario.nombre;
 
 
-function printTablaOperadores(){
+function printTablaOperadores() {
+    limpiarTablasOpcionesOperador();
     insertarOpcionTodos();
     printOperadoresTablas();
 }
@@ -100,6 +101,95 @@ function limpiarTablasOpcionesOperador() {
     agregarPPOperadorInput.innerHTML = '';
     filtroOperadorInput.innerHTML = '';
     editarPPOperadorInput.innerHTML = '';
+}
+
+async function printGestionUsuarios() {
+    if (datosUsuario.rol === "ADMIN") {
+        const nav = document.querySelector('nav');
+        const botonUsuarios = document.createElement("button");
+        botonUsuarios.textContent = "Gestionar Usuarios";
+        botonUsuarios.addEventListener('click', async () => {
+            inputBuscarUsuario.value = "";
+            generarLista();
+            modalUsuarios.showModal();
+        })
+
+        botonCerrarUsuarios.addEventListener('click', () => {
+            modalUsuarios.close();
+        })
+
+        botonAgregarUsuario.addEventListener('click', () => {
+            generarAlert("agregarusuario", "Blue");
+        })
+
+        botonBuscarUsuarios.addEventListener('click', async () => {
+            await generarLista();
+        });
+
+        inputBuscarUsuario.addEventListener('keydown', async function (event) {
+            if (event.key === 'Enter') {
+                await generarLista();
+            }
+        })
+
+        nav.insertBefore(botonUsuarios, nav.firstChild);
+    }
+}
+
+async function generarLista() {
+    try {
+        mostrarLoader();
+        listaUsuarios = await buscarUsuarios(inputBuscarUsuario.value);
+        printListaUsuarios(listaUsuarios);
+    }
+    catch (err) {
+        if (err.message == 403) {
+            generarAlert("Sesión vencida. Vuelva a iniciar sesión", "blue");
+            sesiónCerrada = true;
+        }
+        else {
+            generarAlert("No fue posible generar la tabla: " + err.message, "red");
+        }
+    }
+    finally {
+        ocultarLoader();
+    }
+}
+
+
+
+function printListaUsuarios() {
+    const contenedorUsuarios = document.querySelector('.contenedor-usuarios');
+    contenedorUsuarios.innerHTML = '';
+    listaUsuarios.forEach((usuario, i) => {
+        const contenedorUsuario = document.createElement('div');
+        contenedorUsuario.classList.add('contenedor-usuario-info');
+        const infoUsuario = document.createElement('div');
+        infoUsuario.classList.add('info-usuario');
+        const nombre = document.createElement('p');
+        const nombreUsuario = document.createElement('p');
+        const rol = document.createElement('p');
+        nombre.textContent = usuario.nombre;
+        nombreUsuario.textContent = usuario.nombreUsuario;
+        rol.textContent = usuario.rol;
+
+        const botonesUsuario = document.createElement('div');
+        botonesUsuario.classList.add('botones-usuario');
+        const botonEditar = document.createElement('button');
+        const botonEliminar = document.createElement('button');
+
+        botonEditar.textContent = "Editar";
+        botonEliminar.textContent = "Eliminar";
+
+        infoUsuario.appendChild(nombre);
+        infoUsuario.appendChild(nombreUsuario);
+        infoUsuario.appendChild(rol);
+        botonesUsuario.appendChild(botonEditar);
+        botonesUsuario.appendChild(botonEliminar);
+        contenedorUsuario.appendChild(infoUsuario);
+        contenedorUsuario.appendChild(botonesUsuario);
+        contenedorUsuarios.appendChild(contenedorUsuario);
+    })
 }
 
 function printOperadoresTablas() {
@@ -118,6 +208,20 @@ function printOperadoresTablas() {
         editarPPOperadorInput.add(opcionEditar);
     })
 
+}
+
+async function buscarUsuarios(nombre) {
+    try {
+        mostrarLoader();
+        const Usuarios = await api.getUsuarios(token, "?nombre=" + nombre);
+        return Usuarios;
+    }
+    catch (err) {
+        throw err;
+    }
+    finally {
+        ocultarLoader();
+    }
 }
 
 function insertarOpcionTodos() {
@@ -231,7 +335,6 @@ async function filtrarPromesas() {
         printTablaHTML();
     }
     catch (err) {
-        console.log(err.message);
         if (err.message == 403) {
             generarAlert("Sesión vencida. Vuelva a iniciar sesión", "blue");
             sesiónCerrada = true;
@@ -944,13 +1047,12 @@ async function descargarExcel(tabla) {
 }
 
 function mostrarLoader() {
-    document.getElementById("loader").classList.remove("hidden");
+    loader.showModal();
 }
 
 function ocultarLoader() {
-    document.getElementById("loader").classList.add("hidden");
+    loader.close();
 }
-
 function cerrarSesion() {
     document.cookie = "session_token=; path=/; max-age=0;"
     window.location.href = "/index.html";

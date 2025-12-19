@@ -255,3 +255,30 @@ export async function getEstadisticas(token,tabla) {
 
     return responseBody;
 }
+
+export async function getUsuarios(token,query) {
+    var responseBody;
+    await fetch(apiUrl + 'usuario'+query,{
+        method: 'Get',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        }
+    }).then(response => {
+        if (!response.ok) {
+            if (response.status === 403) {
+                throw new Error(response.status);
+            }
+            throw new Error("ERROR: " + response.status);
+        }
+        return response.json();
+    })
+    .then(data => {
+            responseBody = data;
+        })
+    .catch(error => {
+            throw error;
+    });
+
+    return responseBody;
+}
