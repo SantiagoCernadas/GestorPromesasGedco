@@ -84,9 +84,10 @@ finally {
 
 printTablaOperadores();
 filtrarPromesas();
-await printGestionUsuarios();
 
-
+if (datosUsuario.rol === "ADMIN") {
+    printGestionUsuarios();
+}
 
 document.getElementById("nombre-operador-span").textContent = datosUsuario.nombre;
 
@@ -103,37 +104,36 @@ function limpiarTablasOpcionesOperador() {
     editarPPOperadorInput.innerHTML = '';
 }
 
-async function printGestionUsuarios() {
-    if (datosUsuario.rol === "ADMIN") {
-        const nav = document.querySelector('nav');
-        const botonUsuarios = document.createElement("button");
-        botonUsuarios.textContent = "Gestionar Usuarios";
-        botonUsuarios.addEventListener('click', async () => {
-            inputBuscarUsuario.value = "";
-            generarLista();
-            modalUsuarios.showModal();
-        })
+function printGestionUsuarios() {
+    const nav = document.querySelector('nav');
+    const botonUsuarios = document.createElement("button");
+    botonUsuarios.textContent = "Gestionar Usuarios";
 
-        botonCerrarUsuarios.addEventListener('click', () => {
-            modalUsuarios.close();
-        })
+    botonUsuarios.addEventListener('click', async () => {
+        inputBuscarUsuario.value = "";
+        generarLista();
+        modalUsuarios.showModal();
+    })
 
-        botonAgregarUsuario.addEventListener('click', () => {
-            generarAlert("agregarusuario", "Blue");
-        })
+    botonCerrarUsuarios.addEventListener('click', () => {
+        modalUsuarios.close();
+    })
 
-        botonBuscarUsuarios.addEventListener('click', async () => {
+    botonAgregarUsuario.addEventListener('click', () => {
+        generarAlert("agregarusuario", "Blue");
+    })
+
+    botonBuscarUsuarios.addEventListener('click', async () => {
+        await generarLista();
+    });
+
+    inputBuscarUsuario.addEventListener('keydown', async function (event) {
+        if (event.key === 'Enter') {
             await generarLista();
-        });
+        }
+    })
 
-        inputBuscarUsuario.addEventListener('keydown', async function (event) {
-            if (event.key === 'Enter') {
-                await generarLista();
-            }
-        })
-
-        nav.insertBefore(botonUsuarios, nav.firstChild);
-    }
+    nav.insertBefore(botonUsuarios, nav.firstChild);
 }
 
 async function generarLista() {
@@ -177,6 +177,16 @@ function printListaUsuarios() {
         botonesUsuario.classList.add('botones-usuario');
         const botonEditar = document.createElement('button');
         const botonEliminar = document.createElement('button');
+
+        botonEditar.addEventListener('click',() =>{
+            idEdit = usuario.id;
+            generarAlert("Editar<br> id"+idEdit+" usuario: " + nombre.textContent,"green");
+        })
+
+        botonEliminar.addEventListener('click',() =>{
+            idEliminar = usuario.id;
+            generarAlert("Eliminar<br> id"+idEliminar+" usuario: " + nombre.textContent,"green");
+        })
 
         botonEditar.textContent = "Editar";
         botonEliminar.textContent = "Eliminar";

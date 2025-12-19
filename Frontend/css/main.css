@@ -575,13 +575,21 @@ h3{
 
 
 .contenedor-usuario-info{
-    background-color: rgb(209, 209, 209);
+    border: 2px solid rgb(56, 150, 180);
+    background-color: rgb(240, 240, 240);
     display: flex;
     gap: 20px;
     align-items: center;
     padding: 10px;
     border-radius: 10px;
     justify-content:space-around;
+}
+
+.info-usuario{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-weight: bold;
 }
 
 .botones-usuario{
