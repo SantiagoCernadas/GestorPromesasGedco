@@ -170,13 +170,14 @@ function printListaUsuarios() {
         const nombreUsuario = document.createElement('p');
         const rol = document.createElement('p');
         nombre.textContent = usuario.nombre;
-        nombreUsuario.textContent = usuario.nombreUsuario;
+        nombreUsuario.textContent = "("+usuario.nombreUsuario+")";
         rol.textContent = usuario.rol;
 
         const botonesUsuario = document.createElement('div');
         botonesUsuario.classList.add('botones-usuario');
         const botonEditar = document.createElement('button');
         const botonEliminar = document.createElement('button');
+        const botonNuevaContrasenia = document.createElement('button');
 
         botonEditar.addEventListener('click',() =>{
             idEdit = usuario.id;
@@ -188,14 +189,21 @@ function printListaUsuarios() {
             generarAlert("Eliminar<br> id"+idEliminar+" usuario: " + nombre.textContent,"green");
         })
 
+        botonNuevaContrasenia.addEventListener('click',() =>{
+            idEdit = usuario.id;
+            generarAlert("Nueva contraseña: <br> id"+idEliminar+" usuario: " + nombre.textContent,"green");
+        })
+
         botonEditar.textContent = "Editar";
         botonEliminar.textContent = "Eliminar";
+        botonNuevaContrasenia.textContent = "Nueva contraseña";
 
         infoUsuario.appendChild(nombre);
         infoUsuario.appendChild(nombreUsuario);
         infoUsuario.appendChild(rol);
         botonesUsuario.appendChild(botonEditar);
         botonesUsuario.appendChild(botonEliminar);
+        botonesUsuario.appendChild(botonNuevaContrasenia);
         contenedorUsuario.appendChild(infoUsuario);
         contenedorUsuario.appendChild(botonesUsuario);
         contenedorUsuarios.appendChild(contenedorUsuario);

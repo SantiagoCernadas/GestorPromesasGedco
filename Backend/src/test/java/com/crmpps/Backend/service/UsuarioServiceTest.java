@@ -81,7 +81,7 @@ class UsuarioServiceTest {
                 .thenReturn(Optional.of(usuarioEntity));
 
         assertDoesNotThrow(() -> {
-            usuarioService.getUsuario(headers);
+            usuarioService.getDatosUsuario(headers);
         });
     }
 
@@ -95,7 +95,7 @@ class UsuarioServiceTest {
                 .thenThrow(NoSuchElementException.class);
 
         assertThrows(NoSuchElementException.class , () -> {
-            usuarioService.getUsuario(headers);
+            usuarioService.getDatosUsuario(headers);
         });
     }
 
