@@ -1,6 +1,7 @@
 package com.crmpps.Backend.service;
 
 
+import com.crmpps.Backend.dto.ContraseniaRequest;
 import com.crmpps.Backend.dto.ModificarUsuarioRequest;
 import com.crmpps.Backend.dto.UsuarioRequest;
 import com.crmpps.Backend.dto.UsuarioResponse;
@@ -186,5 +187,25 @@ public class UsuarioService {
                 .nombre(usuarioEntity.getNombre())
                 .rol(usuarioEntity.getRol())
                 .build();
+    }
+
+    public void modificarContraseniaUsuario(Map<String, String> headers, Long id, ContraseniaRequest request) throws LogicaInvalidaException, NoAutorizadoException {
+
+        String tokenHeader = headers.get("authorization").substring(7);
+        if (!jwtUtils.getRolFromToken(tokenHeader).equals(("ROLE_ADMIN"))){
+            throw new NoAutorizadoException("Credenciales invalidas.");
+        }
+
+        UsuarioEntity usuarioEntity = usuarioRepository.findById(id).orElseThrow(() ->
+                new NoSuchElementException("No existe el usuario con id: " + id));
+
+        if (usuarioEntity.getRol().name().equals("ADMIN")){
+            throw  new LogicaInvalidaException("No es posible modificar los datos de un usuario ADMIN");
+        }
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+        usuarioEntity.setContrasenia(encoder.encode(request.getContrasenia()));
+
+        usuarioRepository.save(usuarioEntity);
     }
 }

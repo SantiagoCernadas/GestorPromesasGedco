@@ -282,3 +282,31 @@ export async function getUsuarios(token,query) {
 
     return responseBody;
 }
+
+export async function agregarUsuario(token,usuario) {
+    var responseBody;
+    await fetch(apiUrl + 'usuario',{
+        method: 'POST',
+        body: JSON.stringify(usuario),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        }
+    }).then(response => {
+        if (!response.ok) {
+            if (response.status === 403) {
+                throw new Error(response.status);
+            }
+            throw new Error("ERROR: " + response.status);
+        }
+        return response.json();
+    })
+    .then(data => {
+            responseBody = data;
+        })
+    .catch(error => {
+            throw error;
+        });
+
+    return responseBody;
+}

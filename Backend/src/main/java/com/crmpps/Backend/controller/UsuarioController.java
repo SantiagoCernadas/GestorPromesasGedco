@@ -1,5 +1,6 @@
 package com.crmpps.Backend.controller;
 
+import com.crmpps.Backend.dto.ContraseniaRequest;
 import com.crmpps.Backend.dto.ModificarUsuarioRequest;
 import com.crmpps.Backend.dto.UsuarioRequest;
 import com.crmpps.Backend.dto.UsuarioResponse;
@@ -60,7 +61,15 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.modificarUsuario(headers,id,request));
     }
 
+    @PatchMapping("{id}/contrasenia")
+    @Operation(summary = "Modificar Contraseña del usuario por ID.")
+    public ResponseEntity<UsuarioResponse> modificarContraseniaUsuario(@RequestHeader Map<String,String> headers,
+                                                            @PathVariable Long id,
+                                                            @RequestBody ContraseniaRequest request) throws NoAutorizadoException, LogicaInvalidaException {
 
+        usuarioService.modificarContraseniaUsuario(headers,id,request);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 
     @GetMapping("/operadores")
     @Operation(summary = "Obtener lista de operadores para Supervisor y Admin. Si la solicitud es de un operador, " +

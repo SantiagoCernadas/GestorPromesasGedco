@@ -399,23 +399,79 @@
     <div class="contenedor-agregar-usuario">
         <dialog id="modal-agregar-usuario">
             <div class="contenedor-usuarios-dialog">
-                <h2>Gestión de usuarios</h2>
-                <div class="buscador-usuarios">
-                    <input type="text" id="input-buscar-usuarios" placeholder="Buscar Usuario">
-                    <button id="boton-buscar-usuarios">Buscar</button>
-                </div>
-                <div class="contenedor-usuarios">
-
-
+                <h2>Agregar usuario</h2>
+                <div>
+                    <h3>Usuario</h3>
+                    <input type="text" name="" id="input-usuario-nombreUsuario">
                 </div>
                 <div>
-                    <button id="agregar-usuarios">Agregar Usuario</button>
-                    <button id="boton-cerrar-usuarios">Cerrar</button>
+                    <h3>Nombre</h3>
+                    <input type="text" name="" id="input-usuario-nombre">
                 </div>
-
+                <div>
+                    <h3>Contraseña</h3>
+                    <input type="password" name="" id="input-usuario-contraseña">
+                </div>
+                <div>
+                    <h3>Repetir contraseña</h3>
+                    <input type="password" name="" id="input-usuario-confirmar-contraseña">
+                </div>
+                <div>
+                    <h3>ROL</h3>
+                    <select name="roles" id="input-usuario-rol">
+                        <option value="OPERADOR">OPERADOR</option>
+                        <option value="SUPERVISOR">SUPERVISOR</option>
+                    </select>
+                </div>
+                <div>
+                    <button id="boton-agregar-usuario">Agregar</button>
+                    <button id="boton-cancelar-agregar-usuario">Cerrar</button>
+                </div>
             </div>
         </dialog>
     </div>
+
+
+    <div class="contenedor-editar-usuario">
+        <dialog id="modal-editar-usuario">
+            <div class="contenedor-editar-usuario-dialog">
+                <h2>Editar Usuario</h2>
+                <div>
+                    <h3>Usuario</h3>
+                    <input type="text" name="" id="input-editar-usuario-nombreUsuario">
+                </div>
+                <div>
+                    <h3>Nombre</h3>
+                    <input type="text" name="" id="input-editar-usuario-nombre">
+                </div>
+                <div>
+                    <h3>ROL</h3>
+                    <select name="roles" id="input-usuario-editar-rol">
+                        <option value="OPERADOR">OPERADOR</option>
+                        <option value="SUPERVISOR">SUPERVISOR</option>
+                    </select>
+                </div>
+                <div>
+                    <button id="boton-editar-usuario">Editar</button>
+                    <button id="boton-cerrar-usuario">Cerrar</button>
+                </div>
+            </div>
+        </dialog>
+    </div>
+
+    <div class="contenedor-eliminar-usuario">
+        <dialog id="modal-eliminar-usuario">
+            <div class="contenedor-eliminar-usuario-dialog">
+                <h2>Eliminar usuario</h2>
+                <p>¿Estas seguro de eliminar al usuario <span id="nombre-usuario-eliminar">NOMBRE</span>?</p>
+                <div>
+                    <button id="boton-eliminar-usuario">Eliminar Usuario</button>
+                    <button id="boton-cerrar-usuario">Cerrar</button>
+                </div>
+            </div>
+        </dialog>
+    </div>
+
 
     <div class="contenedor-dialogo">
         <dialog id="modal-alert">

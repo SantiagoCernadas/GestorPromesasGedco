@@ -29,16 +29,31 @@ const modalEditar = document.getElementById('modal-editar-pp');
 const modalEstadisticas = document.getElementById('modal-estadisticas');
 const modalEliminar = document.getElementById('modal-eliminar');
 const modalUsuarios = document.getElementById("modal-usuarios");
+
+const modalAgregarUsuario = document.getElementById("modal-agregar-usuario");
+const botonAgregarUsuario = document.getElementById('agregar-usuarios');
+const botonCancelarAgregarUsuario = document.getElementById("boton-cancelar-agregar-usuario");
+
+const botonAgregarUsuarioGuardar = document.getElementById("boton-agregar-usuario");
+
+const modalEditarUsuario = document.getElementById("modal-editar-usuario");
+const modalEliminarUsuario = document.getElementById("modal-eliminar-usuario");
+
 const modalAlert = document.getElementById('modal-alert');
+
 const botonGuardarEditar = document.getElementById('boton-guardar-editar');
 const botonCerrarEstadistica = document.getElementById("boton-cerrar-estadisticas");
+
 const botonCerrarEliminar = document.getElementById("boton-cerrar-eliminar");
 const botonConfirmarEliminar = document.getElementById("boton-confirmar-eliminar");
+
+const mensajeAlert = document.getElementById("mensaje-alert-dialog");
 const botonAceptarAlert = document.getElementById('boton-cerrar-alert');
+
 const botonCerrarUsuarios = document.getElementById('boton-cerrar-usuarios');
 const botonBuscarUsuarios = document.getElementById('boton-buscar-usuarios');
-const botonAgregarUsuario = document.getElementById('agregar-usuarios');
-const mensajeAlert = document.getElementById("mensaje-alert-dialog");
+
+
 const filtroOperadorInput = document.getElementById("input-filtro-operador");
 const agregarPPOperadorInput = document.getElementById("input-pp-operador");
 const editarPPOperadorInput = document.getElementById("input-pp-operador-edit");
@@ -109,10 +124,11 @@ function printGestionUsuarios() {
     const botonUsuarios = document.createElement("button");
     botonUsuarios.textContent = "Gestionar Usuarios";
 
+
     botonUsuarios.addEventListener('click', async () => {
         inputBuscarUsuario.value = "";
-        generarLista();
         modalUsuarios.showModal();
+        generarLista();
     })
 
     botonCerrarUsuarios.addEventListener('click', () => {
@@ -120,8 +136,16 @@ function printGestionUsuarios() {
     })
 
     botonAgregarUsuario.addEventListener('click', () => {
-        generarAlert("agregarusuario", "Blue");
+        modalAgregarUsuario.showModal();
     })
+
+    botonAgregarUsuarioGuardar.addEventListener('click', async () => {
+        await agregarUsuario();
+    })
+
+    botonCancelarAgregarUsuario.addEventListener('click', () => {
+        modalAgregarUsuario.close();
+    });
 
     botonBuscarUsuarios.addEventListener('click', async () => {
         await generarLista();
@@ -136,11 +160,86 @@ function printGestionUsuarios() {
     nav.insertBefore(botonUsuarios, nav.firstChild);
 }
 
+async function agregarUsuario() {
+    const nuevoUsuario = {
+        nombre: document.getElementById("input-usuario-nombre").value,
+        nombreUsuario: document.getElementById("input-usuario-nombreUsuario").value,
+        rol: document.getElementById("input-usuario-rol").value,
+        contrasenia: document.getElementById("input-usuario-contraseña").value,
+        confirmaContrasenia: document.getElementById("input-usuario-confirmar-contraseña").value
+    }
+
+    let validarU = validarUsuario(nuevoUsuario);
+
+    if (!validarU.sinError) {
+        generarAlert(validarU.mensaje.innerHTML, "red");
+        return;
+    }
+
+    let nuevoUsuarioApi;
+    try {
+        mostrarLoader()
+        nuevoUsuarioApi = await api.agregarUsuario(token, nuevoUsuario);
+        listaUsuarios.unshift(nuevoUsuarioApi);
+        printListaUsuarios();
+        printTablaOperadores();
+        generarAlert("Usuario Generado Correctamente.", "green");
+        document.getElementById("input-usuario-nombre").value = "";
+        document.getElementById("input-usuario-nombreUsuario").value = "";
+        document.getElementById("input-usuario-contraseña").value = "";
+        document.getElementById("input-usuario-confirmar-contraseña").value = ""
+        document.getElementById("input-usuario-rol").value = "OPERADOR";
+        modalAgregarUsuario.close();
+    }
+    catch (err) {
+        if (err.message == 403) {
+            generarAlert("Sesión vencida. Vuelva a iniciar sesión", "blue");
+            sesiónCerrada = true;
+        }
+        else {
+            generarAlert('No fue posible agregar el usuario: ' + err.message, 'red');
+        }
+    }
+    finally {
+        ocultarLoader();
+    }
+}
+
+function validarUsuario(usuario) {
+    var validacion = {
+        sinError: true,
+        mensaje: document.createElement("p")
+    }
+
+    if (usuario.nombre == '') {
+        validacion.mensaje.innerHTML += 'Ingresar nombre. <br>'
+        validacion.sinError = false;
+    }
+    if (usuario.nombreUsuario == '') {
+        validacion.mensaje.innerHTML += 'Ingresar Usuario. <br>'
+        validacion.sinError = false;
+    }
+    if (usuario.contrasenia == '' || usuario.confirmaContrasenia == '') {
+        validacion.mensaje.innerHTML += 'Ingresar Contraseña. <br>'
+        validacion.sinError = false;
+    }
+    else if (usuario.contrasenia !== usuario.confirmaContrasenia) {
+        validacion.mensaje.innerHTML += 'Las contraseñas no son iguales. <br>';
+        validacion.sinError = false;
+    }
+    if (usuario.rol !== 'SUPERVISOR' && usuario.rol !== 'OPERADOR') {
+        validacion.mensaje.innerHTML += 'Rol invalido. <br>';
+        validacion.sinError = false;
+    }
+
+    return validacion;
+}
+
 async function generarLista() {
     try {
         mostrarLoader();
         listaUsuarios = await buscarUsuarios(inputBuscarUsuario.value);
-        printListaUsuarios(listaUsuarios);
+        printListaUsuarios();
     }
     catch (err) {
         if (err.message == 403) {
@@ -170,7 +269,7 @@ function printListaUsuarios() {
         const nombreUsuario = document.createElement('p');
         const rol = document.createElement('p');
         nombre.textContent = usuario.nombre;
-        nombreUsuario.textContent = "("+usuario.nombreUsuario+")";
+        nombreUsuario.textContent = "(" + usuario.nombreUsuario + ")";
         rol.textContent = usuario.rol;
 
         const botonesUsuario = document.createElement('div');
@@ -179,19 +278,19 @@ function printListaUsuarios() {
         const botonEliminar = document.createElement('button');
         const botonNuevaContrasenia = document.createElement('button');
 
-        botonEditar.addEventListener('click',() =>{
+        botonEditar.addEventListener('click', () => {
             idEdit = usuario.id;
-            generarAlert("Editar<br> id"+idEdit+" usuario: " + nombre.textContent,"green");
+            modalEditarUsuario.showModal();
         })
 
-        botonEliminar.addEventListener('click',() =>{
+        botonEliminar.addEventListener('click', () => {
             idEliminar = usuario.id;
-            generarAlert("Eliminar<br> id"+idEliminar+" usuario: " + nombre.textContent,"green");
+            modalEliminarUsuario.showModal();
         })
 
-        botonNuevaContrasenia.addEventListener('click',() =>{
+        botonNuevaContrasenia.addEventListener('click', () => {
             idEdit = usuario.id;
-            generarAlert("Nueva contraseña: <br> id"+idEliminar+" usuario: " + nombre.textContent,"green");
+            generarAlert("Nueva contraseña: <br> id" + idEliminar + " usuario: " + nombre.textContent, "green");
         })
 
         botonEditar.textContent = "Editar";
