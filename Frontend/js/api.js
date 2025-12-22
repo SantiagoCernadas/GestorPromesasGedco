@@ -310,3 +310,31 @@ export async function agregarUsuario(token,usuario) {
 
     return responseBody;
 }
+
+export async function modificarUsuario(token,id,usuario) {
+    var responseBody;
+    await fetch(apiUrl + 'usuario/'+id,{
+        method: 'PUT',
+        body: JSON.stringify(usuario),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        }
+    }).then(response => {
+        if (!response.ok) {
+            if (response.status === 403) {
+                throw new Error(response.status);
+            }
+            throw new Error("ERROR: " + response.status);
+        }
+        return response.json();
+    })
+    .then(data => {
+            responseBody = data;
+        })
+    .catch(error => {
+            throw error;
+        });
+
+    return responseBody;
+}

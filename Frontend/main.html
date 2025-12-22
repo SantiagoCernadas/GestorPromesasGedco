@@ -463,7 +463,11 @@
         <dialog id="modal-eliminar-usuario">
             <div class="contenedor-eliminar-usuario-dialog">
                 <h2>Eliminar usuario</h2>
-                <p>¿Estas seguro de eliminar al usuario <span id="nombre-usuario-eliminar">NOMBRE</span>?</p>
+                <h3>¿Estas seguro de eliminar al usuario <span id="nombre-usuario-eliminar"></span>?</h3>
+                <div>
+                    <p>Escriba "confirmar" para aceptar</p>
+                    <input type="text" placeholder="confirmar" id="input-eliminar-usuario-confirmar">
+                </div>
                 <div>
                     <button id="boton-eliminar-usuario">Eliminar Usuario</button>
                     <button id="boton-cerrar-usuario">Cerrar</button>

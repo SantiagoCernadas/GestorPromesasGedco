@@ -544,7 +544,8 @@ h3{
 }
 
 
-.contenedor-usuarios-dialog{
+.contenedor-usuarios-dialog,.contenedor-editar-usuario-dialog,
+.contenedor-eliminar-usuario-dialog{
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -555,7 +556,9 @@ h3{
     width: 100%;
 }
 
-.contenedor-usuarios-dialog input, .contenedor-usuarios-dialog select{
+.contenedor-usuarios-dialog input, .contenedor-usuarios-dialog select,
+.contenedor-editar-usuario-dialog input, .contenedor-editar-usuario-dialog select,
+.contenedor-eliminar-usuario-dialog input{
     width: 60%;
     padding: 5px;
     border: none;

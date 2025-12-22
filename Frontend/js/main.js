@@ -131,22 +131,6 @@ function printGestionUsuarios() {
         generarLista();
     })
 
-    botonCerrarUsuarios.addEventListener('click', () => {
-        modalUsuarios.close();
-    })
-
-    botonAgregarUsuario.addEventListener('click', () => {
-        modalAgregarUsuario.showModal();
-    })
-
-    botonAgregarUsuarioGuardar.addEventListener('click', async () => {
-        await agregarUsuario();
-    })
-
-    botonCancelarAgregarUsuario.addEventListener('click', () => {
-        modalAgregarUsuario.close();
-    });
-
     botonBuscarUsuarios.addEventListener('click', async () => {
         await generarLista();
     });
@@ -155,6 +139,23 @@ function printGestionUsuarios() {
         if (event.key === 'Enter') {
             await generarLista();
         }
+    })
+
+
+    botonCerrarUsuarios.addEventListener('click', () => {
+        modalUsuarios.close();
+    })
+
+    botonAgregarUsuario.addEventListener('click', () => {
+        modalAgregarUsuario.showModal();
+    })
+
+    botonCancelarAgregarUsuario.addEventListener('click', () => {
+        modalAgregarUsuario.close();
+    });
+
+    botonAgregarUsuarioGuardar.addEventListener('click', async () => {
+        await agregarUsuario();
     })
 
     nav.insertBefore(botonUsuarios, nav.firstChild);
@@ -280,16 +281,15 @@ function printListaUsuarios() {
 
         botonEditar.addEventListener('click', () => {
             idEdit = usuario.id;
-            modalEditarUsuario.showModal();
+            printModalEditarUsuario(usuario);
+
         })
 
         botonEliminar.addEventListener('click', () => {
-            idEliminar = usuario.id;
-            modalEliminarUsuario.showModal();
+            printModalEliminar(usuario);
         })
 
         botonNuevaContrasenia.addEventListener('click', () => {
-            idEdit = usuario.id;
             generarAlert("Nueva contraseña: <br> id" + idEliminar + " usuario: " + nombre.textContent, "green");
         })
 
@@ -307,6 +307,20 @@ function printListaUsuarios() {
         contenedorUsuario.appendChild(botonesUsuario);
         contenedorUsuarios.appendChild(contenedorUsuario);
     })
+}
+
+function printModalEditarUsuario(usuario) {
+    idEdit = usuario.id;
+    document.getElementById("input-editar-usuario-nombreUsuario").value = usuario.nombreUsuario;
+    document.getElementById("input-editar-usuario-nombre").value = usuario.nombre;
+    document.getElementById("input-usuario-editar-rol").value = usuario.rol;
+    modalEditarUsuario.showModal();
+}
+
+function printModalEliminar(usuario) {
+    idEliminar = usuario.id;
+    document.getElementById("nombre-usuario-eliminar").textContent = usuario.nombreUsuario;
+    modalEliminarUsuario.showModal();
 }
 
 function printOperadoresTablas() {
