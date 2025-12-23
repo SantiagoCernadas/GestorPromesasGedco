@@ -81,7 +81,7 @@ nav button:hover {
 #paginacion {
     display: flex;
     gap: 5px;
-    margin-top: 50px;
+    margin-top: 20px;
     align-items: center;
     text-align: center;
     gap: 20px;

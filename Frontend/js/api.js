@@ -338,3 +338,31 @@ export async function modificarUsuario(token,id,usuario) {
 
     return responseBody;
 }
+
+
+export async function eliminarUsuario(token,id) {
+    var responseBody;
+    await fetch(apiUrl + 'usuario/'+id,{
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        }
+    }).then(response => {
+        if (!response.ok) {
+            if (response.status === 403) {
+                throw new Error(response.status);
+            }
+            throw new Error("ERROR " + response.status);
+        }
+        return response;
+    })
+    .then(data => {
+            responseBody = data;
+        })
+    .catch(error => {
+            throw error;
+        });
+
+    return responseBody;
+}

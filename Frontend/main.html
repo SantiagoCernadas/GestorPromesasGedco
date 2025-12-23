@@ -181,6 +181,8 @@
             <p id="pp-mensaje"></p>
         </div>
 
+        <button class="diseño-boton" id="boton-estadisticas">Obtener estadisticas</button>
+
         <div id="paginacion">
             <button id="boton-paginacion-anterior">Anterior</button>
             <p>a</p>
@@ -201,7 +203,6 @@
                 <th>Opciones</th>
             </tr>
         </table>
-        <button class="diseño-boton" id="boton-estadisticas">Obtener estadisticas</button>
     </main>
 
     <div class="contenedor-dialogo">
@@ -464,6 +465,7 @@
             <div class="contenedor-eliminar-usuario-dialog">
                 <h2>Eliminar usuario</h2>
                 <h3>¿Estas seguro de eliminar al usuario <span id="nombre-usuario-eliminar"></span>?</h3>
+                <p>Se eliminaran tambien sus promesas de pago.</p>
                 <div>
                     <p>Escriba "confirmar" para aceptar</p>
                     <input type="text" placeholder="confirmar" id="input-eliminar-usuario-confirmar">
@@ -487,7 +489,7 @@
     </div>
 
 
-    <dialog id="loader" class="loader">
+    <dialog id="loader" class="loader" closedby="none">
         <div class="spinner"></div>
     </dialog>
 

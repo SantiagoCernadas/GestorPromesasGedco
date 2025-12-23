@@ -16,7 +16,7 @@ let sesiónCerrada = false;
 
 const botonFiltrar = document.getElementById('boton-filtrar');
 let paginaActual = 1;
-const cantFilasPagina = 10;
+const cantFilasPagina = 18;
 
 let listaPromesas;
 let totalPaginas;
@@ -33,13 +33,17 @@ const modalUsuarios = document.getElementById("modal-usuarios");
 const modalAgregarUsuario = document.getElementById("modal-agregar-usuario");
 const botonAgregarUsuario = document.getElementById('agregar-usuarios');
 const botonCancelarAgregarUsuario = document.getElementById("boton-cancelar-agregar-usuario");
-
 const botonAgregarUsuarioGuardar = document.getElementById("boton-agregar-usuario");
 
 const modalEditarUsuario = document.getElementById("modal-editar-usuario");
 const botonCancelarEditarUsuario = document.getElementById("boton-editar-cerrar-usuario");
+const botonEditarUsuarioGuardar = document.getElementById("boton-editar-usuario");
+
+
 
 const modalEliminarUsuario = document.getElementById("modal-eliminar-usuario");
+const botonCancelarEliminarUsuario = document.getElementById("boton-cerrar-usuario");
+const botonEliminarUsuario = document.getElementById("boton-eliminar-usuario");
 
 const modalAlert = document.getElementById('modal-alert');
 
@@ -62,12 +66,10 @@ const editarPPOperadorInput = document.getElementById("input-pp-operador-edit");
 let listaUsuarios;
 const inputBuscarUsuario = document.getElementById('input-buscar-usuarios');
 
-
 let idEdit;
 let idEliminar = 0;
 
 var filtros = getFiltros();
-
 const token = document.cookie
     .split("; ")
     .find(row => row.startsWith("session_token="))
@@ -81,6 +83,12 @@ try {
     mostrarLoader();
     datosUsuario = await api.getDatosUsuario(token);
     usuarios = await api.getOperadores(token);
+    printTablaOperadores();
+    filtrarPromesas(filtros);
+    document.getElementById("nombre-operador-span").textContent = datosUsuario.nombre;
+    if (datosUsuario.rol === "ADMIN") {
+        printGestionUsuarios();
+    }
 }
 catch (err) {
     if (err.message == 403) {
@@ -98,15 +106,6 @@ finally {
 
 
 
-
-printTablaOperadores();
-filtrarPromesas();
-
-if (datosUsuario.rol === "ADMIN") {
-    printGestionUsuarios();
-}
-
-document.getElementById("nombre-operador-span").textContent = datosUsuario.nombre;
 
 
 function printTablaOperadores() {
@@ -160,7 +159,11 @@ function printGestionUsuarios() {
         modalEditarUsuario.close();
     });
 
-    
+    botonCancelarEliminarUsuario.addEventListener('click', () => {
+        modalEliminarUsuario.close();
+    });
+
+
 
     botonAgregarUsuarioGuardar.addEventListener('click', async () => {
         await agregarUsuario();
@@ -190,6 +193,7 @@ async function agregarUsuario() {
         mostrarLoader()
         nuevoUsuarioApi = await api.agregarUsuario(token, nuevoUsuario);
         listaUsuarios.unshift(nuevoUsuarioApi);
+        usuarios.unshift(nuevoUsuarioApi);
         printListaUsuarios();
         printTablaOperadores();
         generarAlert("Usuario Generado Correctamente.", "green");
@@ -234,6 +238,28 @@ function validarUsuario(usuario) {
     }
     else if (usuario.contrasenia !== usuario.confirmaContrasenia) {
         validacion.mensaje.innerHTML += 'Las contraseñas no son iguales. <br>';
+        validacion.sinError = false;
+    }
+    if (usuario.rol !== 'SUPERVISOR' && usuario.rol !== 'OPERADOR') {
+        validacion.mensaje.innerHTML += 'Rol invalido. <br>';
+        validacion.sinError = false;
+    }
+
+    return validacion;
+}
+
+function validarUsuarioEdit(usuario) {
+    var validacion = {
+        sinError: true,
+        mensaje: document.createElement("p")
+    }
+
+    if (usuario.nombre == '') {
+        validacion.mensaje.innerHTML += 'Ingresar nombre. <br>'
+        validacion.sinError = false;
+    }
+    if (usuario.nombreUsuario == '') {
+        validacion.mensaje.innerHTML += 'Ingresar Usuario. <br>'
         validacion.sinError = false;
     }
     if (usuario.rol !== 'SUPERVISOR' && usuario.rol !== 'OPERADOR') {
@@ -325,10 +351,99 @@ function printModalEditarUsuario(usuario) {
     modalEditarUsuario.showModal();
 }
 
+botonEditarUsuarioGuardar.addEventListener('click', async () => {
+    const usuarioEditado = {
+        nombre: document.getElementById("input-editar-usuario-nombre").value,
+        nombreUsuario: document.getElementById("input-editar-usuario-nombreUsuario").value,
+        rol: document.getElementById("input-usuario-editar-rol").value
+    }
+
+    const validacionUsuario = validarUsuarioEdit(usuarioEditado);
+
+    if (!validacionUsuario.sinError) {
+        generarAlert(validacionUsuario.mensaje, "red");
+    }
+
+    let usuarioEditadoApi;
+    try {
+        mostrarLoader()
+        usuarioEditadoApi = await api.modificarUsuario(token, idEdit, usuarioEditado);
+        var usuario = listaUsuarios.find(u => u.id === idEdit);
+        if (usuario) {
+            usuario.nombreUsuario = usuarioEditadoApi.nombreUsuario;
+            usuario.nombre = usuarioEditadoApi.nombre;
+            usuario.rol = usuarioEditadoApi.rol;
+        }
+        usuario = usuarios.find(u => u.id === idEdit);
+        if (usuario) {
+            usuario.nombreUsuario = usuarioEditadoApi.nombreUsuario;
+            usuario.nombre = usuarioEditadoApi.nombre;
+            usuario.rol = usuarioEditadoApi.rol;
+        }
+
+        printListaUsuarios();
+        printTablaOperadores();
+        filtrarPromesas(filtros);
+        generarAlert("Usuario Modificado Correctamente.", "green");
+        modalEditarUsuario.close();
+    }
+    catch (err) {
+        if (err.message == 403) {
+            generarAlert("Sesión vencida. Vuelva a iniciar sesión", "blue");
+            sesiónCerrada = true;
+        }
+        else {
+            generarAlert('No fue posible editar el usuario: ' + err.message, 'red');
+        }
+    }
+    finally {
+        ocultarLoader();
+    }
+
+
+
+
+
+
+})
+
 function printModalEliminar(usuario) {
     idEliminar = usuario.id;
     document.getElementById("nombre-usuario-eliminar").textContent = usuario.nombreUsuario;
+    document.getElementById("input-eliminar-usuario-confirmar").value = "";
     modalEliminarUsuario.showModal();
+}
+
+botonEliminarUsuario.addEventListener('click', async () => {
+    if(document.getElementById("input-eliminar-usuario-confirmar").value.toLowerCase() !== "confirmar"){
+        return;
+    }
+    eliminarUsuario(idEliminar);
+})
+
+async function eliminarUsuario(id){
+    try {
+        mostrarLoader();
+        await api.eliminarUsuario(token, id);
+        listaUsuarios = listaUsuarios.filter(u => !(u.id === id));
+        usuarios = usuarios.filter(u => !(u.id === id));
+        modalEliminarUsuario.close();
+        generarAlert("Usuario eliminado correctamente.", "green")
+        printListaUsuarios();
+        printTablaOperadores();
+        filtrarPromesas(filtros);
+    }
+    catch (err) {
+        if (err.message == 403) {
+            generarAlert("Sesión vencida. Vuelva a iniciar sesión", "blue");
+            sesiónCerrada = true;
+        } else {
+            generarAlert("No fue posible eliminar al usuario: " + err.message, "red");
+        }
+    }
+    finally {
+        ocultarLoader();
+    }
 }
 
 function printOperadoresTablas() {
@@ -395,10 +510,12 @@ function getFiltros() {
     };
 }
 
-botonFiltrar.addEventListener('click', filtrarPromesas)
-
-async function filtrarPromesas() {
+botonFiltrar.addEventListener('click', () =>{
     filtros = getFiltros();
+    filtrarPromesas(filtros);
+})
+
+async function filtrarPromesas(filtros) {
     var query = "?1=1";
     if (!isNaN(filtros.caso)) {
         query += "&caso=" + filtros.caso;
