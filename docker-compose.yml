@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  backend:
+    build: backend
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:mysql://crm_pps_db:3306/basecrmpps?createDatabaseIfNotExist=true&serverTimeZone=UTC
+      DB_NOMBRE_USUARIO: root
+      DB_CONTRASENIA: 1234
+
+      JWT_SECRET: bf098db80296dc998eee4442dd5aee68354d2923deb24d42dd5964ce3f627f30
+      JWT_TIEMPO_EXP: 1440000
+    depends_on:
+        crm_pps_db:
+            condition: service_healthy
+
+  crm_pps_db:
+    image: mysql:8.0.33
+    restart: always
+    environment:
+      MYSQL_DATABASE: basecrmpps
+      MYSQL_PASSWORD: 1234
+      MYSQL_ROOT_PASSWORD: 1234
+    ports:
+      - "3307:3306"
+    healthcheck:
+        test: ["CMD","mysqladmin","-h","localhost"]
+        timeout: 10s
+        retries: 10

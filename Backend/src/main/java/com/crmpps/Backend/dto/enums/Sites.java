@@ -14,4 +14,13 @@ public enum Sites {
     public String getSite() {
         return site;
     }
+
+    public static boolean siteValido(String site){
+        for (Sites s: Sites.values()){
+            if(s.getSite().equals(site)){
+                return  true;
+            }
+        }
+        return false;
+    }
 }

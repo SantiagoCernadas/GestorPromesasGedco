@@ -13,4 +13,13 @@ public enum EstadosCumplimiento {
     public String getEstado() {
         return estado;
     }
+
+    public static boolean cumplimientoValido(String estado){
+        for (EstadosCumplimiento s: EstadosCumplimiento.values()){
+            if(s.getEstado().equals(estado)){
+                return  true;
+            }
+        }
+        return false;
+    }
 }

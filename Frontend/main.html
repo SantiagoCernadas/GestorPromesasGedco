@@ -181,6 +181,8 @@
             <p id="pp-mensaje"></p>
         </div>
 
+        <button class="diseño-boton" id="boton-estadisticas">Obtener estadisticas</button>
+
         <div id="paginacion">
             <button id="boton-paginacion-anterior">Anterior</button>
             <p>a</p>
@@ -201,7 +203,6 @@
                 <th>Opciones</th>
             </tr>
         </table>
-        <button class="diseño-boton" id="boton-estadisticas">Obtener estadisticas</button>
     </main>
 
     <div class="contenedor-dialogo">
@@ -375,6 +376,122 @@
             </div>
         </dialog>
     </div>
+
+    <div class="contenedor-gestion-usuarios">
+        <dialog id="modal-usuarios">
+            <div class="contenedor-usuarios-dialog">
+                <h2>Gestión de usuarios</h2>
+                <div class="buscador-usuarios">
+                    <input type="text" id="input-buscar-usuarios" placeholder="Buscar Usuario">
+                    <button id="boton-buscar-usuarios">Buscar</button>
+                </div>
+                <div class="contenedor-usuarios">
+
+                </div>
+                <div>
+                    <button id="agregar-usuarios">Agregar Usuario</button>
+                    <button id="boton-cerrar-usuarios">Cerrar</button>
+                </div>
+
+            </div>
+        </dialog>
+    </div>
+
+    <div class="contenedor-agregar-usuario">
+        <dialog id="modal-agregar-usuario">
+            <div class="contenedor-usuarios-dialog">
+                <h2>Agregar usuario</h2>
+                <div>
+                    <h3>Usuario</h3>
+                    <input type="text" name="" id="input-usuario-nombreUsuario">
+                </div>
+                <div>
+                    <h3>Nombre</h3>
+                    <input type="text" name="" id="input-usuario-nombre">
+                </div>
+                <div>
+                    <h3>Contraseña</h3>
+                    <input type="password" name="" id="input-usuario-contraseña">
+                </div>
+                <div>
+                    <h3>Repetir contraseña</h3>
+                    <input type="password" name="" id="input-usuario-confirmar-contraseña">
+                </div>
+                <div>
+                    <h3>ROL</h3>
+                    <select name="roles" id="input-usuario-rol">
+                        <option value="OPERADOR">OPERADOR</option>
+                        <option value="SUPERVISOR">SUPERVISOR</option>
+                    </select>
+                </div>
+                <div>
+                    <button id="boton-agregar-usuario">Agregar</button>
+                    <button id="boton-cancelar-agregar-usuario">Cerrar</button>
+                </div>
+            </div>
+        </dialog>
+    </div>
+
+
+    <div class="contenedor-editar-usuario">
+        <dialog id="modal-editar-usuario">
+            <div class="contenedor-editar-usuario-dialog">
+                <h2>Editar Usuario</h2>
+                <div>
+                    <h3>Usuario</h3>
+                    <input type="text" name="" id="input-editar-usuario-nombreUsuario">
+                </div>
+                <div>
+                    <h3>Nombre</h3>
+                    <input type="text" name="" id="input-editar-usuario-nombre">
+                </div>
+                <div>
+                    <h3>ROL</h3>
+                    <select name="roles" id="input-usuario-editar-rol">
+                        <option value="OPERADOR">OPERADOR</option>
+                        <option value="SUPERVISOR">SUPERVISOR</option>
+                    </select>
+                </div>
+                <div>
+                    <button id="boton-editar-usuario">Editar</button>
+                    <button id="boton-editar-cerrar-usuario">Cerrar</button>
+                </div>
+            </div>
+        </dialog>
+    </div>
+
+    <div class="contenedor-eliminar-usuario">
+        <dialog id="modal-eliminar-usuario">
+            <div class="contenedor-eliminar-usuario-dialog">
+                <h2>Eliminar usuario</h2>
+                <h3>¿Estas seguro de eliminar al usuario <span id="nombre-usuario-eliminar"></span>?</h3>
+                <p>Se eliminaran tambien sus promesas de pago.</p>
+                <div>
+                    <p>Escriba "confirmar" para aceptar</p>
+                    <input type="text" placeholder="confirmar" id="input-eliminar-usuario-confirmar">
+                </div>
+                <div>
+                    <button id="boton-eliminar-usuario">Eliminar Usuario</button>
+                    <button id="boton-cerrar-usuario">Cerrar</button>
+                </div>
+            </div>
+        </dialog>
+    </div>
+
+
+    <div class="contenedor-dialogo">
+        <dialog id="modal-alert">
+            <div class="contenedor-alert-dialog">
+                <p id="mensaje-alert-dialog"></p>
+                <button id="boton-cerrar-alert">Aceptar</button>
+            </div>
+        </dialog>
+    </div>
+
+
+    <dialog id="loader" class="loader" closedby="none">
+        <div class="spinner"></div>
+    </dialog>
 
 </body>
 <script type="module" src="js/main.js"></script>

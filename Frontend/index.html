@@ -8,6 +8,7 @@
     <title>CRM DE PPS</title>
 </head>
 <script src="js/validarsesion.js"></script>
+
 <body>
     <div class="contenedor-login">
         <h1>CRM DE PPS</h1>
@@ -21,12 +22,15 @@
                 <input type="password" name="" id="input-contrasenia">
             </div>
         </div>
-       
+
         <button id="boton-login">Iniciar Sesión</button>
-         <p id="error-mensaje"></p>
+        <p id="error-mensaje"></p>
     </div>
 
-
+    <dialog id="loader" class="loader" closedby="none">
+        <div class="spinner"></div>
+    </dialog>
 </body>
 <script type="module" src="js/login.js"></script>
+
 </html>

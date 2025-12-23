@@ -83,4 +83,38 @@ input{
     margin-bottom: 20px;
 }
 
+.loader {
+    border: none;
+    padding: 0;
+    margin: auto;
+    background: transparent;
+    overflow: hidden;
+    
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 
+.loader::backdrop {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.loader[open] {
+    display: flex;
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 6px solid white;
+    border-top: 6px solid rgb(56, 150, 180);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

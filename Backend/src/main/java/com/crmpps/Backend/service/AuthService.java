@@ -30,8 +30,7 @@ public class AuthService {
                         loginRequest.getContrasenia())
         );
 
-        UserDetails user = (UserDetails) authentication.getPrincipal();
-        String token = jwtUtils.generarToken(user);
+        String token = jwtUtils.generarToken((UserDetails) authentication.getPrincipal());
         return new LoginResponse(token);
     }
 }

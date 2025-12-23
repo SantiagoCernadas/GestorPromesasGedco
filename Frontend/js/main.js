@@ -12,81 +12,488 @@ const contenedorFiltros = document.querySelector('.filtros-contenedor');
 
 const botonCerrarSesion = document.getElementById("boton-cerrar-sesion");
 const botonDescargarExcel = document.getElementById("boton-descargar-excel");
+let sesiónCerrada = false;
 
 const botonFiltrar = document.getElementById('boton-filtrar');
 let paginaActual = 1;
-const cantFilasPagina = 8;
+const cantFilasPagina = 18;
 
 let listaPromesas;
 let totalPaginas;
 const botonAnteriorPaginacion = document.getElementById('boton-paginacion-anterior');
 const botonSiguientePaginacion = document.getElementById('boton-paginacion-siguiente');
 
+const loader = document.getElementById("loader");
 
 const modalEditar = document.getElementById('modal-editar-pp');
 const modalEstadisticas = document.getElementById('modal-estadisticas');
 const modalEliminar = document.getElementById('modal-eliminar');
+const modalUsuarios = document.getElementById("modal-usuarios");
+
+const modalAgregarUsuario = document.getElementById("modal-agregar-usuario");
+const botonAgregarUsuario = document.getElementById('agregar-usuarios');
+const botonCancelarAgregarUsuario = document.getElementById("boton-cancelar-agregar-usuario");
+const botonAgregarUsuarioGuardar = document.getElementById("boton-agregar-usuario");
+
+const modalEditarUsuario = document.getElementById("modal-editar-usuario");
+const botonCancelarEditarUsuario = document.getElementById("boton-editar-cerrar-usuario");
+const botonEditarUsuarioGuardar = document.getElementById("boton-editar-usuario");
+
+
+
+const modalEliminarUsuario = document.getElementById("modal-eliminar-usuario");
+const botonCancelarEliminarUsuario = document.getElementById("boton-cerrar-usuario");
+const botonEliminarUsuario = document.getElementById("boton-eliminar-usuario");
+
+const modalAlert = document.getElementById('modal-alert');
+
 const botonGuardarEditar = document.getElementById('boton-guardar-editar');
 const botonCerrarEstadistica = document.getElementById("boton-cerrar-estadisticas");
+
 const botonCerrarEliminar = document.getElementById("boton-cerrar-eliminar");
 const botonConfirmarEliminar = document.getElementById("boton-confirmar-eliminar");
+
+const mensajeAlert = document.getElementById("mensaje-alert-dialog");
+const botonAceptarAlert = document.getElementById('boton-cerrar-alert');
+
+const botonCerrarUsuarios = document.getElementById('boton-cerrar-usuarios');
+const botonBuscarUsuarios = document.getElementById('boton-buscar-usuarios');
+
+
+const filtroOperadorInput = document.getElementById("input-filtro-operador");
+const agregarPPOperadorInput = document.getElementById("input-pp-operador");
+const editarPPOperadorInput = document.getElementById("input-pp-operador-edit");
+let listaUsuarios;
+const inputBuscarUsuario = document.getElementById('input-buscar-usuarios');
 
 let idEdit;
 let idEliminar = 0;
 
 var filtros = getFiltros();
-
-
 const token = document.cookie
     .split("; ")
     .find(row => row.startsWith("session_token="))
     ?.split("=")[1];
 
 
+let datosUsuario;
+let usuarios;
 
-const datosUsuario = await api.getDatosUsuario(token);
-
-const usuarios = await api.getOperadores(token);
-
-const filtroOperadorInput = document.getElementById("input-filtro-operador");
-const agregarPPOperadorInput = document.getElementById("input-pp-operador");
-const editarPPOperadorInput = document.getElementById("input-pp-operador-edit");
-
-
-
-if (datosUsuario.rol === "SUPERVISOR") {
-    const opcionPP = document.createElement('option');
-    const opcionFiltro = document.createElement('option');
-    const opcionEditar = document.createElement('option');
-    opcionPP.value = "-";
-    opcionPP.textContent = "Todos";
-    opcionFiltro.value = "-";
-    opcionFiltro.textContent = "-";
-    opcionEditar.textContent = "-";
-    opcionEditar.value = "-";
-    filtroOperadorInput.add(opcionPP)
-    agregarPPOperadorInput.add(opcionFiltro);
-    editarPPOperadorInput.add(opcionEditar);
+try {
+    mostrarLoader();
+    datosUsuario = await api.getDatosUsuario(token);
+    usuarios = await api.getOperadores(token);
+    printTablaOperadores();
+    filtrarPromesas(filtros);
+    document.getElementById("nombre-operador-span").textContent = datosUsuario.nombre;
+    if (datosUsuario.rol === "ADMIN") {
+        printGestionUsuarios();
+    }
 }
-usuarios.forEach((usuario, i) => {
-    const opcionPP = document.createElement('option');
-    const opcionFiltro = document.createElement('option');
-    const opcionEditar = document.createElement('option');
-    opcionPP.value = usuario.id;
-    opcionPP.textContent = usuario.nombre;
-    opcionFiltro.value = usuario.id;
-    opcionFiltro.textContent = usuario.nombre;
-    opcionEditar.value = usuario.id;
-    opcionEditar.textContent = usuario.nombre;
-    agregarPPOperadorInput.add(opcionPP);
-    filtroOperadorInput.add(opcionFiltro);
-    editarPPOperadorInput.add(opcionEditar);
+catch (err) {
+    if (err.message == 403) {
+        cerrarSesion();
+    }
+    else {
+        alert("ERROR INESPERADO");
+        cerrarSesion();
+    }
+}
+finally {
+    ocultarLoader();
+}
+
+
+
+
+
+
+function printTablaOperadores() {
+    limpiarTablasOpcionesOperador();
+    insertarOpcionTodos();
+    printOperadoresTablas();
+}
+
+function limpiarTablasOpcionesOperador() {
+    agregarPPOperadorInput.innerHTML = '';
+    filtroOperadorInput.innerHTML = '';
+    editarPPOperadorInput.innerHTML = '';
+}
+
+function printGestionUsuarios() {
+    const nav = document.querySelector('nav');
+    const botonUsuarios = document.createElement("button");
+    botonUsuarios.textContent = "Gestionar Usuarios";
+
+
+    botonUsuarios.addEventListener('click', async () => {
+        inputBuscarUsuario.value = "";
+        modalUsuarios.showModal();
+        generarLista();
+    })
+
+    botonBuscarUsuarios.addEventListener('click', async () => {
+        await generarLista();
+    });
+
+    inputBuscarUsuario.addEventListener('keydown', async function (event) {
+        if (event.key === 'Enter') {
+            await generarLista();
+        }
+    })
+
+
+    botonCerrarUsuarios.addEventListener('click', () => {
+        modalUsuarios.close();
+    })
+
+    botonAgregarUsuario.addEventListener('click', () => {
+        modalAgregarUsuario.showModal();
+    })
+
+    botonCancelarAgregarUsuario.addEventListener('click', () => {
+        modalAgregarUsuario.close();
+    });
+
+    botonCancelarEditarUsuario.addEventListener('click', () => {
+        modalEditarUsuario.close();
+    });
+
+    botonCancelarEliminarUsuario.addEventListener('click', () => {
+        modalEliminarUsuario.close();
+    });
+
+
+
+    botonAgregarUsuarioGuardar.addEventListener('click', async () => {
+        await agregarUsuario();
+    })
+
+    nav.insertBefore(botonUsuarios, nav.firstChild);
+}
+
+async function agregarUsuario() {
+    const nuevoUsuario = {
+        nombre: document.getElementById("input-usuario-nombre").value,
+        nombreUsuario: document.getElementById("input-usuario-nombreUsuario").value,
+        rol: document.getElementById("input-usuario-rol").value,
+        contrasenia: document.getElementById("input-usuario-contraseña").value,
+        confirmaContrasenia: document.getElementById("input-usuario-confirmar-contraseña").value
+    }
+
+    let validarU = validarUsuario(nuevoUsuario);
+
+    if (!validarU.sinError) {
+        generarAlert(validarU.mensaje.innerHTML, "red");
+        return;
+    }
+
+    let nuevoUsuarioApi;
+    try {
+        mostrarLoader()
+        nuevoUsuarioApi = await api.agregarUsuario(token, nuevoUsuario);
+        listaUsuarios.unshift(nuevoUsuarioApi);
+        usuarios.unshift(nuevoUsuarioApi);
+        printListaUsuarios();
+        printTablaOperadores();
+        generarAlert("Usuario Generado Correctamente.", "green");
+        document.getElementById("input-usuario-nombre").value = "";
+        document.getElementById("input-usuario-nombreUsuario").value = "";
+        document.getElementById("input-usuario-contraseña").value = "";
+        document.getElementById("input-usuario-confirmar-contraseña").value = ""
+        document.getElementById("input-usuario-rol").value = "OPERADOR";
+        modalAgregarUsuario.close();
+    }
+    catch (err) {
+        if (err.message == 403) {
+            generarAlert("Sesión vencida. Vuelva a iniciar sesión", "blue");
+            sesiónCerrada = true;
+        }
+        else {
+            generarAlert('No fue posible agregar el usuario: ' + err.message, 'red');
+        }
+    }
+    finally {
+        ocultarLoader();
+    }
+}
+
+function validarUsuario(usuario) {
+    var validacion = {
+        sinError: true,
+        mensaje: document.createElement("p")
+    }
+
+    if (usuario.nombre == '') {
+        validacion.mensaje.innerHTML += 'Ingresar nombre. <br>'
+        validacion.sinError = false;
+    }
+    if (usuario.nombreUsuario == '') {
+        validacion.mensaje.innerHTML += 'Ingresar Usuario. <br>'
+        validacion.sinError = false;
+    }
+    if (usuario.contrasenia == '' || usuario.confirmaContrasenia == '') {
+        validacion.mensaje.innerHTML += 'Ingresar Contraseña. <br>'
+        validacion.sinError = false;
+    }
+    else if (usuario.contrasenia !== usuario.confirmaContrasenia) {
+        validacion.mensaje.innerHTML += 'Las contraseñas no son iguales. <br>';
+        validacion.sinError = false;
+    }
+    if (usuario.rol !== 'SUPERVISOR' && usuario.rol !== 'OPERADOR') {
+        validacion.mensaje.innerHTML += 'Rol invalido. <br>';
+        validacion.sinError = false;
+    }
+
+    return validacion;
+}
+
+function validarUsuarioEdit(usuario) {
+    var validacion = {
+        sinError: true,
+        mensaje: document.createElement("p")
+    }
+
+    if (usuario.nombre == '') {
+        validacion.mensaje.innerHTML += 'Ingresar nombre. <br>'
+        validacion.sinError = false;
+    }
+    if (usuario.nombreUsuario == '') {
+        validacion.mensaje.innerHTML += 'Ingresar Usuario. <br>'
+        validacion.sinError = false;
+    }
+    if (usuario.rol !== 'SUPERVISOR' && usuario.rol !== 'OPERADOR') {
+        validacion.mensaje.innerHTML += 'Rol invalido. <br>';
+        validacion.sinError = false;
+    }
+
+    return validacion;
+}
+
+async function generarLista() {
+    try {
+        mostrarLoader();
+        listaUsuarios = await buscarUsuarios(inputBuscarUsuario.value);
+        printListaUsuarios();
+    }
+    catch (err) {
+        if (err.message == 403) {
+            generarAlert("Sesión vencida. Vuelva a iniciar sesión", "blue");
+            sesiónCerrada = true;
+        }
+        else {
+            generarAlert("No fue posible generar la tabla: " + err.message, "red");
+        }
+    }
+    finally {
+        ocultarLoader();
+    }
+}
+
+
+
+function printListaUsuarios() {
+    const contenedorUsuarios = document.querySelector('.contenedor-usuarios');
+    contenedorUsuarios.innerHTML = '';
+    listaUsuarios.forEach((usuario, i) => {
+        const contenedorUsuario = document.createElement('div');
+        contenedorUsuario.classList.add('contenedor-usuario-info');
+        const infoUsuario = document.createElement('div');
+        infoUsuario.classList.add('info-usuario');
+        const nombre = document.createElement('p');
+        const nombreUsuario = document.createElement('p');
+        const rol = document.createElement('p');
+        nombre.textContent = usuario.nombre;
+        nombreUsuario.textContent = "(" + usuario.nombreUsuario + ")";
+        rol.textContent = usuario.rol;
+
+        const botonesUsuario = document.createElement('div');
+        botonesUsuario.classList.add('botones-usuario');
+        const botonEditar = document.createElement('button');
+        const botonEliminar = document.createElement('button');
+        const botonNuevaContrasenia = document.createElement('button');
+
+        botonEditar.addEventListener('click', () => {
+            idEdit = usuario.id;
+            printModalEditarUsuario(usuario);
+
+        })
+
+        botonEliminar.addEventListener('click', () => {
+            printModalEliminar(usuario);
+        })
+
+        botonNuevaContrasenia.addEventListener('click', () => {
+            generarAlert("Nueva contraseña: <br> id" + idEliminar + " usuario: " + nombre.textContent, "green");
+        })
+
+        botonEditar.textContent = "Editar";
+        botonEliminar.textContent = "Eliminar";
+        botonNuevaContrasenia.textContent = "Nueva contraseña";
+
+        infoUsuario.appendChild(nombre);
+        infoUsuario.appendChild(nombreUsuario);
+        infoUsuario.appendChild(rol);
+        botonesUsuario.appendChild(botonEditar);
+        botonesUsuario.appendChild(botonEliminar);
+        botonesUsuario.appendChild(botonNuevaContrasenia);
+        contenedorUsuario.appendChild(infoUsuario);
+        contenedorUsuario.appendChild(botonesUsuario);
+        contenedorUsuarios.appendChild(contenedorUsuario);
+    })
+}
+
+function printModalEditarUsuario(usuario) {
+    idEdit = usuario.id;
+    document.getElementById("input-editar-usuario-nombreUsuario").value = usuario.nombreUsuario;
+    document.getElementById("input-editar-usuario-nombre").value = usuario.nombre;
+    document.getElementById("input-usuario-editar-rol").value = usuario.rol;
+    modalEditarUsuario.showModal();
+}
+
+botonEditarUsuarioGuardar.addEventListener('click', async () => {
+    const usuarioEditado = {
+        nombre: document.getElementById("input-editar-usuario-nombre").value,
+        nombreUsuario: document.getElementById("input-editar-usuario-nombreUsuario").value,
+        rol: document.getElementById("input-usuario-editar-rol").value
+    }
+
+    const validacionUsuario = validarUsuarioEdit(usuarioEditado);
+
+    if (!validacionUsuario.sinError) {
+        generarAlert(validacionUsuario.mensaje, "red");
+    }
+
+    let usuarioEditadoApi;
+    try {
+        mostrarLoader()
+        usuarioEditadoApi = await api.modificarUsuario(token, idEdit, usuarioEditado);
+        var usuario = listaUsuarios.find(u => u.id === idEdit);
+        if (usuario) {
+            usuario.nombreUsuario = usuarioEditadoApi.nombreUsuario;
+            usuario.nombre = usuarioEditadoApi.nombre;
+            usuario.rol = usuarioEditadoApi.rol;
+        }
+        usuario = usuarios.find(u => u.id === idEdit);
+        if (usuario) {
+            usuario.nombreUsuario = usuarioEditadoApi.nombreUsuario;
+            usuario.nombre = usuarioEditadoApi.nombre;
+            usuario.rol = usuarioEditadoApi.rol;
+        }
+
+        printListaUsuarios();
+        printTablaOperadores();
+        filtrarPromesas(filtros);
+        generarAlert("Usuario Modificado Correctamente.", "green");
+        modalEditarUsuario.close();
+    }
+    catch (err) {
+        if (err.message == 403) {
+            generarAlert("Sesión vencida. Vuelva a iniciar sesión", "blue");
+            sesiónCerrada = true;
+        }
+        else {
+            generarAlert('No fue posible editar el usuario: ' + err.message, 'red');
+        }
+    }
+    finally {
+        ocultarLoader();
+    }
+
+
+
+
+
+
 })
 
-document.getElementById("nombre-operador-span").textContent = datosUsuario.nombre;
+function printModalEliminar(usuario) {
+    idEliminar = usuario.id;
+    document.getElementById("nombre-usuario-eliminar").textContent = usuario.nombreUsuario;
+    document.getElementById("input-eliminar-usuario-confirmar").value = "";
+    modalEliminarUsuario.showModal();
+}
 
-filtrarPromesas();
+botonEliminarUsuario.addEventListener('click', async () => {
+    if(document.getElementById("input-eliminar-usuario-confirmar").value.toLowerCase() !== "confirmar"){
+        return;
+    }
+    eliminarUsuario(idEliminar);
+})
 
+async function eliminarUsuario(id){
+    try {
+        mostrarLoader();
+        await api.eliminarUsuario(token, id);
+        listaUsuarios = listaUsuarios.filter(u => !(u.id === id));
+        usuarios = usuarios.filter(u => !(u.id === id));
+        modalEliminarUsuario.close();
+        generarAlert("Usuario eliminado correctamente.", "green")
+        printListaUsuarios();
+        printTablaOperadores();
+        filtrarPromesas(filtros);
+    }
+    catch (err) {
+        if (err.message == 403) {
+            generarAlert("Sesión vencida. Vuelva a iniciar sesión", "blue");
+            sesiónCerrada = true;
+        } else {
+            generarAlert("No fue posible eliminar al usuario: " + err.message, "red");
+        }
+    }
+    finally {
+        ocultarLoader();
+    }
+}
+
+function printOperadoresTablas() {
+    usuarios.forEach((usuario, i) => {
+        const opcionPP = document.createElement('option');
+        const opcionFiltro = document.createElement('option');
+        const opcionEditar = document.createElement('option');
+        opcionPP.value = usuario.id;
+        opcionPP.textContent = usuario.nombre;
+        opcionFiltro.value = usuario.id;
+        opcionFiltro.textContent = usuario.nombre;
+        opcionEditar.value = usuario.id;
+        opcionEditar.textContent = usuario.nombre;
+        agregarPPOperadorInput.add(opcionPP);
+        filtroOperadorInput.add(opcionFiltro);
+        editarPPOperadorInput.add(opcionEditar);
+    })
+
+}
+
+async function buscarUsuarios(nombre) {
+    try {
+        mostrarLoader();
+        const Usuarios = await api.getUsuarios(token, "?nombre=" + nombre);
+        return Usuarios;
+    }
+    catch (err) {
+        throw err;
+    }
+    finally {
+        ocultarLoader();
+    }
+}
+
+function insertarOpcionTodos() {
+    if (datosUsuario.rol !== "OPERADOR") {
+        const opcionPP = document.createElement('option');
+        const opcionFiltro = document.createElement('option');
+        const opcionEditar = document.createElement('option');
+        opcionPP.value = "-";
+        opcionPP.textContent = "-";
+        opcionFiltro.value = "-";
+        opcionFiltro.textContent = "Todos";
+        opcionEditar.textContent = "-";
+        opcionEditar.value = "-";
+        agregarPPOperadorInput.insertBefore(opcionPP, agregarPPOperadorInput.firstChild);
+        filtroOperadorInput.insertBefore(opcionFiltro, filtroOperadorInput.firstChild);
+        editarPPOperadorInput.insertBefore(opcionEditar, editarPPOperadorInput.firstChild);
+    }
+}
 
 function getFiltros() {
     return {
@@ -103,10 +510,12 @@ function getFiltros() {
     };
 }
 
-botonFiltrar.addEventListener('click', filtrarPromesas)
-
-async function filtrarPromesas() {
+botonFiltrar.addEventListener('click', () =>{
     filtros = getFiltros();
+    filtrarPromesas(filtros);
+})
+
+async function filtrarPromesas(filtros) {
     var query = "?1=1";
     if (!isNaN(filtros.caso)) {
         query += "&caso=" + filtros.caso;
@@ -175,9 +584,25 @@ async function filtrarPromesas() {
         query += "&duplica=" + filtros.duplica;
     }
 
-    const PromesasFiltros = await api.getPromesas(token, query);
-    listaPromesas = PromesasFiltros;
-    printTablaHTML();
+    try {
+        mostrarLoader()
+        const PromesasFiltros = await api.getPromesas(token, query);
+        listaPromesas = PromesasFiltros;
+        printTablaHTML();
+    }
+    catch (err) {
+        if (err.message == 403) {
+            generarAlert("Sesión vencida. Vuelva a iniciar sesión", "blue");
+            sesiónCerrada = true;
+        }
+        else {
+            generarAlert("No fue posible generar la tabla: " + err.message, "red");
+        }
+    }
+    finally {
+        ocultarLoader();
+    }
+
 }
 
 const formatFecha = new Intl.DateTimeFormat("es", {
@@ -232,9 +657,10 @@ botonAgregarPromesaExcel.addEventListener('click', () => {
 */
 
 botonCerrarSesion.addEventListener('click', () => {
-    document.cookie = "session_token=; path=/; max-age=0;"
-    window.location.href = "/index.html";
+    cerrarSesion();
 })
+
+
 
 function printTablaHTML() {
     const filas = document.querySelectorAll('.tabla tr');
@@ -331,9 +757,11 @@ function modalEliminarPromesa(filaTabla) {
 
 async function eliminarPromesa(id) {
     try {
+        mostrarLoader();
         await api.eliminarPromesa(token, id);
         listaPromesas = listaPromesas.filter(promesa => !(promesa.id === id));
-        alert("Promesa eliminada correctamente.");
+        modalEliminar.close();
+        generarAlert("Promesa eliminada correctamente.", "green")
         const totalPaginas = Math.ceil(listaPromesas.length / cantFilasPagina);
         if (paginaActual > totalPaginas) {
             paginaActual = totalPaginas
@@ -341,8 +769,15 @@ async function eliminarPromesa(id) {
         printTablaHTML();
     }
     catch (err) {
-        alert("No fue posible eliminar la promesa: " + err.message);
-        return;
+        if (err.message == 403) {
+            generarAlert("Sesión vencida. Vuelva a iniciar sesión", "blue");
+            sesiónCerrada = true;
+        } else {
+            generarAlert("No fue posible eliminar la promesa: " + err.message, "red");
+        }
+    }
+    finally {
+        ocultarLoader();
     }
 }
 
@@ -405,18 +840,29 @@ botonGuardarEditar.addEventListener('click', async () => {
 
     let promesaCorrecta = validarPromesa(promesaEdit);
 
-    if (!promesaCorrecta) {
-        alert('ERROR AL GENERAR LA NUEVA PROMESA.');
+    if (!promesaCorrecta.sinError) {
+        generarAlert(promesaCorrecta.mensaje.innerHTML, "red");
         return;
     }
 
     try {
+        mostrarLoader();
         await api.modificarPromesa(token, idEdit, promesaEdit);
     }
     catch (err) {
-        alert('No fue posible generar la promesa. ' + err.message);
+        if (err.message == 403) {
+            generarAlert("Sesión vencida. Vuelva a iniciar sesión", "blue");
+            sesiónCerrada = true;
+        }
+        else {
+            generarAlert("No fue posible modificar la promesa: " + err.message, "red");
+        }
         return;
     }
+    finally {
+        ocultarLoader();
+    }
+
 
     var promesa = listaPromesas.find(p => p.id === idEdit);
     if (promesa) {
@@ -432,15 +878,15 @@ botonGuardarEditar.addEventListener('click', async () => {
         promesa.cumplimiento = promesaEdit.cumplimiento;
     }
 
-    alert('PP Modificada.');
     modalEditar.close();
+    generarAlert("Promesa modificada correctamente.", "green")
     printTablaHTML();
 });
 
-botonConfirmarEliminar.addEventListener('click', () =>{
+botonConfirmarEliminar.addEventListener('click', () => {
     eliminarPromesa(idEliminar);
-    modalEliminar.close();
 });
+
 
 
 document.getElementById('boton-cancelar-editar').addEventListener('click', () => {
@@ -544,16 +990,6 @@ function insertarDato(fila, columna, valorColumna, dato) {
 
 async function agregarPromesa() {
     mensajePP.innerHTML = '';
-    document.getElementById("input-pp-caso").style.border = '1px solid black';
-    document.getElementById("input-pp-id").style.border = '1px solid black';
-    document.getElementById("input-pp-canal").style.border = '1px solid black';
-    document.getElementById("input-pp-site").style.border = '1px solid black';
-    document.getElementById("input-pp-monto").style.border = '1px solid black';
-    document.getElementById("input-pp-fecha-carga").style.border = '1px solid black';
-    document.getElementById("input-pp-fecha-pago").style.border = '1px solid black';
-    document.getElementById("input-pp-tipo-acuerdo").style.border = '1px solid black';
-    document.getElementById("input-pp-operador").style.border = '1px solid black';
-    document.getElementById("input-pp-cumplimiento").style.border = '1px solid black';
 
     const nuevaPromesa = {
         numCaso: parseInt(document.getElementById("input-pp-caso").value),
@@ -569,24 +1005,33 @@ async function agregarPromesa() {
     }
 
 
-    const promesaCorrecta = validarPromesa(nuevaPromesa);
+    let validarPP = validarPromesa(nuevaPromesa);
     let nuevaPromesaApi
-    if (promesaCorrecta) {
+    if (validarPP.sinError) {
         try {
+            mostrarLoader()
             nuevaPromesaApi = await api.agregarPromesa(token, nuevaPromesa);
         }
         catch (err) {
-            mensajePP.innerHTML += 'No fue posible generar la promesa. ' + err.message;
+            if (err.message == 403) {
+                generarAlert("Sesión vencida. Vuelva a iniciar sesión", "blue");
+                sesiónCerrada = true;
+            }
+            else {
+                mensajePP.innerHTML += 'No fue posible generar la promesa. ' + err.message;
+                mensajePP.style.color = "red";
+            }
             return;
+        }
+        finally {
+            ocultarLoader();
         }
 
 
+        listaPromesas.unshift(nuevaPromesaApi);
+
         mensajePP.innerHTML += '¡Promesa agregada con exito!'
         mensajePP.style.color = 'green';
-
-
-
-        listaPromesas.unshift(nuevaPromesaApi);
 
         nuevaPromesa.operador = getNombreOperador(nuevaPromesa.operador);
         document.getElementById("input-pp-caso").value = '';
@@ -601,80 +1046,79 @@ async function agregarPromesa() {
         document.getElementById("input-pp-cumplimiento").value = document.getElementById("input-pp-cumplimiento").options[0].value;
         printTablaHTML();
     }
+    else {
+        mensajePP.style.color = "red";
+        mensajePP.innerHTML = validarPP.mensaje.innerHTML
+    }
 }
 
 
 function validarPromesa(nuevaPromesa) {
-    var sinError = true;
+    var validacion = {
+        sinError: true,
+        mensaje: document.createElement("p")
+    }
+
     if (Number.isNaN(nuevaPromesa.numCaso)) {
-        document.getElementById("input-pp-caso").style.border = '2px solid red';
-        mensajePP.innerHTML += 'Ingresar Numero de caso. <br>'
-        mensajePP.style.color = 'red';
-        sinError = false;
+        validacion.mensaje.innerHTML += 'Ingresar Numero de caso. <br>'
+        validacion.sinError = false;
+    }
+    else if (nuevaPromesa.numCaso <= 0) {
+        validacion.mensaje.innerHTML += 'El número de caso debe ser mayor a 0. <br>'
+        validacion.sinError = false;
     }
     if (Number.isNaN(nuevaPromesa.idUsuarioML)) {
-        document.getElementById("input-pp-id").style.border = '2px solid red';
-        mensajePP.innerHTML += 'Ingresar ID.<br>'
-        mensajePP.style.color = 'red';
-        sinError = false;
+        validacion.mensaje.innerHTML += 'Ingresar ID.<br>'
+        validacion.sinError = false;
+    }
+    else if (nuevaPromesa.idUsuarioML <= 0) {
+        validacion.mensaje.innerHTML += 'El id debe ser mayor a 0. <br>'
+        validacion.sinError = false;
     }
     if (nuevaPromesa.canal == '-') {
-        document.getElementById("input-pp-canal").style.border = '2px solid red';
-        mensajePP.innerHTML += 'Ingresar Canal.<br>'
-        mensajePP.style.color = 'red';
-        sinError = false;
+        validacion.mensaje.innerHTML += 'Ingresar Canal.<br>'
+        validacion.sinError = false;
     }
     if (nuevaPromesa.site == '-') {
-        document.getElementById("input-pp-site").style.border = '2px solid red';
-        mensajePP.innerHTML += 'Ingresar Site.<br>'
-        sinError = false;
+        validacion.mensaje.innerHTML += 'Ingresar Site.<br>'
+        validacion.sinError = false;
     }
     if (Number.isNaN(nuevaPromesa.monto)) {
-        document.getElementById("input-pp-monto").style.border = '2px solid red';
-        mensajePP.innerHTML += 'Monto invalido.<br>';
-        mensajePP.style.color = 'red';
-        sinError = false;
+        validacion.mensaje.innerHTML += 'Monto invalido.<br>';
+        validacion.sinError = false;
+    }
+    else if (nuevaPromesa.monto <= 0) {
+        validacion.mensaje.innerHTML += 'El monto debe ser mayor a 0. <br>'
+        validacion.sinError = false;
     }
     if (nuevaPromesa.fechaCarga == '') {
-        document.getElementById("input-pp-fecha-carga").style.border = '2px solid red';
-        mensajePP.innerHTML += 'Ingresar fecha de carga valida.<br>';
-        mensajePP.style.color = 'red';
-        sinError = false;
+        validacion.mensaje.innerHTML += 'Ingresar fecha de carga valida.<br>';
+        validacion.sinError = false;
     }
     if (nuevaPromesa.fechaPago == '') {
-        document.getElementById("input-pp-fecha-pago").style.border = '2px solid red';
-        mensajePP.innerHTML += 'Ingresar fecha de pago valida.<br>'
-        mensajePP.style.color = 'red';
-        sinError = false;
+        validacion.mensaje.innerHTML += 'Ingresar fecha de pago valida.<br>'
+        validacion.sinError = false;
     }
     if (nuevaPromesa.fechaCarga != '' && nuevaPromesa.fechaPago != '') {
         const difdias = diferenciaEnDias(nuevaPromesa.fechaCarga, nuevaPromesa.fechaPago);
         if (difdias > 7) {
-            document.getElementById("input-pp-fecha-pago").style.border = '2px solid red';
-            mensajePP.innerHTML += 'La diferencia entre la fecha de carga y fecha de pago no puede ser mayor a 7 días.<br>'
-            mensajePP.style.color = 'red';
-            sinError = false;
+            validacion.mensaje.innerHTML += 'La diferencia entre la fecha de carga y fecha de pago no puede ser mayor a 7 días.<br>'
+            validacion.sinError = false;
         }
         else if (difdias < 0) {
-            document.getElementById("input-pp-fecha-pago").style.border = '2px solid red';
-            mensajePP.innerHTML += 'La fecha de pago debe ser igual o posterior a la fecha de carga.<br>'
-            mensajePP.style.color = 'red';
-            sinError = false;
+            validacion.mensaje.innerHTML += 'La fecha de pago debe ser igual o posterior a la fecha de carga.<br>'
+            validacion.sinError = false;
         }
     }
     if (nuevaPromesa.tipoAcuerdo == '-') {
-        document.getElementById("input-pp-tipo-acuerdo").style.border = '2px solid red';
-        mensajePP.innerHTML += 'Ingresar tipo de acuerdo.<br>'
-        mensajePP.style.color = 'red';
-        sinError = false;
+        validacion.mensaje.innerHTML += 'Ingresar tipo de acuerdo.<br>'
+        validacion.sinError = false;
     }
     if (Number.isNaN(nuevaPromesa.operador)) {
-        document.getElementById("input-pp-operador").style.border = '2px solid red';
-        mensajePP.innerHTML += 'Ingresar nombre de operador.<br>'
-        mensajePP.style.color = 'red';
-        sinError = false;
+        validacion.mensaje.innerHTML += 'Ingresar nombre de operador.<br>'
+        validacion.sinError = false;
     }
-    return sinError;
+    return validacion;
 }
 
 
@@ -742,11 +1186,20 @@ function diferenciaEnDias(fecha1, fecha2) {
 }
 
 botonObtenerEstadisticas.addEventListener('click', async () => {
-    const estadisticas = await obtenerEstadisticas(listaPromesas)
-
-    printEstadisticas(estadisticas)
-
-    modalEstadisticas.showModal();
+    try {
+        const estadisticas = await obtenerEstadisticas(listaPromesas)
+        printEstadisticas(estadisticas)
+        modalEstadisticas.showModal();
+    }
+    catch (err) {
+        if (err.message == 403) {
+            generarAlert("Sesión vencida. Vuelva a iniciar sesión", "blue");
+            sesiónCerrada = true;
+        }
+        else {
+            generarAlert("No fue posible obtener las estadisticas:" + err.message, "red");
+        }
+    }
 })
 
 function printEstadisticas(estadisticas) {
@@ -771,29 +1224,61 @@ botonCerrarEliminar.addEventListener('click', () => {
     modalEliminar.close();
 })
 
+function generarAlert(mensaje, color) {
+    mensajeAlert.style.color = color
+    mensajeAlert.innerHTML = mensaje;
+    modalAlert.showModal();
+}
+
+botonAceptarAlert.addEventListener('click', () => {
+    if (sesiónCerrada === true) {
+        cerrarSesion();
+    }
+    modalAlert.close();
+});
+
 async function obtenerEstadisticas(tabla) {
     try {
+        mostrarLoader()
         if (tabla.length == 0) {
-            alert("La tabla actual no tiene ninguna promesa.");
-            return;
+            throw new Error("La tabla actual no tiene ninguna promesa.");
         }
         const estadisticas = await api.getEstadisticas(token, tabla);
         return estadisticas
     }
     catch (err) {
-        alert(err)
+        throw err
+    }
+    finally {
+        ocultarLoader();
     }
 }
 
 botonDescargarExcel.addEventListener('click', async () => {
-    await descargarExcel(listaPromesas);
+    try {
+        mostrarLoader();
+        await descargarExcel(listaPromesas);
+    }
+    catch (err) {
+        if (err.message == 403) {
+            generarAlert("Sesión vencida. Vuelva a iniciar sesión", "blue");
+            sesiónCerrada = true;
+        }
+        else {
+            generarAlert("No fue posible exportar el excel: " + err.message, "red");
+        }
+    }
+    finally {
+        ocultarLoader();
+    }
+
 });
 
 async function descargarExcel(tabla) {
     try {
+        mostrarLoader();
         if (tabla.length == 0) {
-            alert("La tabla actual no tiene ninguna promesa.");
-            return;
+            throw new Error("La tabla actual no tiene ninguna promesa");
         }
         const responseExcel = await api.getExcelTabla(token, tabla);
         const blob = await responseExcel.blob();
@@ -810,6 +1295,21 @@ async function descargarExcel(tabla) {
         window.URL.revokeObjectURL(url);
 
     } catch (err) {
-        alert(err)
+        throw err;
     }
+    finally {
+        ocultarLoader();
+    }
+}
+
+function mostrarLoader() {
+    loader.showModal();
+}
+
+function ocultarLoader() {
+    loader.close();
+}
+function cerrarSesion() {
+    document.cookie = "session_token=; path=/; max-age=0;"
+    window.location.href = "/index.html";
 }

@@ -4,15 +4,19 @@ import com.crmpps.Backend.dto.EstadisticaResponse;
 import com.crmpps.Backend.dto.PromesaExcelRequest;
 import com.crmpps.Backend.dto.PromesaRequest;
 import com.crmpps.Backend.dto.PromesaResponse;
+import com.crmpps.Backend.dto.enums.Canales;
 import com.crmpps.Backend.dto.enums.EstadosCumplimiento;
 import com.crmpps.Backend.dto.enums.Sites;
+import com.crmpps.Backend.dto.enums.TiposAcuerdo;
 import com.crmpps.Backend.entity.PromesaEntity;
 import com.crmpps.Backend.entity.UsuarioEntity;
+import com.crmpps.Backend.exception.LogicaInvalidaException;
 import com.crmpps.Backend.exception.NoAutorizadoException;
 import com.crmpps.Backend.repository.PromesaCustomRepository;
 import com.crmpps.Backend.repository.PromesaRepository;
 import com.crmpps.Backend.repository.UsuarioRepository;
 import com.crmpps.Backend.util.JwtUtils;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -24,6 +28,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static com.crmpps.Backend.dto.enums.Sites.*;
@@ -43,15 +48,17 @@ public class PromesaService {
     @Autowired
     private JwtUtils jwtUtils;
 
-    public PromesaResponse agregarPromesa(Map<String, String> headers, @Valid PromesaRequest promesaRequest) throws NoAutorizadoException {
-        String tokenHeader = headers.get("authorization");
+    public PromesaResponse agregarPromesa(Map<String, String> headers, @Valid PromesaRequest promesaRequest) throws NoAutorizadoException, LogicaInvalidaException {
+        String tokenHeader = headers.get("authorization").substring(7);
         UsuarioEntity usuarioEntity = usuarioRepository.findById(promesaRequest.getOperador())
                 .orElseThrow(() -> new NoSuchElementException("No se encontro al usuario con id: " + promesaRequest.getOperador()));
 
-        if (getRolToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
-                !usuarioEntity.getNombreUsuario().equals(getNombreUsuarioToken(tokenHeader))){
+        if (jwtUtils.getRolFromToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
+                !usuarioEntity.getNombreUsuario().equals(jwtUtils.getNombreUsuarioFromToken(tokenHeader))){
             throw new NoAutorizadoException("Credenciales invalidas.");
         }
+
+        validarPromesa(promesaRequest);
 
         PromesaEntity promesaEntity = PromesaEntity.builder()
                 .idUsuarioML(promesaRequest.getIdUsuarioML())
@@ -68,7 +75,7 @@ public class PromesaService {
 
         promesaRepository.save(promesaEntity);
 
-        PromesaResponse response = PromesaResponse.builder()
+        return PromesaResponse.builder()
                 .id(promesaEntity.getId())
                 .idUsuarioML(promesaEntity.getIdUsuarioML())
                 .numCaso(promesaEntity.getNumCaso())
@@ -81,8 +88,6 @@ public class PromesaService {
                 .fechaPago(promesaEntity.getFechaPago())
                 .operador(promesaEntity.getOperador().getNombre())
                 .build();
-
-        return response;
     }
 
     public List<PromesaResponse> getPromesasOperadorFiltros(Map<String, String> headers,
@@ -98,18 +103,21 @@ public class PromesaService {
                                                             Boolean duplica) throws NoAutorizadoException {
 
 
-        String tokenHeader = headers.get("authorization");
+        String tokenHeader = headers.get("authorization").substring(7);
         if (operador == null){
-            if (getRolToken(tokenHeader).equals(("ROLE_OPERADOR"))){
-                throw new NoAutorizadoException("Credenciales invalidas.");
+            if (jwtUtils.getRolFromToken(tokenHeader).equals(("ROLE_OPERADOR"))){
+                operador = usuarioRepository
+                        .findByNombreUsuario(jwtUtils.getNombreUsuarioFromToken(tokenHeader))
+                        .orElseThrow(() -> new NoSuchElementException("Usuario inexistente.")).getId();
             }
         }
         else {
             UsuarioEntity usuarioEntity = usuarioRepository.findById(operador)
-                    .orElseThrow(() -> new NoSuchElementException("No se encontro al usuario con id: " + operador));
+                    .orElseThrow(() -> new NoSuchElementException("Usuario inexistente."));
 
-            if(getRolToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
-                    !usuarioEntity.getNombreUsuario().equals(getNombreUsuarioToken(tokenHeader))){
+
+            if (jwtUtils.getRolFromToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
+                    !usuarioEntity.getNombreUsuario().equals(jwtUtils.getNombreUsuarioFromToken(tokenHeader))){
                 throw new NoAutorizadoException("Credenciales invalidas.");
             }
         }
@@ -146,12 +154,13 @@ public class PromesaService {
                 .orElseThrow(() -> new NoSuchElementException("No se encontro la promesa con id:" + id));
 
 
-        String tokenHeader = headers.get("authorization");
+        String tokenHeader = headers.get("authorization").substring(7);
 
-        if (getRolToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
-                !promesa.getOperador().getNombreUsuario().equals(getNombreUsuarioToken(tokenHeader))){
+        if (jwtUtils.getRolFromToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
+                !promesa.getOperador().getNombreUsuario().equals(jwtUtils.getNombreUsuarioFromToken(tokenHeader))){
             throw new NoAutorizadoException("Credenciales invalidas.");
         }
+
 
         PromesaResponse response = PromesaResponse.builder()
                 .id(promesa.getId())
@@ -174,27 +183,20 @@ public class PromesaService {
         PromesaEntity promesa = promesaRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("No se encontro la promesa con id:" + id));
 
-        String tokenHeader = headers.get("authorization");
+        String tokenHeader = headers.get("authorization").substring(7);
 
-        if (getRolToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
-                !promesa.getOperador().getNombreUsuario().equals(getNombreUsuarioToken(tokenHeader))){
+        if (jwtUtils.getRolFromToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
+                !promesa.getOperador().getNombreUsuario().equals(jwtUtils.getNombreUsuarioFromToken(tokenHeader))){
             throw new NoAutorizadoException("Credenciales invalidas.");
         }
 
         promesaRepository.deleteById(id);
     }
 
-    public String getRolToken(String token) {
-        return jwtUtils.getRolFromToken(token.substring(7));
-    }
 
-    public String getNombreUsuarioToken(String token){
-        return jwtUtils.getNombreUsuarioFromToken(token.substring(7));
-    }
+    public PromesaResponse modificarPromesa(Map<String, String> headers, Long id, PromesaRequest promesaRequest) throws NoAutorizadoException, LogicaInvalidaException {
 
-    public PromesaResponse modificarPromesa(Map<String, String> headers, Long id, PromesaRequest promesaRequest) throws NoAutorizadoException {
-
-        String tokenHeader = headers.get("authorization");
+        String tokenHeader = headers.get("authorization").substring(7);
 
         PromesaEntity promesa = promesaRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("No se encontro la promesa con id:" + id));
@@ -202,11 +204,14 @@ public class PromesaService {
         UsuarioEntity usuario = usuarioRepository.findById(promesaRequest.getOperador())
                 .orElseThrow(() -> new NoSuchElementException("No se encontro al usuario con id:" + promesaRequest.getOperador()));
 
-        if (getRolToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
-                !promesa.getOperador().getNombreUsuario().equals(getNombreUsuarioToken(tokenHeader))){
+        if (jwtUtils.getRolFromToken(tokenHeader).equals(("ROLE_OPERADOR")) &&
+                !promesa.getOperador().getNombreUsuario().equals(jwtUtils.getNombreUsuarioFromToken(tokenHeader))){
             throw new NoAutorizadoException("Credenciales invalidas.");
         }
 
+
+
+        validarPromesa(promesaRequest);
 
         PromesaEntity promesaModificada = PromesaEntity.builder().
                 id(promesa.getId())
@@ -241,9 +246,16 @@ public class PromesaService {
         return response;
     }
 
-    public EstadisticaResponse getEstadisticas(Map<String, String> headers, @Valid List<PromesaExcelRequest> promesas) throws NoAutorizadoException {
+    public EstadisticaResponse getEstadisticas(Map<String, String> headers, @Valid List<PromesaExcelRequest> promesas) throws LogicaInvalidaException {
+
+        if(promesas.isEmpty()){
+            throw new LogicaInvalidaException("La tabla esta vacía.");
+        }
+
         EstadisticaResponse response = new EstadisticaResponse();
         response.setCantPromesas(promesas.size());
+
+
 
         for (PromesaExcelRequest promesaRequest : promesas){
 
@@ -296,8 +308,11 @@ public class PromesaService {
         return false;
     }
 
-    public byte[] getExcelTabla(Map<String, String> headers, @Valid List<PromesaExcelRequest> promesas) throws NoAutorizadoException, IOException {
-        String tokenHeader = headers.get("authorization");
+    public byte[] getExcelTabla(Map<String, String> headers, @Valid List<PromesaExcelRequest> promesas) throws IOException, LogicaInvalidaException {
+
+        if(promesas.isEmpty()){
+            throw new LogicaInvalidaException("La tabla esta vacía.");
+        }
 
         ClassPathResource plantilla = new ClassPathResource("PlantillaPromesas.xlsx");
         InputStream inputStream = plantilla.getInputStream();
@@ -377,5 +392,38 @@ public class PromesaService {
         libro.close();
 
         return outputStream.toByteArray();
+    }
+
+    public void validarPromesa(PromesaRequest promesaRequest) throws LogicaInvalidaException {
+        if(promesaRequest.getNumCaso() <= 0){
+            throw new LogicaInvalidaException("El número de caso debe ser mayor a 0");
+        }
+        if(promesaRequest.getIdUsuarioML() <= 0){
+            throw new LogicaInvalidaException("El id del usuario debe ser mayor a 0");
+        }
+        if (promesaRequest.getMonto() <= 0){
+            throw new LogicaInvalidaException("El monto debe ser mayor a 0");
+        }
+        if (!Sites.siteValido(promesaRequest.getSite())){
+            throw new LogicaInvalidaException("Site invalido");
+        }
+        if(!Canales.canalValido(promesaRequest.getCanal())){
+            throw new LogicaInvalidaException("Canal invalido");
+        }
+        if (!TiposAcuerdo.acuerdoValido(promesaRequest.getTipoAcuerdo())){
+            throw new LogicaInvalidaException("Tipo de acuerdo invalido");
+        }
+        if (!EstadosCumplimiento.cumplimientoValido(promesaRequest.getCumplimiento())){
+            throw new LogicaInvalidaException("tipo de cumplimiento invalido");
+        }
+
+        long diasDiferencia = ChronoUnit.DAYS.between(promesaRequest.getFechaCarga(), promesaRequest.getFechaPago());
+
+        if(diasDiferencia < 0){
+            throw new LogicaInvalidaException("La fecha de pago no puede ser menor a la fecha de carga");
+        }
+        else if (diasDiferencia > 7){
+            throw new LogicaInvalidaException("La diferencia de días entre la fecha de carga y la fecha de pago no puede ser mayor a 7 días");
+        }
     }
 }

@@ -81,7 +81,7 @@ nav button:hover {
 #paginacion {
     display: flex;
     gap: 5px;
-    margin-top: 50px;
+    margin-top: 20px;
     align-items: center;
     text-align: center;
     gap: 20px;
@@ -402,6 +402,7 @@ dialog {
     font-family: sans-serif;
     place-items: center;
     text-align: center;
+    z-index: 100;
     border: 2px solid rgb(56, 150, 180);
 }
 
@@ -528,4 +529,117 @@ h3{
     display: flex;
     flex-direction: column;
     gap: 20px;
+}
+
+.contenedor-alert-dialog{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#mensaje-alert-dialog{
+    color: rgb(47 97 129);
+    font-size: 20px;
+    font-weight: bold;
+}
+
+
+.contenedor-usuarios-dialog,.contenedor-editar-usuario-dialog,
+.contenedor-eliminar-usuario-dialog{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 500px;
+}
+
+.buscador-usuarios{
+    width: 100%;
+}
+
+.contenedor-usuarios-dialog input, .contenedor-usuarios-dialog select,
+.contenedor-editar-usuario-dialog input, .contenedor-editar-usuario-dialog select,
+.contenedor-eliminar-usuario-dialog input{
+    width: 60%;
+    padding: 5px;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    border: 1px solid black;
+    font-size: 18px;
+}
+
+
+.contenedor-usuarios{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 400px;
+    overflow: auto;
+}
+
+
+.contenedor-usuario-info{
+    border: 2px solid rgb(56, 150, 180);
+    background-color: rgb(240, 240, 240);
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    padding: 10px;
+    border-radius: 10px;
+    justify-content:space-around;
+}
+
+.info-usuario{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-weight: bold;
+}
+
+.botones-usuario{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+
+.botones-usuario button{
+    font-size: 15px;
+}
+
+.loader {
+    border: none;
+    padding: 0;
+    margin: auto;
+    background: transparent;
+    overflow: hidden;
+    
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.loader::backdrop {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.loader[open] {
+    display: flex;
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 6px solid white;
+    border-top: 6px solid rgb(56, 150, 180);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
