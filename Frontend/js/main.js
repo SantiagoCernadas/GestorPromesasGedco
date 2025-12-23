@@ -37,6 +37,8 @@ const botonCancelarAgregarUsuario = document.getElementById("boton-cancelar-agre
 const botonAgregarUsuarioGuardar = document.getElementById("boton-agregar-usuario");
 
 const modalEditarUsuario = document.getElementById("modal-editar-usuario");
+const botonCancelarEditarUsuario = document.getElementById("boton-editar-cerrar-usuario");
+
 const modalEliminarUsuario = document.getElementById("modal-eliminar-usuario");
 
 const modalAlert = document.getElementById('modal-alert');
@@ -153,6 +155,12 @@ function printGestionUsuarios() {
     botonCancelarAgregarUsuario.addEventListener('click', () => {
         modalAgregarUsuario.close();
     });
+
+    botonCancelarEditarUsuario.addEventListener('click', () => {
+        modalEditarUsuario.close();
+    });
+
+    
 
     botonAgregarUsuarioGuardar.addEventListener('click', async () => {
         await agregarUsuario();
