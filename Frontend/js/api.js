@@ -370,7 +370,7 @@ export async function eliminarUsuario(token,id) {
 
 export async function modificarContraseniaUsuario(token,id,contrasenia) {
     var responseBody;
-    await fetch(apiUrl + 'usuario/'+id+"/contrasenia",{
+    await fetch(apiUrl + 'usuario/'+id+'/contrasenia',{
         method: 'PATCH',
         body: JSON.stringify(contrasenia),
         headers: {
@@ -384,7 +384,7 @@ export async function modificarContraseniaUsuario(token,id,contrasenia) {
             }
             throw new Error("ERROR: " + response.status);
         }
-        return response.json();
+        return response;
     })
     .then(data => {
             responseBody = data;

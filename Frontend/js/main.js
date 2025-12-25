@@ -388,7 +388,8 @@ botonEditarUsuarioGuardar.addEventListener('click', async () => {
     const validacionUsuario = validarUsuarioEdit(usuarioEditado);
 
     if (!validacionUsuario.sinError) {
-        generarAlert(validacionUsuario.mensaje, "red");
+        generarAlert(validacionUsuario.mensaje.innerHTML, "red");
+        return;
     }
 
     let usuarioEditadoApi;
@@ -477,8 +478,37 @@ botonNuevaContraseniaUsuario.addEventListener('click', async () => {
     modificarContraseniaUsuario(idEdit);
 })
 
-function modificarContraseniaUsuario(id){
+async function modificarContraseniaUsuario(id){
 
+    const usuarioEditado = {
+        contrasenia: document.getElementById("input-usuario-nueva-contraseña").value,
+        confirmaContrasenia: document.getElementById("input-usuario-confirmar-nueva-contraseña").value
+    }
+
+    const validarUsuario = validarContraseniaUsuario(usuarioEditado);
+    if(!validarUsuario.sinError){
+        generarAlert(validarUsuario.mensaje.innerHTML,"red");
+        return;
+    }
+
+    try {
+        mostrarLoader()
+        await api.modificarContraseniaUsuario(token, id, usuarioEditado);
+        generarAlert("Contraseña modificada correctamente.", "green");
+        modalNuevaContraseniaUsuario.close();
+    }
+    catch (err) {
+        if (err.message == 403) {
+            generarAlert("Sesión vencida. Vuelva a iniciar sesión", "blue");
+            sesiónCerrada = true;
+        }
+        else {
+            generarAlert('No fue posible modificar la contraseña: ' + err.message, 'red');
+        }
+    }
+    finally {
+        ocultarLoader();
+    }
 }
 
 function printModalNuevaContrasenia(usuario){
