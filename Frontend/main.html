@@ -402,23 +402,23 @@
             <div class="contenedor-usuarios-dialog">
                 <h2>Agregar usuario</h2>
                 <div>
-                    <h3>Usuario</h3>
+                    <p>Usuario</p>
                     <input type="text" name="" id="input-usuario-nombreUsuario">
                 </div>
                 <div>
-                    <h3>Nombre</h3>
+                    <p>Nombre</p>
                     <input type="text" name="" id="input-usuario-nombre">
                 </div>
                 <div>
-                    <h3>Contraseña</h3>
+                    <p>Contraseña</p>
                     <input type="password" name="" id="input-usuario-contraseña">
                 </div>
                 <div>
-                    <h3>Repetir contraseña</h3>
+                    <p>Repetir contraseña</p>
                     <input type="password" name="" id="input-usuario-confirmar-contraseña">
                 </div>
                 <div>
-                    <h3>ROL</h3>
+                    <p>ROL</p>
                     <select name="roles" id="input-usuario-rol">
                         <option value="OPERADOR">OPERADOR</option>
                         <option value="SUPERVISOR">SUPERVISOR</option>
@@ -438,15 +438,15 @@
             <div class="contenedor-editar-usuario-dialog">
                 <h2>Editar Usuario</h2>
                 <div>
-                    <h3>Usuario</h3>
+                    <p>Usuario</p>
                     <input type="text" name="" id="input-editar-usuario-nombreUsuario">
                 </div>
                 <div>
-                    <h3>Nombre</h3>
+                    <p>Nombre</p>
                     <input type="text" name="" id="input-editar-usuario-nombre">
                 </div>
                 <div>
-                    <h3>ROL</h3>
+                    <p>ROL</p>
                     <select name="roles" id="input-usuario-editar-rol">
                         <option value="OPERADOR">OPERADOR</option>
                         <option value="SUPERVISOR">SUPERVISOR</option>
@@ -475,6 +475,26 @@
                     <button id="boton-cerrar-usuario">Cerrar</button>
                 </div>
             </div>
+        </dialog>
+    </div>
+
+    <div class="contenedor-contrasenia-usuario">
+        <dialog id="modal-contrasenia-usuario">
+            <div class="contenedor-contrasenia-usuario-dialog">
+                <h2>Nueva contraseña</h2>
+                <h3>Escriba la nueva contraseña para el usuario <span id="nombre-usuario-contrasenia"></span></h3>
+                <div>
+                    <p>Contraseña</p>
+                    <input type="password" name="" id="input-usuario-nueva-contraseña">
+                </div>
+                <div>
+                    <p>Repetir contraseña</p>
+                    <input type="password" name="" id="input-usuario-confirmar-nueva-contraseña">
+                </div>
+                <div>
+                    <button id="boton-nueva-contrasenia-usuario">Cambiar Contraseña</button>
+                    <button id="boton-cerrar-contrasenia">Cerrar</button>
+                </div>
         </dialog>
     </div>
 

@@ -45,7 +45,12 @@ const modalEliminarUsuario = document.getElementById("modal-eliminar-usuario");
 const botonCancelarEliminarUsuario = document.getElementById("boton-cerrar-usuario");
 const botonEliminarUsuario = document.getElementById("boton-eliminar-usuario");
 
+const modalNuevaContraseniaUsuario = document.getElementById("modal-contrasenia-usuario");
+const botonCancelarNuevaContrasenia = document.getElementById("boton-cerrar-contrasenia");
+const botonNuevaContraseniaUsuario = document.getElementById("boton-nueva-contrasenia-usuario");
+
 const modalAlert = document.getElementById('modal-alert');
+
 
 const botonGuardarEditar = document.getElementById('boton-guardar-editar');
 const botonCerrarEstadistica = document.getElementById("boton-cerrar-estadisticas");
@@ -163,6 +168,10 @@ function printGestionUsuarios() {
         modalEliminarUsuario.close();
     });
 
+    botonCancelarNuevaContrasenia.addEventListener('click', () => {
+        modalNuevaContraseniaUsuario.close();
+    });
+
 
 
     botonAgregarUsuarioGuardar.addEventListener('click', async () => {
@@ -270,6 +279,24 @@ function validarUsuarioEdit(usuario) {
     return validacion;
 }
 
+function validarContraseniaUsuario(usuario){
+     var validacion = {
+        sinError: true,
+        mensaje: document.createElement("p")
+    }
+
+    if (usuario.contrasenia == '' || usuario.confirmaContrasenia == '') {
+        validacion.mensaje.innerHTML += 'Ingresar Contraseña. <br>'
+        validacion.sinError = false;
+    }
+    else if (usuario.contrasenia !== usuario.confirmaContrasenia) {
+        validacion.mensaje.innerHTML += 'Las contraseñas no son iguales. <br>';
+        validacion.sinError = false;
+    }
+
+    return validacion;
+}
+
 async function generarLista() {
     try {
         mostrarLoader();
@@ -324,7 +351,7 @@ function printListaUsuarios() {
         })
 
         botonNuevaContrasenia.addEventListener('click', () => {
-            generarAlert("Nueva contraseña: <br> id" + idEliminar + " usuario: " + nombre.textContent, "green");
+            printModalNuevaContrasenia(usuario);
         })
 
         botonEditar.textContent = "Editar";
@@ -444,6 +471,20 @@ async function eliminarUsuario(id){
     finally {
         ocultarLoader();
     }
+}
+
+botonNuevaContraseniaUsuario.addEventListener('click', async () => {
+    modificarContraseniaUsuario(idEdit);
+})
+
+function modificarContraseniaUsuario(id){
+
+}
+
+function printModalNuevaContrasenia(usuario){
+    idEdit = usuario.id;
+    document.getElementById("nombre-usuario-contrasenia").textContent = usuario.nombreUsuario;
+    modalNuevaContraseniaUsuario.showModal();
 }
 
 function printOperadoresTablas() {
