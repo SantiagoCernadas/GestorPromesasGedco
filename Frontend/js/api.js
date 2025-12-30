@@ -366,3 +366,32 @@ export async function eliminarUsuario(token,id) {
 
     return responseBody;
 }
+
+
+export async function modificarContraseniaUsuario(token,id,contrasenia) {
+    var responseBody;
+    await fetch(apiUrl + 'usuario/'+id+'/contrasenia',{
+        method: 'PATCH',
+        body: JSON.stringify(contrasenia),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        }
+    }).then(response => {
+        if (!response.ok) {
+            if (response.status === 403) {
+                throw new Error(response.status);
+            }
+            throw new Error("ERROR: " + response.status);
+        }
+        return response;
+    })
+    .then(data => {
+            responseBody = data;
+        })
+    .catch(error => {
+            throw error;
+        });
+
+    return responseBody;
+}

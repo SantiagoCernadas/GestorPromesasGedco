@@ -45,7 +45,12 @@ const modalEliminarUsuario = document.getElementById("modal-eliminar-usuario");
 const botonCancelarEliminarUsuario = document.getElementById("boton-cerrar-usuario");
 const botonEliminarUsuario = document.getElementById("boton-eliminar-usuario");
 
+const modalNuevaContraseniaUsuario = document.getElementById("modal-contrasenia-usuario");
+const botonCancelarNuevaContrasenia = document.getElementById("boton-cerrar-contrasenia");
+const botonNuevaContraseniaUsuario = document.getElementById("boton-nueva-contrasenia-usuario");
+
 const modalAlert = document.getElementById('modal-alert');
+
 
 const botonGuardarEditar = document.getElementById('boton-guardar-editar');
 const botonCerrarEstadistica = document.getElementById("boton-cerrar-estadisticas");
@@ -163,6 +168,10 @@ function printGestionUsuarios() {
         modalEliminarUsuario.close();
     });
 
+    botonCancelarNuevaContrasenia.addEventListener('click', () => {
+        modalNuevaContraseniaUsuario.close();
+    });
+
 
 
     botonAgregarUsuarioGuardar.addEventListener('click', async () => {
@@ -270,6 +279,24 @@ function validarUsuarioEdit(usuario) {
     return validacion;
 }
 
+function validarContraseniaUsuario(usuario){
+     var validacion = {
+        sinError: true,
+        mensaje: document.createElement("p")
+    }
+
+    if (usuario.contrasenia == '' || usuario.confirmaContrasenia == '') {
+        validacion.mensaje.innerHTML += 'Ingresar Contraseña. <br>'
+        validacion.sinError = false;
+    }
+    else if (usuario.contrasenia !== usuario.confirmaContrasenia) {
+        validacion.mensaje.innerHTML += 'Las contraseñas no son iguales. <br>';
+        validacion.sinError = false;
+    }
+
+    return validacion;
+}
+
 async function generarLista() {
     try {
         mostrarLoader();
@@ -324,7 +351,7 @@ function printListaUsuarios() {
         })
 
         botonNuevaContrasenia.addEventListener('click', () => {
-            generarAlert("Nueva contraseña: <br> id" + idEliminar + " usuario: " + nombre.textContent, "green");
+            printModalNuevaContrasenia(usuario);
         })
 
         botonEditar.textContent = "Editar";
@@ -361,7 +388,8 @@ botonEditarUsuarioGuardar.addEventListener('click', async () => {
     const validacionUsuario = validarUsuarioEdit(usuarioEditado);
 
     if (!validacionUsuario.sinError) {
-        generarAlert(validacionUsuario.mensaje, "red");
+        generarAlert(validacionUsuario.mensaje.innerHTML, "red");
+        return;
     }
 
     let usuarioEditadoApi;
@@ -444,6 +472,51 @@ async function eliminarUsuario(id){
     finally {
         ocultarLoader();
     }
+}
+
+botonNuevaContraseniaUsuario.addEventListener('click', async () => {
+    modificarContraseniaUsuario(idEdit);
+})
+
+async function modificarContraseniaUsuario(id){
+
+    const usuarioEditado = {
+        contrasenia: document.getElementById("input-usuario-nueva-contraseña").value,
+        confirmaContrasenia: document.getElementById("input-usuario-confirmar-nueva-contraseña").value
+    }
+
+    const validarUsuario = validarContraseniaUsuario(usuarioEditado);
+    if(!validarUsuario.sinError){
+        generarAlert(validarUsuario.mensaje.innerHTML,"red");
+        return;
+    }
+
+    try {
+        mostrarLoader()
+        await api.modificarContraseniaUsuario(token, id, usuarioEditado);
+        generarAlert("Contraseña modificada correctamente.", "green");
+        modalNuevaContraseniaUsuario.close();
+    }
+    catch (err) {
+        if (err.message == 403) {
+            generarAlert("Sesión vencida. Vuelva a iniciar sesión", "blue");
+            sesiónCerrada = true;
+        }
+        else {
+            generarAlert('No fue posible modificar la contraseña: ' + err.message, 'red');
+        }
+    }
+    finally {
+        ocultarLoader();
+    }
+}
+
+function printModalNuevaContrasenia(usuario){
+    idEdit = usuario.id;
+    document.getElementById("nombre-usuario-contrasenia").textContent = usuario.nombreUsuario;
+    document.getElementById("input-usuario-nueva-contraseña").value = "";
+    document.getElementById("input-usuario-confirmar-nueva-contraseña").value = "";
+    modalNuevaContraseniaUsuario.showModal();
 }
 
 function printOperadoresTablas() {
