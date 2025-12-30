@@ -589,6 +589,7 @@ botonFiltrar.addEventListener('click', () =>{
 })
 
 async function filtrarPromesas(filtros) {
+    paginaActual = 1;
     var query = "?1=1";
     if (!isNaN(filtros.caso)) {
         query += "&caso=" + filtros.caso;
