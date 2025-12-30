@@ -514,6 +514,8 @@ async function modificarContraseniaUsuario(id){
 function printModalNuevaContrasenia(usuario){
     idEdit = usuario.id;
     document.getElementById("nombre-usuario-contrasenia").textContent = usuario.nombreUsuario;
+    document.getElementById("input-usuario-nueva-contraseña").value = "";
+    document.getElementById("input-usuario-confirmar-nueva-contraseña").value = "";
     modalNuevaContraseniaUsuario.showModal();
 }
 
