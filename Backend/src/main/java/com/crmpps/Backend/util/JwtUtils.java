@@ -1,7 +1,5 @@
 package com.crmpps.Backend.util;
 
-//Clase que nos permite trabajar con JWT.
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -74,7 +72,6 @@ public class JwtUtils {
                 .getBody();
     }
 
-    //Obtener Firma del token (Secret)
     public Key getClaveFirma(){
         byte[] keyBytes = Decoders.BASE64.decode(secret);
         return Keys.hmacShaKeyFor(keyBytes);
