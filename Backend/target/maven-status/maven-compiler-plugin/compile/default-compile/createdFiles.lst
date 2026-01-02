@@ -1,4 +1,0 @@
-com\crmpps\Backend\util\JwtUtils.class
-com\crmpps\Backend\config\JwtAuthorizationFilter.class
-com\crmpps\Backend\BackendApplication.class
-com\crmpps\Backend\config\CustomAuthenticationFailureHandler.class
