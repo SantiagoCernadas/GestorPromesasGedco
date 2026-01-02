@@ -1,0 +1,4 @@
+com\crmpps\Backend\service\AuthServiceTest.class
+com\crmpps\Backend\service\PromesaServiceTest.class
+com\crmpps\Backend\BackendApplicationTests.class
+com\crmpps\Backend\service\UsuarioServiceTest.class
