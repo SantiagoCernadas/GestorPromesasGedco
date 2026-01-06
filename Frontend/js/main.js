@@ -89,7 +89,6 @@ try {
     datosUsuario = await api.getDatosUsuario(token);
     usuarios = await api.getOperadores(token);
     printTablaOperadores();
-    filtrarPromesas(filtros);
     document.getElementById("nombre-operador-span").textContent = datosUsuario.nombre;
     if (datosUsuario.rol === "ADMIN") {
         printGestionUsuarios();
@@ -107,6 +106,8 @@ catch (err) {
 finally {
     ocultarLoader();
 }
+
+filtrarPromesas(filtros);
 
 
 
@@ -279,8 +280,8 @@ function validarUsuarioEdit(usuario) {
     return validacion;
 }
 
-function validarContraseniaUsuario(usuario){
-     var validacion = {
+function validarContraseniaUsuario(usuario) {
+    var validacion = {
         sinError: true,
         mensaje: document.createElement("p")
     }
@@ -443,13 +444,13 @@ function printModalEliminar(usuario) {
 }
 
 botonEliminarUsuario.addEventListener('click', async () => {
-    if(document.getElementById("input-eliminar-usuario-confirmar").value.toLowerCase() !== "confirmar"){
+    if (document.getElementById("input-eliminar-usuario-confirmar").value.toLowerCase() !== "confirmar") {
         return;
     }
     eliminarUsuario(idEliminar);
 })
 
-async function eliminarUsuario(id){
+async function eliminarUsuario(id) {
     try {
         mostrarLoader();
         await api.eliminarUsuario(token, id);
@@ -478,7 +479,7 @@ botonNuevaContraseniaUsuario.addEventListener('click', async () => {
     modificarContraseniaUsuario(idEdit);
 })
 
-async function modificarContraseniaUsuario(id){
+async function modificarContraseniaUsuario(id) {
 
     const usuarioEditado = {
         contrasenia: document.getElementById("input-usuario-nueva-contraseña").value,
@@ -486,8 +487,8 @@ async function modificarContraseniaUsuario(id){
     }
 
     const validarUsuario = validarContraseniaUsuario(usuarioEditado);
-    if(!validarUsuario.sinError){
-        generarAlert(validarUsuario.mensaje.innerHTML,"red");
+    if (!validarUsuario.sinError) {
+        generarAlert(validarUsuario.mensaje.innerHTML, "red");
         return;
     }
 
@@ -511,7 +512,7 @@ async function modificarContraseniaUsuario(id){
     }
 }
 
-function printModalNuevaContrasenia(usuario){
+function printModalNuevaContrasenia(usuario) {
     idEdit = usuario.id;
     document.getElementById("nombre-usuario-contrasenia").textContent = usuario.nombreUsuario;
     document.getElementById("input-usuario-nueva-contraseña").value = "";
@@ -583,7 +584,7 @@ function getFiltros() {
     };
 }
 
-botonFiltrar.addEventListener('click', () =>{
+botonFiltrar.addEventListener('click', () => {
     filtros = getFiltros();
     filtrarPromesas(filtros);
 })
